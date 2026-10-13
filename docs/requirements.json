@@ -1,0 +1,1098 @@
+{
+  "schemaVersion": 1,
+  "sourceSha256": "47795fce2fc38cae5f1b91368ebaf80b7a2ed1fe147f36704b665faf0613812e",
+  "requirements": [
+    {
+      "id": "REQ-SYSTEM",
+      "summary": "Processar operações distribuídas corretamente sob duplicação, desordem, simultaneidade e indisponibilidade.",
+      "readmeSections": ["1", "3"],
+      "taskId": "T09",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "concurrency",
+          "description": "Cenários de falha e concorrência com saldo reconciliado, sem perda de eventos confirmados.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-AUTH",
+      "summary": "Documentar ausência de autenticação, desenho com IdP e ponto de extensão; não implementar credenciais artesanais.",
+      "readmeSections": ["2"],
+      "taskId": "T05",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "review",
+          "description": "Revisar ARCHITECTURE e extensão explícita; health aberto e fila interna com identidade validada.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-STACK",
+      "summary": "Bun 1.x como runtime, package manager e test runner; TypeScript estrito, NestJS, PostgreSQL, SQS local e Compose.",
+      "readmeSections": ["4"],
+      "taskId": "T01",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Iniciar a stack obrigatória em ambiente limpo usando comandos Bun.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-ORM",
+      "summary": "Usar MikroORM ou TypeORM, justificar ORM, Money e estratégia transacional; não usar outros ORMs.",
+      "readmeSections": ["4"],
+      "taskId": "T03",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "review",
+          "description": "Conferir dependências, mapeamentos e decisões documentadas.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-MIGRATIONS",
+      "summary": "Migrations versionadas e reversíveis.",
+      "readmeSections": ["4", "13"],
+      "taskId": "T03",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Aplicar e reverter migrations no PostgreSQL real.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-MONEY-EXACT",
+      "summary": "Nunca representar dinheiro com number, float ou double.",
+      "readmeSections": ["5"],
+      "taskId": "T02",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "unit",
+          "description": "Operações exatas de valor elevado e frações, mais revisão dos tipos e conversões.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-DURABLE-IDEMPOTENCY",
+      "summary": "Idempotência persistente; memória e FIFO não são garantias suficientes.",
+      "readmeSections": ["5"],
+      "taskId": "T05",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Reenvio após reinício e concorrência com registros persistidos.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-POST-COMMIT",
+      "summary": "Nunca publicar evento antes do commit da transação financeira.",
+      "readmeSections": ["5", "11"],
+      "taskId": "T07",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Falha antes do commit não publica; falha depois do commit recupera outbox.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-LEDGER-IMMUTABLE",
+      "summary": "Ledger não pode ser sobrescrito nem excluído; imutabilidade garantida no schema.",
+      "readmeSections": ["5", "6.4"],
+      "taskId": "T03",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "UPDATE e DELETE diretos são rejeitados pelo PostgreSQL.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-WALLET-CONCURRENCY",
+      "summary": "Controle de concorrência por wallet, sem lock global nem read/calculate/update desprotegido; múltiplas instâncias.",
+      "readmeSections": ["5", "8"],
+      "taskId": "T04",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "concurrency",
+          "description": "Disputa de saldo e wallets distintas processadas em paralelo.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-SCHEMA-INVARIANTS",
+      "summary": "Unicidade, imutabilidade e não-negatividade do modelo aplicadas no schema.",
+      "readmeSections": ["5"],
+      "taskId": "T03",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Tentar violar cada invariante diretamente via SQL.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-FACTORIES",
+      "summary": "Construtores private/protected, factories estáticas, encapsulamento e rehydrate sem revalidar transições.",
+      "readmeSections": ["6", "6.0"],
+      "taskId": "T02",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "unit",
+          "description": "Reconstruir estados persistidos e testar apenas transições explícitas.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-MONEY-IMMUTABLE",
+      "summary": "Money imutável, aritmética e comparação exatas, operações produzem novas instâncias.",
+      "readmeSections": ["6.1"],
+      "taskId": "T02",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "unit",
+          "description": "Cobrir add/subtract/negate, zero, sinais, igualdade e comparações.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-MONEY-CONTRACT",
+      "summary": "Entrada e saída monetária em string decimal de escala 2, moeda ISO-4217; modelo multi-moeda mesmo usando BRL.",
+      "readmeSections": ["6.1"],
+      "taskId": "T02",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "unit",
+          "description": "Validar e serializar MoneyProps, escala e conflitos de moeda.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-MONEY-INVALID",
+      "summary": "Rejeitar NaN, Infinity, notação científica, vazio, mais de duas casas e negativos nos contratos de entrada.",
+      "readmeSections": ["6.1"],
+      "taskId": "T02",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "unit",
+          "description": "Tabela de entradas inválidas e política sem arredondamento silencioso.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-MONEY-CURRENCY",
+      "summary": "Operações entre moedas diferentes geram erro de domínio, incluindo operação versus wallet.",
+      "readmeSections": ["6.1", "6.2"],
+      "taskId": "T02",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "unit",
+          "description": "Conflitos de moeda em Money e Wallet.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-DOMAIN-INDEPENDENT",
+      "summary": "Domínio não depende de tipos monetários ORM nem decorators NestJS.",
+      "readmeSections": ["6.1"],
+      "taskId": "T02",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "review",
+          "description": "Verificador de imports e inspeção do modelo de domínio.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-WALLET-UNIQUE",
+      "summary": "No máximo uma wallet por playerId e currency.",
+      "readmeSections": ["6.2"],
+      "taskId": "T03",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Criação concorrente e SQL direto respeitam unique constraint.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-WALLET-NONNEGATIVE",
+      "summary": "Saldo nunca negativo e sem lost update.",
+      "readmeSections": ["6.2"],
+      "taskId": "T03",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Constraint de saldo e concorrência real impedem valores negativos.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-WALLET-LEDGER",
+      "summary": "Toda mudança de saldo tem ledger correspondente e vice-versa.",
+      "readmeSections": ["6.2"],
+      "taskId": "T04",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Commit/rollback e reconciliação demonstram correspondência das movimentações.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-WALLET-VERSION",
+      "summary": "Version inicia em 1 e incrementa somente quando saldo muda.",
+      "readmeSections": ["6.2", "9"],
+      "taskId": "T04",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "unit",
+          "description": "Abertura, operações financeiras, LOSS, rejeição e replay preservam version correta.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-TRANSACTION-STATES",
+      "summary": "Transação nasce PENDING; documentar transições e impedir mudanças em PROCESSED, REJECTED ou FAILED.",
+      "readmeSections": ["6.3"],
+      "taskId": "T02",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "unit",
+          "description": "Matriz de estados, incluindo erro de programação ao transicionar terminal.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-OPENING-INTERNAL",
+      "summary": "OPENING é interno, recusado tanto por HTTP como por fila.",
+      "readmeSections": ["6.3", "9", "10"],
+      "taskId": "T05",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Submissão externa OPENING rejeitada nas duas entradas.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-PAYLOAD-CONFLICT",
+      "summary": "Mesma chave com payload divergente é conflito, não replay.",
+      "readmeSections": ["6.3", "9"],
+      "taskId": "T05",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Conflitos sequenciais e paralelos não alteram saldo nem resultado original.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-LEDGER-FACTORY",
+      "summary": "Ledger estruturalmente imutável; create valida balanceBefore +/- money = balanceAfter.",
+      "readmeSections": ["6.4"],
+      "taskId": "T02",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "unit",
+          "description": "Criação válida e aritmética inválida, direção e moeda.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-LEDGER-UNIQUE",
+      "summary": "No máximo um lançamento por transação financeira e wallet.",
+      "readmeSections": ["6.4"],
+      "taskId": "T03",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Constraint rejeita lançamento duplicado inclusive em concorrência.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-NO-EFFECT-LEDGER",
+      "summary": "LOSS e transações REJECTED não alteram saldo nem geram ledger.",
+      "readmeSections": ["6.4", "7"],
+      "taskId": "T04",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Comparar saldo, versão e contagem do ledger após resultados sem efeito.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-INBOX-OUTBOX-MODEL",
+      "summary": "Inbox persistente e outbox com tentativas, agendamento, publicação e factories encapsuladas.",
+      "readmeSections": ["6.5"],
+      "taskId": "T02",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "unit",
+          "description": "Transições, processedAt, isDue e evolução de retries.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-ATOMIC-UNIT",
+      "summary": "Transação, wallet, ledger, inbox SQS e eventos de outbox participam da mesma transação SQL.",
+      "readmeSections": ["6.5", "11"],
+      "taskId": "T07",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Injetar falhas em etapas da persistência e verificar tudo ou nada.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-BET",
+      "summary": "BET debita uma vez; saldo insuficiente gera rejeição.",
+      "readmeSections": ["7"],
+      "taskId": "T04",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Aposta válida e insuficiente com ledger, saldo e failureCode.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-WIN",
+      "summary": "WIN credita e pode referenciar BET da mesma rodada.",
+      "readmeSections": ["7"],
+      "taskId": "T04",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "WIN válido e referência incompatível de tipo ou escopo.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-LOSS",
+      "summary": "LOSS registra resultado sem movimentação financeira.",
+      "readmeSections": ["7"],
+      "taskId": "T04",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "LOSS processado sem ledger e com evento de processamento.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-REFUND",
+      "summary": "REFUND reverte BET PROCESSED uma vez, por crédito integral.",
+      "readmeSections": ["7"],
+      "taskId": "T04",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "REFUND válido, referência de tipo incorreto e repetição.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-ROLLBACK",
+      "summary": "ROLLBACK inverte BET, WIN ou REFUND PROCESSED, uma vez por referência/tipo.",
+      "readmeSections": ["7"],
+      "taskId": "T04",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Inversão das direções para cada tipo permitido e bloqueio de duplicação.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-REFERENCE-REQUIRED",
+      "summary": "REFUND e ROLLBACK exigem referenceExternalTransactionId.",
+      "readmeSections": ["7"],
+      "taskId": "T02",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "unit",
+          "description": "Factories rejeitam ausência de referência para reversões.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-REFERENCE-SCOPE",
+      "summary": "Resolver referência por providerId e ID externo, no mesmo provider/player/wallet/moeda/rodada.",
+      "readmeSections": ["7"],
+      "taskId": "T06",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Matriz de referências incompatíveis e IDs externos iguais em provedores distintos.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-REVERSAL-UNIQUE",
+      "summary": "Referência não pode ser revertida duas vezes pelo mesmo tipo de operação.",
+      "readmeSections": ["7"],
+      "taskId": "T03",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Unique constraint e reversões concorrentes.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-REVERSAL-AMOUNT",
+      "summary": "REFUND/ROLLBACK têm valor igual à referência; reversão parcial fora de escopo.",
+      "readmeSections": ["7"],
+      "taskId": "T04",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Reversões integrais aceitas e valor divergente rejeitado.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-REPLAY-ORIGINAL",
+      "summary": "Replay retorna resultado original, incluindo saldo observado naquele momento.",
+      "readmeSections": ["7", "9"],
+      "taskId": "T05",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Replay após outras movimentações e após reinício retorna snapshot original.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-REFERENCE-PENDING",
+      "summary": "Referência ausente persiste PENDING_REFERENCE e é reprocessada.",
+      "readmeSections": ["7", "7.1"],
+      "taskId": "T06",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Reversão chega antes da referência, aguarda e é aplicada apenas uma vez.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-REVERSAL-INSUFFICIENT",
+      "summary": "Reversão que negativaria saldo é rejeitada, auditável e com código distinto de BET sem saldo.",
+      "readmeSections": ["7"],
+      "taskId": "T04",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "ROLLBACK de crédito sem saldo disponível não gera débito.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-REFERENCE-RETRY",
+      "summary": "Worker agendado para PENDING_REFERENCE com backoff exponencial e limite/TTL justificado.",
+      "readmeSections": ["7.1"],
+      "taskId": "T06",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Verificar agendamento persistido, múltiplos workers e retomada.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-REFERENCE-EXPIRY",
+      "summary": "Esgotamento da espera rejeita com código de referência inexistente e publica evento.",
+      "readmeSections": ["7.1"],
+      "taskId": "T06",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Expiração determinística e evento de rejeição via outbox.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-FAILURE-CODES",
+      "summary": "Toda rejeição tem failureCode estável, legível por máquina, definido e documentado.",
+      "readmeSections": ["7.2"],
+      "taskId": "T02",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "unit",
+          "description": "Taxonomia testada em regras de negócio e conferida nos contratos.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-REQUIRED-RACE",
+      "summary": "Duas apostas 80.00 em saldo 100.00: um PROCESSED, um REJECTED, saldo 20.00 e um débito.",
+      "readmeSections": ["8"],
+      "taskId": "T09",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "concurrency",
+          "description": "Execução simultânea em processos distintos e redelivery sem débito extra.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-WALLET-API",
+      "summary": "POST /wallets cria wallet, devolve contrato e trata duplicação como conflito.",
+      "readmeSections": ["9"],
+      "taskId": "T05",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "HTTP para abertura zero/positiva, moeda, validação e duplicação.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-OPENING-ATOMIC",
+      "summary": "Saldo inicial positivo gera OPENING e crédito no ledger na mesma transação SQL.",
+      "readmeSections": ["9"],
+      "taskId": "T04",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Abertura atômica e rollback; saldo zero e versão inicial 1.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-QUERY-API",
+      "summary": "Consultar wallet, transação por ID e por providerId/externalTransactionId.",
+      "readmeSections": ["9"],
+      "taskId": "T05",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "GETs retornam recursos corretos e distinguem ausentes.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-LEDGER-CURSOR",
+      "summary": "GET ledger tem cursor estável e opaco, com limite e ordenação consistente.",
+      "readmeSections": ["9"],
+      "taskId": "T05",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Páginas sem lacunas/repetição sob inserções e tratamento de cursor inválido.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-SUBMIT-API",
+      "summary": "POST transação aceita o contrato de negócio e retorna transactionId, status, balance e idempotentReplay.",
+      "readmeSections": ["9"],
+      "taskId": "T05",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Contratos de sucesso, pendência, rejeição, entrada inválida e replay.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-IDEMPOTENCY-HEADER",
+      "summary": "Idempotency-Key obrigatório como fonte da verdade; não inferir silenciosamente o header ausente.",
+      "readmeSections": ["9"],
+      "taskId": "T05",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Header ausente recusado e chave fornecida respeitada.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-CANONICAL-HASH",
+      "summary": "Hash de JSON canônico com chaves ordenadas e apenas campos de negócio; algoritmo documentado.",
+      "readmeSections": ["9"],
+      "taskId": "T05",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "unit",
+          "description": "Ordem de chaves/metadados não alteram hash; mudança de negócio altera.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-HTTP-STATUS",
+      "summary": "Distinguir consistentemente payload inválido, conflito, rejeição, pendência e infraestrutura transitória.",
+      "readmeSections": ["9"],
+      "taskId": "T05",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Matriz HTTP verificável sem depender de parsing de mensagens de erro.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-RECONCILIATION",
+      "summary": "POST reconciliação retorna saldos, diferença, consistência e quantidade de lançamentos.",
+      "readmeSections": ["9"],
+      "taskId": "T08",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Casos consistentes e divergentes com aritmética exata e visão coerente.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-RECONCILIATION-DIVERGENCE",
+      "summary": "Divergência é logada, contabilizada e retornada, sem correção silenciosa.",
+      "readmeSections": ["9"],
+      "taskId": "T08",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Divergência induzida produz resposta/log/métrica e preserva dados.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-HEALTH",
+      "summary": "Liveness separada de readiness, health aberto, readiness verifica PostgreSQL e SQS.",
+      "readmeSections": ["9", "12"],
+      "taskId": "T08",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Processo vivo e dependências indisponíveis produzem estados adequados.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-SQS-QUEUES",
+      "summary": "Filas wager-transactions.fifo e wager-transactions-dlq.fifo com envelope exigido.",
+      "readmeSections": ["10"],
+      "taskId": "T07",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Provisionamento e entrega real pelo broker local.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-SHARED-USECASE",
+      "summary": "HTTP e SQS reutilizam o mesmo caso de uso; identidade de provedor validada no domínio.",
+      "readmeSections": ["10"],
+      "taskId": "T07",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Mesma regra e mesmo efeito para as duas entradas.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-INBOX-DEDUPE",
+      "summary": "Inbox deduplica por consumerName/messageId com payloadHash persistido.",
+      "readmeSections": ["10"],
+      "taskId": "T07",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Redelivery e mensagem repetida não duplicam efeitos; payload divergente detectado.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-ACK-AFTER-COMMIT",
+      "summary": "Ack somente depois do commit; redelivery seguro.",
+      "readmeSections": ["10"],
+      "taskId": "T07",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Falha antes/depois do commit comprova momento do ack e ausência de efeito duplicado.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-SQS-ERRORS",
+      "summary": "Negócio terminal com ack, transitório com backoff, permanente com DLQ e limite de tentativas.",
+      "readmeSections": ["10"],
+      "taskId": "T07",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Forçar cada classe de erro e conferir estado, retries e destino da mensagem.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-SHUTDOWN",
+      "summary": "SIGTERM conclui mensagens em andamento ou devolve visibilidade.",
+      "readmeSections": ["10"],
+      "taskId": "T07",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Encerrar consumidor durante processamento e demonstrar recuperação.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-OUTBOX-PUBLISHERS",
+      "summary": "Publishers concorrentes recuperam eventos após crash e não perdem nem duplicam indefinidamente.",
+      "readmeSections": ["11"],
+      "taskId": "T07",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "concurrency",
+          "description": "Dois publishers, claim recuperável, publicação e retry persistido.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-OUTBOX-RECOVERY",
+      "summary": "Commit seguido de morte antes de publicar: outra instância publica e duplicata é segura para consumidor.",
+      "readmeSections": ["11"],
+      "taskId": "T09",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "concurrency",
+          "description": "Falha controlada e consumidor idempotente por eventId.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-EVENT-TYPES",
+      "summary": "Eventos mínimos Processed incluindo LOSS, Rejected, PendingReference e BalanceChanged apenas quando saldo muda.",
+      "readmeSections": ["11"],
+      "taskId": "T02",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "unit",
+          "description": "Eventos corretos por transição e ausência de BalanceChanged sem movimentação.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-EVENT-ENVELOPE",
+      "summary": "Classe abstrata e subclasse por evento, tipo/versão no tipo, IDs, contexto, data ISO e MoneyProps JSON.",
+      "readmeSections": ["11"],
+      "taskId": "T02",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "unit",
+          "description": "Serialização estável do envelope com eventId, aggregateId, correlationId e causationId opcional.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-LOGS",
+      "summary": "Logs JSON com correlationId, messageId, transactionId, walletId e providerId, sem dados sensíveis/payloads completos.",
+      "readmeSections": ["12"],
+      "taskId": "T08",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Capturar logs de fluxos HTTP/SQS e conferir contexto e ausência de conteúdo sensível.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-METRICS",
+      "summary": "Métricas de status, duplicatas, retries, DLQ, conflitos de lock, outbox lag e latência.",
+      "readmeSections": ["12"],
+      "taskId": "T08",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Exercitar cenários e verificar incrementos/observações das métricas.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-UNIT-SUITE",
+      "summary": "Cobrir Money/escala/entradas, Wallet, cinco operações, moeda e conflito de payload.",
+      "readmeSections": ["13"],
+      "taskId": "T09",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "review",
+          "description": "Conferir casos unitários obrigatórios contra os testes reais.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-REAL-INTEGRATION",
+      "summary": "Integração usa PostgreSQL e LocalStack/MiniStack reais para constraints, atomicidade, inbox, publishers, retry, DLQ e restart.",
+      "readmeSections": ["13"],
+      "taskId": "T09",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Suíte real em containers, sem substituição integral por mocks.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-FIFTY-DUPLICATES",
+      "summary": "Mesma aposta enviada 50 vezes em paralelo gera um único débito.",
+      "readmeSections": ["13"],
+      "taskId": "T09",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "concurrency",
+          "description": "Barreira de início e 50 envios paralelos com auditoria do ledger.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-PARALLEL-WALLETS",
+      "summary": "Wallets distintas são processadas em paralelo.",
+      "readmeSections": ["13"],
+      "taskId": "T09",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "concurrency",
+          "description": "Operações sobre wallets distintas progridem sem lock global.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-THREE-PROCESSES",
+      "summary": "Executar concorrência com pelo menos três processos/instâncias simultâneos.",
+      "readmeSections": ["13"],
+      "taskId": "T09",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "concurrency",
+          "description": "Registrar processos reais ativos compartilhando PostgreSQL e broker.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-KILL-BEFORE-ACK",
+      "summary": "Matar worker depois do commit e antes do ack preserva efeito único no redelivery.",
+      "readmeSections": ["13"],
+      "taskId": "T09",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "concurrency",
+          "description": "Injetar parada no ponto exato, reiniciar e reconciliar saldo/ledger.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-OUT-OF-ORDER-RESTART",
+      "summary": "REFUND/ROLLBACK antes da referência e reinício mantêm consistência final.",
+      "readmeSections": ["13"],
+      "taskId": "T09",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "concurrency",
+          "description": "Receber reversão primeiro, reiniciar serviço e concluir com referência tardia.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-FINAL-INVARIANT",
+      "summary": "Em todos os testes obrigatórios, saldo corresponde ao reconstruído pelo ledger.",
+      "readmeSections": ["13"],
+      "taskId": "T09",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "integration",
+          "description": "Asserção de reconciliação ao final de cada cenário financeiro obrigatório.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-DELIVERY-DOCS",
+      "summary": "README com setup/comandos e ARCHITECTURE com decisões, trade-offs, limitações e interpretações.",
+      "readmeSections": ["14"],
+      "taskId": "T10",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "documentation",
+          "description": "Revisar documentos e reproduzir setup em ambiente limpo preservando o enunciado.",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "REQ-ELIMINATORY",
+      "summary": "Auditar falhas eliminatórias: dinheiro inexato, race, duplicação, idempotência em memória, instância única, evento pré-commit, ledger ausente e mocks totais.",
+      "readmeSections": ["14"],
+      "taskId": "T10",
+      "status": "planned",
+      "evidence": [
+        {
+          "kind": "review",
+          "description": "Checklist final com evidências reais de cada garantia.",
+          "status": "planned"
+        }
+      ]
+    }
+  ]
+}

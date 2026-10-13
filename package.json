@@ -1,0 +1,31 @@
+{
+  "name": "backend-challenge",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.4.3",
+  "engines": {
+    "bun": "1.4.3"
+  },
+  "scripts": {
+    "doctor": "bun scripts/doctor.ts",
+    "check:docs": "bun scripts/check-docs.ts",
+    "check:architecture": "bun scripts/check-architecture.ts",
+    "lint": "bun --bun eslint .",
+    "format:check": "bun --bun prettier --check .",
+    "format": "bun --bun prettier --write .",
+    "typecheck": "bun --bun tsc --noEmit",
+    "test:harness": "bun test tests/harness",
+    "check": "bun scripts/check.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@types/bun": "1.4.3",
+    "@types/markdown-it": "14.1.2",
+    "eslint": "9.39.5",
+    "markdown-it": "14.1.0",
+    "prettier": "3.9.10",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.2"
+  }
+}

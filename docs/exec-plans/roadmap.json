@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "tasks": [
+    {
+      "id": "T00",
+      "title": "Harness de engenharia",
+      "dependsOn": [],
+      "status": "completed",
+      "scope": "Documentação, verificadores, testes e CI; sem backend.",
+      "acceptanceCriteria": [
+        "Enunciado preservado e requisitos rastreáveis.",
+        "Checks do harness passam e detectam entradas inválidas.",
+        "Próxima etapa identificável apenas pelo repositório."
+      ],
+      "verification": [
+        "Instalação congelada, bun run check, diagnóstico e revisão do diff."
+      ]
+    },
+    {
+      "id": "T01",
+      "title": "Ambiente e estrutura do backend",
+      "dependsOn": ["T00"],
+      "status": "planned",
+      "scope": "Preparar Bun/NestJS, Docker Compose, configuração e boundaries; sem processamento financeiro.",
+      "acceptanceCriteria": [
+        "Stack obrigatória executável com comandos documentados.",
+        "Dependências e serviços locais definidos sem segredos.",
+        "Build e verificações de aplicação incorporados ao fluxo."
+      ],
+      "verification": [
+        "Smoke test da aplicação e dependências em containers.",
+        "Typecheck/build, instalação limpa e revisão da stack."
+      ]
+    },
+    {
+      "id": "T02",
+      "title": "Domínio financeiro",
+      "dependsOn": ["T01"],
+      "status": "planned",
+      "scope": "Modelar Money, agregados, transações, ledger, inbox/outbox e eventos sem adaptadores.",
+      "acceptanceCriteria": [
+        "Factories, reidratação e estados encapsulados.",
+        "Regras das operações e precisão monetária cobertas por unidade.",
+        "Taxonomia de falhas definida e transições documentadas."
+      ],
+      "verification": [
+        "Testes Bun de Money, Wallet, operações, moedas, ledger e transições."
+      ]
+    },
+    {
+      "id": "T03",
+      "title": "Schema e persistência",
+      "dependsOn": ["T02"],
+      "status": "planned",
+      "scope": "Mapeamento ORM, migrations reversíveis e invariantes no PostgreSQL.",
+      "acceptanceCriteria": [
+        "Constraints cobrem unicidade, imutabilidade, não-negatividade e consistência.",
+        "Migrations sobem e revertem em banco real.",
+        "Money é persistido sem perda e reidratado pelo domínio."
+      ],
+      "verification": [
+        "Integração com PostgreSQL real, violações via SQL direto e round trips."
+      ]
+    },
+    {
+      "id": "T04",
+      "title": "Processamento transacional e concorrência",
+      "dependsOn": ["T03"],
+      "status": "planned",
+      "scope": "Criação de wallet e caso de uso financeiro com concorrência por wallet.",
+      "acceptanceCriteria": [
+        "OPENING, saldo, ledger e eventos atômicos.",
+        "Disputa de 80.00 + 80.00 sobre 100.00 preserva saldo 20.00.",
+        "Reversões e rejeições não violam invariantes."
+      ],
+      "verification": [
+        "Unidade e integração transacional com falhas induzidas.",
+        "Paralelismo real na mesma wallet e entre wallets."
+      ]
+    },
+    {
+      "id": "T05",
+      "title": "Idempotência e HTTP",
+      "dependsOn": ["T04"],
+      "status": "planned",
+      "scope": "Idempotência persistente, hash, replay, endpoints, consultas e extensão de autenticação.",
+      "acceptanceCriteria": [
+        "Header é fonte da verdade; payload conflitante falha.",
+        "Replay preserva resultado e saldo originalmente observado.",
+        "Contratos distinguem resultados e ledger tem cursor estável e opaco.",
+        "Decisão de autenticação e extensão explícitas."
+      ],
+      "verification": [
+        "Testes HTTP de contratos, paginação e erros.",
+        "Concorrência de chaves e replay após reinício em PostgreSQL real."
+      ]
+    },
+    {
+      "id": "T06",
+      "title": "Referências fora de ordem",
+      "dependsOn": ["T05"],
+      "status": "planned",
+      "scope": "Resolução de referências, worker agendado e política de espera limitada.",
+      "acceptanceCriteria": [
+        "Pendência persistida, backoff e limite justificados.",
+        "Referências validadas no escopo e tipo corretos.",
+        "Expiração é rejeição auditável com evento."
+      ],
+      "verification": [
+        "Testes de reversão anterior à referência, expiração e retomada.",
+        "Concorrência entre workers de referência."
+      ]
+    },
+    {
+      "id": "T07",
+      "title": "SQS, inbox e outbox",
+      "dependsOn": ["T06"],
+      "status": "planned",
+      "scope": "Consumidor, publicação, retentativas, DLQ e encerramento seguro.",
+      "acceptanceCriteria": [
+        "Inbox e efeitos financeiros atômicos; ack após commit.",
+        "Múltiplos publishers recuperam trabalho e preservam eventos.",
+        "Erros de negócio, transitórios e permanentes têm tratamentos distintos."
+      ],
+      "verification": [
+        "Integração real com PostgreSQL e broker.",
+        "Redelivery, retry, DLQ, SIGTERM, publishers concorrentes e falhas após commit."
+      ]
+    },
+    {
+      "id": "T08",
+      "title": "Reconciliação e observabilidade",
+      "dependsOn": ["T07"],
+      "status": "planned",
+      "scope": "Reconciliação, logs, métricas e health checks exigidos.",
+      "acceptanceCriteria": [
+        "Reconciliação detecta divergências sem correção silenciosa.",
+        "Logs e métricas mínimos disponíveis sem payloads sensíveis.",
+        "Liveness e readiness refletem suas dependências e são abertos."
+      ],
+      "verification": [
+        "Testes HTTP e integração de reconciliação consistente/divergente.",
+        "Inspeção de logs, métricas e falhas de dependências."
+      ]
+    },
+    {
+      "id": "T09",
+      "title": "Testes distribuídos e recuperação",
+      "dependsOn": ["T08"],
+      "status": "planned",
+      "scope": "Completar a matriz obrigatória de concorrência e falhas com infraestrutura real.",
+      "acceptanceCriteria": [
+        "50 reenvios paralelos geram efeito único.",
+        "Três ou mais processos e dois publishers comprovados.",
+        "Morte entre commit e ack, fora de ordem e reinício preservam consistência.",
+        "Saldo final igual ao reconstruído pelo ledger em todos os cenários."
+      ],
+      "verification": [
+        "Suíte de integração e concorrência em containers, com evidências de processos e falhas.",
+        "Repetição dirigida apenas para investigar flakiness ou riscos encontrados."
+      ]
+    },
+    {
+      "id": "T10",
+      "title": "Documentação final e conferência",
+      "dependsOn": ["T09"],
+      "status": "planned",
+      "scope": "Setup final, arquitetura, decisões, comandos e auditoria do enunciado.",
+      "acceptanceCriteria": [
+        "Requisitos obrigatórios têm evidência revisada.",
+        "Setup e testes reproduzíveis em ambiente limpo.",
+        "Limitações, trade-offs, autenticação e interpretações documentados."
+      ],
+      "verification": [
+        "Auditoria do catálogo contra README e evidências.",
+        "Execução limpa de setup, migrations e todas as suítes."
+      ]
+    }
+  ]
+}

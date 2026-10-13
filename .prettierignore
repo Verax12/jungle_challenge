@@ -1,0 +1,6 @@
+README.md
+bun.lock
+node_modules/
+coverage/
+dist/
+tests/fixtures/
