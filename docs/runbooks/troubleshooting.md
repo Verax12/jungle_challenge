@@ -36,4 +36,13 @@ um verificador; não desative uma regra somente para fazer a execução passar.
 
 O harness pode ser validado sem Docker. Para etapas de integração, instale uma
 distribuição comum de Docker/Compose, inicie o daemon e repita `bun run doctor`.
-Somente então execute os testes com infraestrutura real que serão criados na T01.
+Com Colima, selecione `DOCKER_CONTEXT=colima-backend-challenge` no terminal antes
+dos comandos Docker. Execute `bun run stack:up` e `bun run stack:smoke` conforme
+o [runbook do backend](backend.md). Buildx também precisa estar disponível.
+
+## Testes HTTP em ambiente restrito
+
+Os testes da aplicação abrem uma porta temporária em `127.0.0.1`. Um sandbox que
+proíba listeners pode produzir EADDRINUSE mesmo usando a porta dinâmica 0. Nesse
+caso, execute os testes em um ambiente autorizado a abrir sockets locais; não
+substitua o teste HTTP real por mocks para contornar a restrição.

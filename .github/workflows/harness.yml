@@ -1,4 +1,4 @@
-name: Harness
+name: Validation
 
 on:
   push:
@@ -18,3 +18,20 @@ jobs:
           bun-version-file: .bun-version
       - run: bun install --frozen-lockfile
       - run: bun run check
+
+  stack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - run: bun run stack:up
+      - run: bun run stack:smoke
+      - name: Diagnostics on failure
+        if: failure()
+        run: docker compose ps -a && docker compose logs --no-color --tail 100
+      - name: Stop stack
+        if: always()
+        run: docker compose down --volumes

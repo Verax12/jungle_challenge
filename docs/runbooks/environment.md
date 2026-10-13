@@ -12,9 +12,10 @@ a versão: `curl -fsSL https://bun.com/install | bash -s "bun-v1.4.3"`. Esse com
 instala software; leia o script se desejar revisá-lo antes de executá-lo. Confirme
 que o diretório de binários do Bun está no PATH e confira `bun --version`.
 
-Docker e Compose serão necessários para PostgreSQL e o broker a partir da T01.
-Nenhum container é necessário para os testes atuais do harness. Não há dependência
-de conta corporativa, provedor remoto ou credencial de produção.
+Docker, Compose e Buildx são necessários para a stack e seus smoke tests na T01.
+`bun run check` pode rodar sem containers e inclui testes HTTP em loopback.
+Veja [execução da stack](backend.md). Não há dependência de conta corporativa,
+provedor remoto ou credencial de produção.
 
 ## Instalação reproduzível
 
@@ -28,7 +29,7 @@ bun run check
 ```
 
 O `doctor` retorna código 1 se houver pré-requisito ausente ou versão Bun divergente,
-inclusive Docker indisponível. Isso não impede executar os checks do harness. Ele
+inclusive Docker indisponível. Isso não impede executar os checks sem containers. Ele
 apenas diagnostica; não instala pacotes nem inicia serviços.
 
 ## Comandos direcionados
@@ -47,15 +48,16 @@ o enunciado. O hash do conteúdo original é conferido pelo check documental.
 
 ## Alterações de ferramentas
 
-Mudanças de versão Bun exigem atualizar `.bun-version`, `packageManager`, `engines`
-e os documentos pertinentes. O workflow lê `.bun-version`. Atualize dependências
+Mudanças de versão Bun exigem atualizar `.bun-version`, `packageManager`, `engines`,
+as imagens/digests no Dockerfile e os documentos pertinentes. O workflow lê `.bun-version`. Atualize dependências
 com Bun, versione o lockfile e valide uma instalação congelada. Nunca edite o lockfile
 manualmente para simular uma resolução.
 
 ## CI
 
 O [workflow](../../.github/workflows/harness.yml) roda em pushes e pull requests com
-permissão de leitura do repositório. Executa instalação congelada e `bun run check`.
-Não publica, não faz deploy, não requer segredos configurados pelo usuário e não
-executa o backend inexistente. O setup-bun lê a versão de `.bun-version`, conforme
+permissão de leitura do repositório. Executa instalação congelada e `bun run check`,
+mais um job que sobe a stack real, executa smoke tests e limpa os containers.
+Não publica, não faz deploy e não requer segredos configurados pelo usuário.
+O setup-bun lê a versão de `.bun-version`, conforme
 a [documentação da action](https://github.com/oven-sh/setup-bun#using-version-file).

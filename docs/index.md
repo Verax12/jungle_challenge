@@ -13,6 +13,7 @@
 - [Formato e ciclo dos planos](PLANS.md).
 - [Roadmap](exec-plans/roadmap.json): T00 é o harness; T01 a T10 são o backend.
 - [Plano T00 — harness concluído e evidências](exec-plans/completed/T00-harness.md).
+- [Plano T01 — base do backend e evidências](exec-plans/completed/T01-backend-foundation.md).
 - [Dívida técnica](exec-plans/tech-debt.md).
 
 ## Decisões
@@ -20,10 +21,12 @@
 - [Índice de decisões](decisions/index.md).
 - [ADR 0001 — harness de desenvolvimento](decisions/0001-development-harness.md).
 - [ADR 0002 — escolhas pendentes do backend](decisions/0002-backend-options.md).
+- [ADR 0003 — ambiente e bootstrap](decisions/0003-backend-foundation.md).
 
 ## Operação
 
 - [Ambiente e comandos](runbooks/environment.md).
+- [Execução da stack local](runbooks/backend.md).
 - [Diagnóstico de verificações](runbooks/troubleshooting.md).
 
 ## Referências
@@ -35,4 +38,5 @@
 As referências orientam o processo. Requisitos do produto continuam definidos pelo
 enunciado, e as restrições desta entrega prevalecem sobre exemplos das referências.
 
-Estado atual: T00 concluída; T01 é a próxima etapa planejada, ainda não iniciada.
+Estado atual: T00 e T01 concluídas; T02 é a próxima tarefa disponível, aguardando seleção.
+Nenhum fluxo financeiro implementado.

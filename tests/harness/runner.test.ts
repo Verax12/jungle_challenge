@@ -28,6 +28,25 @@ test('doctor requires the pinned runtime version', () => {
   expect(versionMatches('1.4.2', '1.4.3')).toBe(false);
 });
 
+test('Docker runtime cannot drift from the pinned Bun version or omit its digest', () => {
+  const root = fixture();
+  roots.push(root);
+  put(root, '.bun-version', '1.4.3');
+  put(
+    root,
+    'package.json',
+    JSON.stringify({ packageManager: 'bun@1.4.3', engines: { bun: '1.4.3' } }),
+  );
+  put(
+    root,
+    'Dockerfile',
+    `FROM oven/bun:1.4.3-slim@sha256:${'a'.repeat(64)} AS runtime\n`,
+  );
+  expect(checkToolchain(root, '1.4.3')).toEqual([]);
+  put(root, 'Dockerfile', 'FROM oven/bun:1.4.2-slim AS runtime\n');
+  expect(checkToolchain(root, '1.4.3').join('\n')).toContain('Dockerfile');
+});
+
 test('doctor reports missing and failed commands without crashing', () => {
   expect(diagnoseCommand(['backend-harness-command-does-not-exist']).ok).toBe(
     false,

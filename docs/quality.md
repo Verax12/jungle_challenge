@@ -2,9 +2,9 @@
 
 ## Estado das garantias
 
-O backend não foi implementado. Todos os requisitos do challenge estão `planned`.
-O sucesso do harness significa apenas que documentação, ferramentas e política
-arquitetural foram verificadas; não significa correção financeira ou distribuída.
+A T01 implementa a base executável do backend, sem processamento financeiro. O
+catálogo registra o estado individual de cada requisito. Sucesso do harness e dos
+smoke tests não significa correção financeira ou distribuída.
 
 ## Catálogo
 
@@ -38,12 +38,14 @@ ou esperas arbitrárias como prova de paralelismo. Injeção de falha será plan
 
 ## Gates atuais e evolução
 
-`bun run check` executa documentos, arquitetura, lint, formato, tipos e testes do
-harness, inclusive após uma verificação falhar. Qualquer falha torna o resultado
-final diferente de zero. O comando não instala dependências nem altera arquivos.
+`bun run check` executa documentos, arquitetura, lint, formato, tipos, build e testes
+do harness/aplicação, inclusive após uma verificação falhar. Qualquer falha torna o
+resultado final diferente de zero. O build recria apenas `dist/`, ignorado pelo Git.
+O comando não instala dependências nem modifica arquivos versionados.
 
-T01 adicionará verificações do backend ao mesmo fluxo. T03 e T07 introduzirão
-infraestrutura real; T09 completará a validação distribuída. Não usar testes vazios,
+T01 adiciona smoke tests com PostgreSQL e LocalStack reais, executados separadamente
+por `test:smoke`/`stack:smoke` e pelo job `stack` na CI. T03 e T07 acrescentarão
+persistência financeira e mensageria; T09 completará a validação distribuída. Não usar testes vazios,
 skips ou stubs como aceitação dos requisitos futuros. Não enfraquecer um gate para
 ocultar uma falha financeira ou um teste instável.
 

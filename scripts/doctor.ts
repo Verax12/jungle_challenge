@@ -42,6 +42,7 @@ if (import.meta.main) {
     ['Docker CLI', ['docker', '--version']],
     ['Docker daemon', ['docker', 'info', '--format', '{{.ServerVersion}}']],
     ['Docker Compose', ['docker', 'compose', 'version']],
+    ['Docker Buildx', ['docker', 'buildx', 'version']],
   ] as const) {
     const { ok, detail } = diagnoseCommand(command);
     failed ||= !ok;

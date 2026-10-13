@@ -8,6 +8,16 @@
     "bun": "1.4.3"
   },
   "scripts": {
+    "build": "bun scripts/build.ts",
+    "start": "bun dist/composition/main.js",
+    "start:dev": "bun run build && bun run start",
+    "test:app": "bun test tests/app",
+    "test:smoke": "bun test tests/smoke --timeout 20000",
+    "infra:up": "docker compose up -d --wait postgres localstack",
+    "infra:provision": "bun src/composition/provision-queues.ts",
+    "stack:up": "docker compose up --build -d --wait",
+    "stack:down": "docker compose down",
+    "stack:smoke": "docker compose run --rm --build smoke",
     "doctor": "bun scripts/doctor.ts",
     "check:docs": "bun scripts/check-docs.ts",
     "check:architecture": "bun scripts/check-architecture.ts",
@@ -27,5 +37,15 @@
     "prettier": "3.9.10",
     "typescript": "5.9.3",
     "typescript-eslint": "8.71.2"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sqs": "3.1151.0",
+    "@mikro-orm/core": "6.6.17",
+    "@mikro-orm/postgresql": "6.6.17",
+    "@nestjs/common": "11.2.7",
+    "@nestjs/core": "11.2.7",
+    "@nestjs/platform-express": "11.2.7",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2"
   }
 }

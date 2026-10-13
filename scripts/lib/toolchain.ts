@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 export function checkToolchain(root: string, currentVersion: string): string[] {
@@ -16,5 +16,23 @@ export function checkToolchain(root: string, currentVersion: string): string[] {
     errors.push(
       'packageManager e engines.bun devem corresponder a .bun-version.',
     );
+  const dockerfile = join(root, 'Dockerfile');
+  if (existsSync(dockerfile)) {
+    const images = [
+      ...readFileSync(dockerfile, 'utf8').matchAll(/^FROM\s+oven\/bun:(\S+)/gm),
+    ];
+    if (
+      !images.length ||
+      images.some(
+        (match) =>
+          !match[1]?.startsWith(`${expected}-`) ||
+          !/@sha256:[a-f0-9]{64}$/.test(match[1]),
+      )
+    ) {
+      errors.push(
+        'Dockerfile deve fixar as imagens Bun na versão de .bun-version e por digest SHA-256.',
+      );
+    }
+  }
   return errors;
 }

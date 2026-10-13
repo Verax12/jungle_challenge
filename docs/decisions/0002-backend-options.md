@@ -4,6 +4,9 @@
 
 Proposto. Não constitui requisito adicional nem decisão aceita de implementação.
 
+Atualização T01: ORM (MikroORM) e broker local (LocalStack Community fixado) foram
+aceitos no [ADR 0003](0003-backend-foundation.md). As demais propostas continuam pendentes.
+
 ## Contexto
 
 O README fixa parte da stack e deixa escolhas ao candidato. O plano inicial

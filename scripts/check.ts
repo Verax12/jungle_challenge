@@ -6,7 +6,9 @@ export const checks = [
   'lint',
   'format:check',
   'typecheck',
+  'build',
   'test:harness',
+  'test:app',
 ] as const;
 
 export async function runChecks(

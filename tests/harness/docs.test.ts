@@ -17,7 +17,7 @@ function requirements(edit: (items: Record<string, unknown>[]) => void): void {
 }
 
 describe('documentation', () => {
-  test('accepts the actual documentation and unimplemented backend requirements', () => {
+  test('accepts the actual documentation and current requirement states', () => {
     expect(checkDocs(root)).toEqual([]);
     expect(cli(root, 'check-docs.ts').exitCode).toBe(0);
   });
@@ -164,10 +164,13 @@ describe('documentation', () => {
   test('requires plans for active/completed tasks and completed dependencies', () => {
     editJson(root, 'docs/exec-plans/roadmap.json', (value) => {
       const tasks = value.tasks as Record<string, unknown>[];
-      tasks[2]!.status = 'active';
+      tasks.push(
+        { ...tasks[0]!, id: 'T98', status: 'planned', dependsOn: [] },
+        { ...tasks[0]!, id: 'T99', status: 'active', dependsOn: ['T98'] },
+      );
     });
     const errors = checkDocs(root).join('\n');
-    expect(errors).toContain('T02 exige T01 concluída');
+    expect(errors).toContain('T99 exige T98 concluída');
     expect(errors).toContain('sem plano de execução');
   });
 

@@ -20,7 +20,7 @@
       "id": "T01",
       "title": "Ambiente e estrutura do backend",
       "dependsOn": ["T00"],
-      "status": "planned",
+      "status": "completed",
       "scope": "Preparar Bun/NestJS, Docker Compose, configuração e boundaries; sem processamento financeiro.",
       "acceptanceCriteria": [
         "Stack obrigatória executável com comandos documentados.",

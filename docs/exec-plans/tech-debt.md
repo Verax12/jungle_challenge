@@ -1,13 +1,17 @@
 # Dívida técnica e pendências
 
-Não há dívida técnica de implementação do backend: ele ainda não existe. Requisitos
-não iniciados pertencem ao roadmap, não devem ser tratados como funcionalidades prontas.
+A base executável do backend existe a partir da T01. Requisitos financeiros não
+iniciados pertencem ao roadmap, não devem ser tratados como funcionalidades prontas.
 
-| Item                    | Situação                              | Tratamento                                                 |
-| ----------------------- | ------------------------------------- | ---------------------------------------------------------- |
-| Docker e Compose locais | Não detectados na sessão inicial      | Verificar e preparar na T01 antes de testes com containers |
-| Garantias financeiras   | Não implementadas                     | T02 a T09, com evidências no catálogo                      |
-| CI remota               | Workflow a validar em execução remota | Conferir a primeira execução após publicação autorizada    |
+| Item                    | Situação                              | Tratamento                                              |
+| ----------------------- | ------------------------------------- | ------------------------------------------------------- |
+| Docker e Compose locais | Preparados na T01 com Colima e Buildx | Usar o contexto dedicado conforme runbook da stack      |
+| Garantias financeiras   | Não implementadas                     | T02 a T09, com evidências no catálogo                   |
+| CI remota               | Workflow a validar em execução remota | Conferir a primeira execução após publicação autorizada |
 
 Para uma dívida nova, registre impacto, tarefa responsável, critério de resolução e
 evidência. Falhas eliminatórias não podem ser adiadas como dívida para declarar entrega completa.
+
+A imagem Community legada do LocalStack foi escolhida para operação local sem conta.
+Sua limitação de atualizações está registrada no ADR 0003; revisar a escolha antes
+de qualquer uso fora deste ambiente de desenvolvimento.

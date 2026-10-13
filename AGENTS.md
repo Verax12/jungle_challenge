@@ -26,13 +26,15 @@ Se não houver plano ativo, identifique a próxima tarefa no roadmap e aguarde s
 
 - `bun run doctor`: diagnóstico do ambiente, sem instalações.
 - `bun install --frozen-lockfile`: instalação reproduzível.
-- `bun run check`: verificações completas do harness.
+- `bun run check`: harness, build e testes da base HTTP/configuração, sem containers.
+- `bun run stack:up` e `bun run stack:smoke`: stack e smoke em containers reais.
 - `bun run check:docs` e `bun run check:architecture`: verificações direcionadas.
 - `bun run lint`, `bun run typecheck`, `bun run format:check`: qualidade estática.
 - `bun run test:harness`: testes dos verificadores.
 - `bun run format`: formatação; o README original é excluído.
 
 Use a versão de Bun em `.bun-version`. Veja [preparação e execução](docs/runbooks/environment.md).
+Para a aplicação e Docker, consulte [stack local](docs/runbooks/backend.md).
 
 ## Ciclo de entrega
 

@@ -35,12 +35,13 @@
       "summary": "Bun 1.x como runtime, package manager e test runner; TypeScript estrito, NestJS, PostgreSQL, SQS local e Compose.",
       "readmeSections": ["4"],
       "taskId": "T01",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Iniciar a stack obrigatória em ambiente limpo usando comandos Bun.",
-          "status": "planned"
+          "description": "Stack iniciada com imagens construídas do lockfile; build, testes HTTP, PostgreSQL via MikroORM e SQS real passaram no host e em containers, inclusive após reinício.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T01-backend-foundation.md"
         }
       ]
     },
