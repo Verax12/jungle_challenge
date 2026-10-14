@@ -26,7 +26,8 @@ Se não houver plano ativo, identifique a próxima tarefa no roadmap e aguarde s
 
 - `bun run doctor`: diagnóstico do ambiente, sem instalações.
 - `bun install --frozen-lockfile`: instalação reproduzível.
-- `bun run check`: harness, build e testes da base HTTP/configuração, sem containers.
+- `bun run check`: harness, build e testes de domínio/HTTP/configuração, sem containers.
+- `bun run test:domain`: regras financeiras e modelos puros, sem banco ou broker.
 - `bun run stack:up` e `bun run stack:smoke`: stack e smoke em containers reais.
 - `bun run check:docs` e `bun run check:architecture`: verificações direcionadas.
 - `bun run lint`, `bun run typecheck`, `bun run format:check`: qualidade estática.

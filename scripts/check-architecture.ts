@@ -117,10 +117,7 @@ export function checkArchitecture(root: string): {
         errors.push(
           `${location}: import local "${name}" não resolve para uma camada de src; corrija o caminho ou alias.`,
         );
-      } else if (
-        layer === 'application' ||
-        (layer === 'domain' && name !== 'decimal.js')
-      ) {
+      } else if (layer === 'application' || layer === 'domain') {
         errors.push(
           `${location}: dependência externa "${name}" proibida em ${layer}; use uma porta e implemente-a em adapters.`,
         );

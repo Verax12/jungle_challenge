@@ -87,9 +87,11 @@ describe('architecture', () => {
     );
   });
 
-  test('reserves the exact decimal library exception for domain only', () => {
+  test('rejects the obsolete decimal dependency in domain and application', () => {
     put(root, 'src/domain/money.ts', "import Decimal from 'decimal.js';");
-    expect(checkArchitecture(root).errors).toEqual([]);
+    expect(checkArchitecture(root).errors.join('\n')).toContain(
+      'proibida em domain',
+    );
     put(
       root,
       'src/application/service.ts',

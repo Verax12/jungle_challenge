@@ -14,6 +14,7 @@
 - [Roadmap](exec-plans/roadmap.json): T00 é o harness; T01 a T10 são o backend.
 - [Plano T00 — harness concluído e evidências](exec-plans/completed/T00-harness.md).
 - [Plano T01 — base do backend e evidências](exec-plans/completed/T01-backend-foundation.md).
+- [Plano T02 — domínio financeiro e evidências](exec-plans/completed/T02-financial-domain.md).
 - [Dívida técnica](exec-plans/tech-debt.md).
 
 ## Decisões
@@ -22,6 +23,7 @@
 - [ADR 0001 — harness de desenvolvimento](decisions/0001-development-harness.md).
 - [ADR 0002 — escolhas pendentes do backend](decisions/0002-backend-options.md).
 - [ADR 0003 — ambiente e bootstrap](decisions/0003-backend-foundation.md).
+- [ADR 0004 — domínio financeiro](decisions/0004-financial-domain.md).
 
 ## Operação
 
@@ -38,5 +40,5 @@
 As referências orientam o processo. Requisitos do produto continuam definidos pelo
 enunciado, e as restrições desta entrega prevalecem sobre exemplos das referências.
 
-Estado atual: T00 e T01 concluídas; T02 é a próxima tarefa disponível, aguardando seleção.
-Nenhum fluxo financeiro implementado.
+Estado atual: T00, T01 e T02 concluídas; T03 é a próxima tarefa, aguardando seleção.
+Modelos financeiros puros implementados; persistência e fluxos financeiros do serviço pendentes.

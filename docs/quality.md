@@ -2,9 +2,10 @@
 
 ## Estado das garantias
 
-A T01 implementa a base executável do backend, sem processamento financeiro. O
-catálogo registra o estado individual de cada requisito. Sucesso do harness e dos
-smoke tests não significa correção financeira ou distribuída.
+A T01 implementa a base executável e a T02 acrescenta modelos financeiros puros.
+Ainda não há caso de uso financeiro persistente ou endpoint de negócio. O catálogo
+registra o estado individual de cada requisito. Testes de unidade comprovam regras
+locais; harness e smoke tests não significam correção financeira distribuída.
 
 ## Catálogo
 
@@ -39,12 +40,15 @@ ou esperas arbitrárias como prova de paralelismo. Injeção de falha será plan
 ## Gates atuais e evolução
 
 `bun run check` executa documentos, arquitetura, lint, formato, tipos, build e testes
-do harness/aplicação, inclusive após uma verificação falhar. Qualquer falha torna o
+do harness/aplicação/domínio, inclusive após uma verificação falhar. Qualquer falha torna o
 resultado final diferente de zero. O build recria apenas `dist/`, ignorado pelo Git.
 O comando não instala dependências nem modifica arquivos versionados.
 
 T01 adiciona smoke tests com PostgreSQL e LocalStack reais, executados separadamente
-por `test:smoke`/`stack:smoke` e pelo job `stack` na CI. T03 e T07 acrescentarão
+por `test:smoke`/`stack:smoke` e pelo job `stack` na CI. T02 inclui `test:domain` no
+check e, portanto, na CI: valores exatos, estados, reversões, ledger, eventos e
+mensagens. A sequência de movimentos em memória não é teste de concorrência.
+T03 e T07 acrescentarão
 persistência financeira e mensageria; T09 completará a validação distribuída. Não usar testes vazios,
 skips ou stubs como aceitação dos requisitos futuros. Não enfraquecer um gate para
 ocultar uma falha financeira ou um teste instável.

@@ -78,12 +78,13 @@
       "summary": "Nunca representar dinheiro com number, float ou double.",
       "readmeSections": ["5"],
       "taskId": "T02",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "unit",
           "description": "Operações exatas de valor elevado e frações, mais revisão dos tipos e conversões.",
-          "status": "planned"
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T02-financial-domain.md"
         }
       ]
     },
@@ -162,12 +163,13 @@
       "summary": "Construtores private/protected, factories estáticas, encapsulamento e rehydrate sem revalidar transições.",
       "readmeSections": ["6", "6.0"],
       "taskId": "T02",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "unit",
           "description": "Reconstruir estados persistidos e testar apenas transições explícitas.",
-          "status": "planned"
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T02-financial-domain.md"
         }
       ]
     },
@@ -176,12 +178,13 @@
       "summary": "Money imutável, aritmética e comparação exatas, operações produzem novas instâncias.",
       "readmeSections": ["6.1"],
       "taskId": "T02",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "unit",
           "description": "Cobrir add/subtract/negate, zero, sinais, igualdade e comparações.",
-          "status": "planned"
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T02-financial-domain.md"
         }
       ]
     },
@@ -190,12 +193,13 @@
       "summary": "Entrada e saída monetária em string decimal de escala 2, moeda ISO-4217; modelo multi-moeda mesmo usando BRL.",
       "readmeSections": ["6.1"],
       "taskId": "T02",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "unit",
           "description": "Validar e serializar MoneyProps, escala e conflitos de moeda.",
-          "status": "planned"
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T02-financial-domain.md"
         }
       ]
     },
@@ -204,12 +208,13 @@
       "summary": "Rejeitar NaN, Infinity, notação científica, vazio, mais de duas casas e negativos nos contratos de entrada.",
       "readmeSections": ["6.1"],
       "taskId": "T02",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "unit",
           "description": "Tabela de entradas inválidas e política sem arredondamento silencioso.",
-          "status": "planned"
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T02-financial-domain.md"
         }
       ]
     },
@@ -218,12 +223,13 @@
       "summary": "Operações entre moedas diferentes geram erro de domínio, incluindo operação versus wallet.",
       "readmeSections": ["6.1", "6.2"],
       "taskId": "T02",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "unit",
           "description": "Conflitos de moeda em Money e Wallet.",
-          "status": "planned"
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T02-financial-domain.md"
         }
       ]
     },
@@ -232,12 +238,13 @@
       "summary": "Domínio não depende de tipos monetários ORM nem decorators NestJS.",
       "readmeSections": ["6.1"],
       "taskId": "T02",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "review",
           "description": "Verificador de imports e inspeção do modelo de domínio.",
-          "status": "planned"
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T02-financial-domain.md"
         }
       ]
     },
@@ -302,12 +309,13 @@
       "summary": "Transação nasce PENDING; documentar transições e impedir mudanças em PROCESSED, REJECTED ou FAILED.",
       "readmeSections": ["6.3"],
       "taskId": "T02",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "unit",
           "description": "Matriz de estados, incluindo erro de programação ao transicionar terminal.",
-          "status": "planned"
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T02-financial-domain.md"
         }
       ]
     },
@@ -344,12 +352,13 @@
       "summary": "Ledger estruturalmente imutável; create valida balanceBefore +/- money = balanceAfter.",
       "readmeSections": ["6.4"],
       "taskId": "T02",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "unit",
           "description": "Criação válida e aritmética inválida, direção e moeda.",
-          "status": "planned"
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T02-financial-domain.md"
         }
       ]
     },
@@ -386,11 +395,17 @@
       "summary": "Inbox persistente e outbox com tentativas, agendamento, publicação e factories encapsuladas.",
       "readmeSections": ["6.5"],
       "taskId": "T02",
-      "status": "planned",
+      "status": "implemented",
       "evidence": [
         {
           "kind": "unit",
           "description": "Transições, processedAt, isDue e evolução de retries.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T02-financial-domain.md"
+        },
+        {
+          "kind": "integration",
+          "description": "T03/T07: persistir inbox/outbox e verificar deduplicação, publicação e recuperação com banco/broker reais.",
           "status": "planned"
         }
       ]
@@ -484,12 +499,13 @@
       "summary": "REFUND e ROLLBACK exigem referenceExternalTransactionId.",
       "readmeSections": ["7"],
       "taskId": "T02",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "unit",
           "description": "Factories rejeitam ausência de referência para reversões.",
-          "status": "planned"
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T02-financial-domain.md"
         }
       ]
     },
@@ -610,11 +626,17 @@
       "summary": "Toda rejeição tem failureCode estável, legível por máquina, definido e documentado.",
       "readmeSections": ["7.2"],
       "taskId": "T02",
-      "status": "planned",
+      "status": "implemented",
       "evidence": [
         {
           "kind": "unit",
-          "description": "Taxonomia testada em regras de negócio e conferida nos contratos.",
+          "description": "Taxonomia documentada e testada nas regras e transições do domínio; contratos de transporte ainda pendentes.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T02-financial-domain.md"
+        },
+        {
+          "kind": "integration",
+          "description": "T05/T07: conferir códigos no contrato HTTP e no processamento por SQS.",
           "status": "planned"
         }
       ]
@@ -904,11 +926,17 @@
       "summary": "Eventos mínimos Processed incluindo LOSS, Rejected, PendingReference e BalanceChanged apenas quando saldo muda.",
       "readmeSections": ["11"],
       "taskId": "T02",
-      "status": "planned",
+      "status": "implemented",
       "evidence": [
         {
           "kind": "unit",
-          "description": "Eventos corretos por transição e ausência de BalanceChanged sem movimentação.",
+          "description": "Factories dos quatro eventos verificam os estados; LOSS permite Processed e lançamento zero não permite BalanceChanged. Geração pelo caso de uso ainda pendente.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T02-financial-domain.md"
+        },
+        {
+          "kind": "integration",
+          "description": "T04/T07: comprovar geração e gravação atômica dos eventos pelo caso de uso, incluindo LOSS e rejeições.",
           "status": "planned"
         }
       ]
@@ -918,12 +946,13 @@
       "summary": "Classe abstrata e subclasse por evento, tipo/versão no tipo, IDs, contexto, data ISO e MoneyProps JSON.",
       "readmeSections": ["11"],
       "taskId": "T02",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "unit",
           "description": "Serialização estável do envelope com eventId, aggregateId, correlationId e causationId opcional.",
-          "status": "planned"
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T02-financial-domain.md"
         }
       ]
     },

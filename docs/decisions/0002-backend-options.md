@@ -7,6 +7,10 @@ Proposto. Não constitui requisito adicional nem decisão aceita de implementaç
 Atualização T01: ORM (MikroORM) e broker local (LocalStack Community fixado) foram
 aceitos no [ADR 0003](0003-backend-foundation.md). As demais propostas continuam pendentes.
 
+Atualização T02: a [ADR 0004](0004-financial-domain.md) escolheu centavos bigint,
+sem biblioteca decimal, e suporte explícito a BRL/USD/EUR. Representação SQL e
+políticas operacionais continuam pendentes; o backoff do modelo recebe parâmetros.
+
 ## Contexto
 
 O README fixa parte da stack e deixa escolhas ao candidato. O plano inicial

@@ -9,6 +9,7 @@ export const checks = [
   'build',
   'test:harness',
   'test:app',
+  'test:domain',
 ] as const;
 
 export async function runChecks(

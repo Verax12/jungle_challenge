@@ -41,6 +41,7 @@ bun run lint
 bun run format:check
 bun run typecheck
 bun run test:harness
+bun run test:domain
 ```
 
 `bun run format` é a ação explícita de formatação. README.md é excluído para preservar

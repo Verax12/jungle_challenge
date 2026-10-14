@@ -5,8 +5,10 @@
 O harness está concluído. A T01 acrescenta bootstrap NestJS executado pelo Bun,
 configuração validada, build TypeScript e Compose com PostgreSQL e SQS via LocalStack.
 Existe apenas o endpoint `/health/live`, sem dependência de banco ou broker.
-O provisionamento cria filas vazias; ainda não existem entidades, migrations,
-operações financeiras, consumidores, inbox/outbox ou garantias financeiras implementadas.
+O provisionamento cria filas vazias. A T02 implementa modelos de domínio de Money,
+wallet, transações, ledger, inbox/outbox e eventos, com testes de unidade.
+Ainda não existem entidades ORM, migrations, casos de uso financeiros ligados ao
+servidor, consumidores ou garantias financeiras distribuídas implementadas.
 
 O [README](README.md) define o produto. O [catálogo](docs/requirements.json) liga
 os requisitos às tarefas e às evidências esperadas.
@@ -24,12 +26,12 @@ Portas ficam em `src/application/ports/`. Adapters da mesma camada podem compart
 implementações internas, mas os casos de uso não podem depender delas. O ponto de
 entrada fica em `src/composition/`, sem arquivos de aplicação soltos em `src/`.
 
-Nesta etapa, somente adapters e composition contêm código. Domain e application
-receberão implementações a partir da T02; não foram criadas classes vazias de fachada.
+Domain contém o modelo puro da T02; adapters e composition contêm a base da T01.
+Application receberá casos de uso e portas nas próximas etapas.
 
-O domínio não importa pacotes externos, com uma exceção reservada para `decimal.js`
-caso essa opção de aritmética exata seja adotada na etapa T02. Isso não instala nem
-define a implementação de Money. Aplicação não importa bibliotecas externas: I/O,
+O domínio não importa pacotes externos. Money usa centavos `bigint` e saída decimal
+com duas casas; a exceção antiga do verificador para `decimal.js` foi removida.
+Aplicação não importa bibliotecas externas: I/O,
 tempo e identidade são acessados por portas quando necessários. Adapters e composição
 podem usar pacotes externos. Não são permitidos ciclos de imports.
 
@@ -56,3 +58,23 @@ O [ADR 0003](docs/decisions/0003-backend-foundation.md) registra NestJS, MikroOR
 LocalStack, build e limites da stack local. Representação SQL de Money, estratégia
 de lock e decisões de protocolo continuam pendentes das etapas correspondentes.
 Consulte [execução local](docs/runbooks/backend.md) para setup e smoke tests.
+
+## Modelo implementado na T02
+
+A [ADR 0004](docs/decisions/0004-financial-domain.md) documenta escala, valores zero,
+moedas, transições, referências e códigos de falha. As factories validam entradas;
+rehydrate reconstrói estado persistido confiável sem executar movimentações.
+
+Wallet.open devolve a wallet e, se houver saldo inicial, OPENING e ledger. Wallet.apply
+valida uma transação e seus fatos de referência antes de mudar estado, devolvendo o
+ledger correspondente. LOSS só muda o estado da transação. Esses objetos precisam
+ser persistidos em uma mesma transação SQL futura; nenhuma memória local garante
+unicidade, ausência de lost updates ou replay persistente.
+
+Os quatro tipos de evento têm factories e envelopes imutáveis; ainda não há
+coordenador que os grave automaticamente em outbox a cada operação. Inbox e Outbox
+modelam transições e retry parametrizado, sem consumidores ou publishers. IDs e
+instantes ISO UTC entram como argumentos; o domínio não lê relógio nem cria UUIDs.
+
+O mapeamento de bigint para representação SQL exata e seus limites será definido na
+T03. A API financeira ainda não existe, e a política de HTTP/TTL/tentativas segue pendente.

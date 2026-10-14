@@ -36,7 +36,7 @@
       "id": "T02",
       "title": "Domínio financeiro",
       "dependsOn": ["T01"],
-      "status": "planned",
+      "status": "completed",
       "scope": "Modelar Money, agregados, transações, ledger, inbox/outbox e eventos sem adaptadores.",
       "acceptanceCriteria": [
         "Factories, reidratação e estados encapsulados.",

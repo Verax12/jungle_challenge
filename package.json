@@ -12,6 +12,7 @@
     "start": "bun dist/composition/main.js",
     "start:dev": "bun run build && bun run start",
     "test:app": "bun test tests/app",
+    "test:domain": "bun test tests/domain",
     "test:smoke": "bun test tests/smoke --timeout 20000",
     "infra:up": "docker compose up -d --wait postgres localstack",
     "infra:provision": "bun src/composition/provision-queues.ts",
