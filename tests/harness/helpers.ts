@@ -32,6 +32,7 @@ export function documentationFixture(): string {
     'ARCHITECTURE.md',
     'docs',
     'tests',
+    'src',
     '.github',
     '.bun-version',
     'package.json',

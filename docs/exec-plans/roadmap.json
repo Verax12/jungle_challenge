@@ -164,7 +164,7 @@
       "id": "T10",
       "title": "Documentação final e conferência",
       "dependsOn": ["T09"],
-      "status": "planned",
+      "status": "completed",
       "scope": "Setup final, arquitetura, decisões, comandos e auditoria do enunciado.",
       "acceptanceCriteria": [
         "Requisitos obrigatórios têm evidência revisada.",

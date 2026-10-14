@@ -10,7 +10,7 @@ Se não houver plano ativo, identifique a próxima tarefa no roadmap e aguarde s
 
 ## Regras do projeto
 
-- O README é a fonte dos requisitos; não o reescreva durante a preparação.
+- O enunciado no README é a fonte dos requisitos; preserve seu conteúdo original. Instruções de execução ficam no apêndice após o delimitador project-documentation.
 - Trabalhe no checkout atual, sem worktrees, uma tarefa por vez.
 - Abra sempre uma branch nova `codex/tNN-descricao` para cada etapa, partindo da entrega anterior; não reutilize a branch da etapa concluída.
 - Priorize requisitos obrigatórios. Não implemente opcionais ou etapas futuras por iniciativa própria.

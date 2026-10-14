@@ -25,6 +25,7 @@ const evidenceKinds = [
   'review',
   'documentation',
 ];
+export const projectDocumentationMarker = '\n<!-- project-documentation -->\n';
 type RecordValue = Record<string, unknown>;
 
 function record(value: unknown): value is RecordValue {
@@ -324,13 +325,17 @@ export function checkDocs(root: string): string[] {
   for (const id of tasks.keys()) visitTask(id);
 
   const readme = readFileSync(join(root, 'README.md'), 'utf8');
-  const sourceHash = createHash('sha256').update(readme).digest('hex');
+  const parts = readme.split(projectDocumentationMarker);
+  if (parts.length > 2)
+    errors.push('README.md: delimitador project-documentation duplicado.');
+  const original = parts[0]!;
+  const sourceHash = createHash('sha256').update(original).digest('hex');
   if (catalog.sourceSha256 !== sourceHash)
     errors.push(
-      'requirements: README.md diverge de sourceSha256; revise o enunciado e a rastreabilidade antes de atualizar o hash.',
+      'requirements: enunciado original em README.md diverge de sourceSha256; restaure o texto original, sem atualizar o hash para ocultar alterações.',
     );
   const sections = new Set(
-    headingTexts(readme).flatMap((heading) => {
+    headingTexts(original).flatMap((heading) => {
       const match = /^(\d+(?:\.\d+)?)(?:\.|\s)/.exec(heading);
       return match ? [match[1]!] : [];
     }),

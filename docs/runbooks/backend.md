@@ -24,6 +24,7 @@ Isso já foi configurado nesta máquina. Não é necessário mudar o contexto gl
 bun run doctor
 bun run stack:up
 bun run stack:migrate
+bun run stack:workers
 bun run stack:smoke
 ```
 
@@ -45,16 +46,19 @@ para envio/recebimento e a remove no final; não injeta mensagens nas filas de n
 ## Aplicação no host, dependências em containers
 
 ```sh
-cp .env.example .env
+test -f .env || cp .env.example .env
 bun install --frozen-lockfile
 bun run infra:up
 bun run infra:provision
+bun run db:migrate
 bun run start:dev
 ```
 
 `start:dev` faz build e inicia; para aplicar alterações, encerre e execute novamente.
 Em outro terminal, `bun run test:smoke` verifica HTTP, PostgreSQL e SQS. A configuração
 local é carregada pelo Bun a partir de `.env`, que não entra no Git nem na imagem.
+Para processamento assíncrono, inicie os três workers em terminais separados depois
+do build/migrations, com METRICS_PORT distintos: veja [observabilidade](observability.md).
 Se a aplicação Compose já ocupar a porta 3000, pare o serviço `app` antes de iniciar
 outro processo local ou escolha outra porta em `.env`.
 
@@ -69,18 +73,22 @@ bun run stack:down
 
 `stack:down` preserva o volume PostgreSQL. Para reiniciar apenas a aplicação:
 `docker compose restart app`. Após recriar LocalStack, execute `bun run stack:up`
-para repetir o provisionamento, pois suas filas/mensagens não são persistidas nesta etapa.
+para repetir o provisionamento. Filas/mensagens não são persistidas pelo Compose;
+recriar filas vazias não recupera mensagens anteriores, inclusive eventos já marcados
+publishedAt no PostgreSQL. Para preservar mensagens, não recrie LocalStack durante uso.
 
 Para liberar também a VM, execute `colima stop backend-challenge`. Não apague volumes
 com dados que precisa preservar. A limpeza de volumes na CI ocorre apenas no runner descartável.
 
 ## Limites
 
-Liveness não certifica disponibilidade do banco/broker. Domínio puro e schema já
-existem; a T04 acrescenta casos de uso transacionais internos. Consulte
-[migrations e testes](persistence.md). A [API financeira](http.md) existe na T05;
-o [worker de referências](references.md) existe na T06. Consumidor/publisher existem na T07; readiness e métricas existem na T08. Autenticação foi explicitamente omitida.
+Liveness não certifica disponibilidade do banco/broker. Readiness consulta as
+dependências, mas não certifica migrations. Consulte [migrations e testes](persistence.md),
+[API financeira](http.md), [referências](references.md) e [mensageria](messaging.md).
+Autenticação foi explicitamente omitida.
 O smoke atual comprova instalação e comunicação, não correção financeira distribuída.
 
 Consulte [observabilidade](observability.md) para reconciliação, /health/ready, /metrics
 e a porta operacional de cada worker. stack:workers aguarda os health checks de liveness.
+Para validar tudo com volume novo e instalação sem cache, use a
+[reprodução limpa](delivery.md); para correção entre processos, use a [matriz](../test-matrix.md).

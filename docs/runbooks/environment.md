@@ -45,7 +45,8 @@ bun run test:domain
 ```
 
 `bun run format` é a ação explícita de formatação. README.md é excluído para preservar
-o enunciado. O hash do conteúdo original é conferido pelo check documental.
+o enunciado. O hash do prefixo original, anterior ao delimitador project-documentation,
+é conferido pelo check documental; a T10 acrescenta instruções ao final do arquivo.
 
 ## Alterações de ferramentas
 

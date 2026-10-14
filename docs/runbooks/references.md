@@ -31,10 +31,11 @@ No host, com `.env` local preparado conforme o runbook de ambiente:
 
 ```sh
 bun run build
-bun run start:references
+METRICS_PORT=9466 bun run start:references
 ```
 
-Para uma rodada de até 100 trabalhos devidos, sem permanecer agendado:
+A porta 9466 evita colisão com consumer/publisher no host; em containers cada worker
+usa sua própria rede. Para uma rodada de até 100 trabalhos devidos, sem permanecer agendado:
 
 ```sh
 bun run start:references --once

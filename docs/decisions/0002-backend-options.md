@@ -2,7 +2,9 @@
 
 ## Estado
 
-Proposto. Não constitui requisito adicional nem decisão aceita de implementação.
+Substituído pelos ADRs 0003 a 0009. As propostas abaixo são histórico, não requisitos
+adicionais nem decisões vigentes. Os registros das etapas preservam como cada escolha
+foi aceita ou alterada, incluindo bigint e backoff de referências com teto de 60 s.
 
 Atualização T01: ORM (MikroORM) e broker local (LocalStack Community fixado) foram
 aceitos no [ADR 0003](0003-backend-foundation.md). As demais propostas continuam pendentes.

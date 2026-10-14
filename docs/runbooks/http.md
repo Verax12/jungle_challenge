@@ -77,8 +77,8 @@ página é nextCursor null. Cursor opaco não é mecanismo de autenticação/ass
 | 500  | Falha inesperada                                      | INTERNAL_ERROR, sem SQL/stack/payload     |
 
 Replay de uma pendência mantém a resposta inicial 202; GET da transação é a fonte do
-estado atual. O [worker T06](references.md) resolve essas pendências sem alterar o recibo original. A T07 adiciona
-inbox/consumidor/publicação. Readiness e reconciliação HTTP foram acrescentadas na T08.
+estado atual. O [worker de referências](references.md) resolve essas pendências sem alterar
+o recibo original. [SQS](messaging.md) usa o mesmo caso de uso, com inbox e publicação.
 
 Transações antigas, criadas antes da T05 e sem recibo, não recebem saldo original
 inventado: submissão repetida retorna TRANSACTION_IDENTITY_CONFLICT sem efeito extra.
@@ -92,7 +92,7 @@ operação de negócio. Evite reverter migrations em bancos com dados que deseja
 replay de aplicação/rejeição/LOSS/pendência, conflitos concorrentes, paginação durante
 inserções, recibo imutável, rollback, conexão recusada e troca de processo HTTP.
 `bun run stack:smoke` verifica a imagem de produção e PostgreSQL/SQS.
-A suíte com três processos simultâneos, redelivery e falhas de workers fica na T09.
+A suíte [distribuída](distributed.md) valida três processos simultâneos, redelivery e falhas de workers.
 
 Reconciliação e endpoints públicos /health/ready e /metrics estão descritos na
 [operação da T08](observability.md).

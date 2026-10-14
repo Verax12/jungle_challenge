@@ -26,7 +26,8 @@ bun run build
 bun run start:consumer
 ```
 
-Em outro terminal, `bun run start:publisher`. `--once` executa uma rodada, útil para
+Em outro terminal, `METRICS_PORT=9465 bun run start:publisher`, para não disputar
+a porta operacional 9464 do consumidor. `--once` executa uma rodada, útil para
 diagnóstico: `bun run start:consumer --once` ou `bun run start:publisher --once`.
 Não reconstrua dist enquanto testes/processos compilados o estiverem usando.
 
@@ -123,4 +124,4 @@ redelivera após visibilidade. `stack:down` inclui o perfil workers e preserva v
 
 A [decisão 0009](../decisions/0009-sqs-inbox-outbox.md) explica atomicidade, hashes,
 trade-offs de rede/locks e limites. Métricas, readiness e reconciliação estão no [guia da T08](observability.md);
-a matriz completa de três instâncias e 50 reenvios fica na T09.
+a [matriz distribuída](distributed.md) valida três instâncias e 50 reenvios.

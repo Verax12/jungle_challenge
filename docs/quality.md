@@ -8,14 +8,20 @@ A T04 executa abertura e operações com lock, ledger e eventos atômicos. A T05
 acrescenta endpoints HTTP, recibos idempotentes e replay. A T06 acrescenta worker
 de referências, com agenda e recuperação testadas em PostgreSQL. A T07 acrescenta
 consumidor/publisher com PostgreSQL e SQS reais, a T08 instrumenta observabilidade e
-a T09 valida concorrência/recuperação entre processos independentes. O catálogo
+a T09 valida concorrência/recuperação entre processos independentes. A T10 conclui
+a auditoria e reprodução limpa: 78 requisitos com evidências revisadas e 414 testes
+aprovados, nos limites da [auditoria](delivery-review.md). O catálogo
 registra o estado individual de cada requisito. Testes de unidade comprovam regras
 locais; harness e smoke tests não significam correção financeira distribuída.
 
 ## Catálogo
 
 [requirements.json](requirements.json) usa `schemaVersion: 1` e o SHA-256 do README
-original. Cada requisito tem `id`, `summary`, `readmeSections`, `taskId`, `status` e
+original. A T10 acrescenta um apêndice operacional ao README após o delimitador
+project-documentation; o hash continua sendo do prefixo original, sem alteração.
+Links do documento inteiro são verificados. Delimitador duplicado ou mudança do
+enunciado falha; seções do apêndice não viram requisitos. Cada requisito tem
+`id`, `summary`, `readmeSections`, `taskId`, `status` e
 `evidence`. O resumo serve para navegação; a seção citada continua sendo a especificação.
 
 Estados: `planned` (não implementado), `implemented` (implementado, validação ainda
@@ -109,7 +115,13 @@ da CI. A [matriz obrigatória](test-matrix.md) mapeia cada cenário aos testes r
 o [runbook](runbooks/distributed.md) explica barreiras, processos e limites.
 Além das reconciliações por cenário, as suítes de processamento e HTTP conferem
 todas as wallets após cada teste. Referências e mensageria já mantêm essa proteção.
-As fixtures documentais copiam tests para validar os links da matriz: não se deve
+As fixtures documentais copiam tests e src para validar links da matriz e auditoria: não se deve
 ignorar links para código nem afrouxar o check quando a documentação passa a citá-los.
 Casos negativos do catálogo devem definir explicitamente o estado inválido, sem
 presumir que um requisito específico continuará planejado conforme o projeto avança.
+
+T10 acrescenta quatro casos do verificador documental para o apêndice operacional:
+editar comandos é permitido, mas alterar o enunciado, quebrar links ou tornar o
+delimitador ambíguo produz erro. Todas as suítes foram reproduzidas com dependências
+instaladas pelo lockfile congelado e volume PostgreSQL novo. Detalhes no
+[plano concluído](exec-plans/completed/T10-delivery-review.md).

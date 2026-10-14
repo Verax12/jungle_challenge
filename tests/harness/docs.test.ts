@@ -1,7 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
-import { checkDocs } from '../../scripts/check-docs';
+import {
+  checkDocs,
+  projectDocumentationMarker,
+} from '../../scripts/check-docs';
 import { cli, documentationFixture, editJson, put, remove } from './helpers';
 
 let root: string;
@@ -75,10 +78,44 @@ describe('documentation', () => {
     put(
       root,
       'README.md',
-      readFileSync(join(root, 'README.md'), 'utf8') + '\nchanged\n',
+      readFileSync(join(root, 'README.md'), 'utf8').replace(
+        'Distributed Wagering Processor',
+        'Changed processor',
+      ),
     );
     expect(checkDocs(root).join('\n')).toContain('diverge de sourceSha256');
   });
+
+  test('allows operational appendix edits while checking its links and keeping source sections immutable', () => {
+    const original = readFileSync(join(root, 'README.md'), 'utf8');
+    put(
+      root,
+      'README.md',
+      original + '\n## 99. Comandos do projeto\n\n[guia](docs/index.md)\n',
+    );
+    expect(checkDocs(root)).toEqual([]);
+    put(root, 'README.md', original + '\n[quebrado](missing-guide.md)\n');
+    expect(checkDocs(root).join('\n')).toContain('link local quebrado');
+  });
+
+  test.each(['duplicate', 'early', 'missing'] as const)(
+    'rejects %s original-source delimiter',
+    (mode) => {
+      const original = readFileSync(join(root, 'README.md'), 'utf8');
+      const changed =
+        mode === 'duplicate'
+          ? original + projectDocumentationMarker
+          : mode === 'early'
+            ? projectDocumentationMarker + original
+            : original.replace(projectDocumentationMarker, '\n');
+      put(root, 'README.md', changed);
+      expect(checkDocs(root).join('\n')).toContain(
+        mode === 'duplicate'
+          ? 'delimitador project-documentation duplicado'
+          : 'diverge de sourceSha256',
+      );
+    },
+  );
 
   test('verified status requires an actual evidence artifact', () => {
     requirements((items) => {

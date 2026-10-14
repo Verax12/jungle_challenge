@@ -4,10 +4,12 @@
 
 - [Enunciado original](../README.md): fonte dos requisitos; preservado integralmente.
 - [Guia de trabalho](../AGENTS.md): orientação operacional.
-- [Arquitetura](../ARCHITECTURE.md): estado atual e camadas planejadas.
+- [Arquitetura](../ARCHITECTURE.md): camadas, funcionamento atual, decisões e limites.
 - [Catálogo de requisitos](requirements.json): requisitos, tarefas e evidências.
 - [Qualidade e rastreabilidade](quality.md): como interpretar os estados e validar entregas.
 - [Matriz de testes obrigatórios](test-matrix.md): cenários do enunciado e evidências executáveis.
+- [Auditoria da entrega](delivery-review.md): conferência do enunciado e critérios eliminatórios.
+- [Setup no README](../README.md#executar-o-projeto): instalação e comandos da implementação.
 
 ## Planejamento
 
@@ -23,13 +25,14 @@
 - [Plano T07 — SQS, inbox e outbox](exec-plans/completed/T07-sqs-inbox-outbox.md).
 - [Plano T08 — reconciliação e observabilidade](exec-plans/completed/T08-reconciliation-observability.md).
 - [Plano T09 — testes distribuídos e evidências](exec-plans/completed/T09-distributed-recovery.md).
+- [Plano T10 — documentação final e conferência](exec-plans/completed/T10-delivery-review.md).
 - [Dívida técnica](exec-plans/tech-debt.md).
 
 ## Decisões
 
 - [Índice de decisões](decisions/index.md).
 - [ADR 0001 — harness de desenvolvimento](decisions/0001-development-harness.md).
-- [ADR 0002 — escolhas pendentes do backend](decisions/0002-backend-options.md).
+- [ADR 0002 — propostas iniciais substituídas](decisions/0002-backend-options.md).
 - [ADR 0003 — ambiente e bootstrap](decisions/0003-backend-foundation.md).
 - [ADR 0004 — domínio financeiro](decisions/0004-financial-domain.md).
 - [ADR 0005 — schema e persistência](decisions/0005-schema-persistence.md).
@@ -51,6 +54,7 @@
 - [Consumidor SQS e publisher](runbooks/messaging.md).
 - [Reconciliação, health e métricas](runbooks/observability.md).
 - [Testes distribuídos e recuperação](runbooks/distributed.md).
+- [Reprodução limpa da entrega](runbooks/delivery.md).
 - [Diagnóstico de verificações](runbooks/troubleshooting.md).
 
 ## Referências
@@ -62,7 +66,12 @@
 As referências orientam o processo. Requisitos do produto continuam definidos pelo
 enunciado, e as restrições desta entrega prevalecem sobre exemplos das referências.
 
-Estado atual: T00 a T09 concluídas; próxima tarefa T10, aguardando seleção e nova branch.
+Estado atual: T00 a T10 concluídas; 78 requisitos obrigatórios com evidências revisadas.
+Não há plano ativo nem próxima etapa obrigatória. Aguardar nova solicitação antes de
+abrir outra etapa; criar nova branch para o escopo selecionado.
 HTTP, referências, consumidor SQS, inbox e publicação da outbox estão disponíveis;
 reconciliação, readiness, logs e métricas também estão disponíveis. A matriz
 distribuída local foi validada com processos independentes e infraestrutura real.
+
+A T10 reproduziu a instalação e todas as suítes em volume novo: 414 testes passaram.
+Limites e resultados estão na [auditoria](delivery-review.md); CI remota ainda não executada.

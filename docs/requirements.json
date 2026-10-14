@@ -142,7 +142,7 @@
       "summary": "Controle de concorrência por wallet, sem lock global nem read/calculate/update desprotegido; múltiplas instâncias.",
       "readmeSections": ["5", "8"],
       "taskId": "T04",
-      "status": "implemented",
+      "status": "verified",
       "evidence": [
         {
           "kind": "concurrency",
@@ -152,8 +152,9 @@
         },
         {
           "kind": "concurrency",
-          "description": "T09: comprovar três ou mais processos e recuperação distribuída; duas sessões no mesmo processo não substituem essa evidência.",
-          "status": "planned"
+          "description": "T09 reproduzida na T10 com três processos API e sessões PostgreSQL distintas, cadeia de locks comprovada, wallet independente e recuperação após morte/reinício. Persistência e oito cenários distribuídos passaram em volume novo.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T10-delivery-review.md"
         }
       ]
     },
@@ -282,7 +283,7 @@
       "summary": "Saldo nunca negativo e sem lost update.",
       "readmeSections": ["6.2"],
       "taskId": "T03",
-      "status": "implemented",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
@@ -298,8 +299,9 @@
         },
         {
           "kind": "concurrency",
-          "description": "T09: completar comprovação de concorrência com três ou mais processos e recuperação.",
-          "status": "planned"
+          "description": "T10 reproduziu constraints, disputa de 80.00 + 80.00 sobre 100.00, três processos, duplicatas e recuperação: saldo 20.00 na disputa, efeito único e reconciliação consistente nos cenários financeiros.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T10-delivery-review.md"
         }
       ]
     },
@@ -434,7 +436,7 @@
       "summary": "Inbox persistente e outbox com tentativas, agendamento, publicação e factories encapsuladas.",
       "readmeSections": ["6.5"],
       "taskId": "T02",
-      "status": "implemented",
+      "status": "verified",
       "evidence": [
         {
           "kind": "unit",
@@ -444,8 +446,9 @@
         },
         {
           "kind": "integration",
-          "description": "T03/T07: persistir inbox/outbox e verificar deduplicação, publicação e recuperação com banco/broker reais.",
-          "status": "planned"
+          "description": "Persistência e mensageria reproduzidas na T10: inbox/efeitos atômicos, claims concorrentes, retry agendado, publicação e recuperação com PostgreSQL/SQS reais. Jornada adicional entregou duas cópias com uma inbox e seis eventos publicados.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T10-delivery-review.md"
         }
       ]
     },
@@ -685,18 +688,19 @@
       "summary": "Toda rejeição tem failureCode estável, legível por máquina, definido e documentado.",
       "readmeSections": ["7.2"],
       "taskId": "T02",
-      "status": "implemented",
+      "status": "verified",
       "evidence": [
         {
           "kind": "unit",
-          "description": "Taxonomia documentada e testada nas regras e transições do domínio; contratos de transporte ainda pendentes.",
+          "description": "Taxonomia documentada e testada nas regras e transições do domínio na T02; contratos de transporte verificados nas etapas posteriores.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T02-financial-domain.md"
         },
         {
           "kind": "integration",
-          "description": "T05/T07: conferir códigos no contrato HTTP e no processamento por SQS.",
-          "status": "planned"
+          "description": "Suítes de domínio, HTTP/PostgreSQL e SQS reproduzidas na T10 verificam códigos estáveis de rejeição, separação de infraestrutura e conflitos. Taxonomia/contratos revisados na arquitetura, ADRs e runbooks.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T10-delivery-review.md"
         }
       ]
     },
@@ -1191,12 +1195,13 @@
       "summary": "README com setup/comandos e ARCHITECTURE com decisões, trade-offs, limitações e interpretações.",
       "readmeSections": ["14"],
       "taskId": "T10",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "documentation",
-          "description": "Revisar documentos e reproduzir setup em ambiente limpo preservando o enunciado.",
-          "status": "planned"
+          "description": "README ganhou setup/comandos após o enunciado original, preservado byte a byte e pelo mesmo hash. Arquitetura e runbooks revisados; build sem cache com lockfile congelado, quatro migrations em volume novo e todas as suítes passaram.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T10-delivery-review.md"
         }
       ]
     },
@@ -1205,12 +1210,13 @@
       "summary": "Auditar falhas eliminatórias: dinheiro inexato, race, duplicação, idempotência em memória, instância única, evento pré-commit, ledger ausente e mocks totais.",
       "readmeSections": ["14"],
       "taskId": "T10",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "review",
-          "description": "Checklist final com evidências reais de cada garantia.",
-          "status": "planned"
+          "description": "Auditoria liga os oito critérios eliminatórios a código e testes na matriz. T10 reproduziu 414 testes, incluindo PostgreSQL/SQS reais, três processos, falhas e recuperação; limites locais e CI remota não executada estão explícitos.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T10-delivery-review.md"
         }
       ]
     }

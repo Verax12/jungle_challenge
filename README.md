@@ -744,3 +744,112 @@ wallet.balance == saldo reconstruído pelo ledger
 ### Diferenciais opcionais
 
 Teste de carga também conta como diferencial. Se fizer, exponha como `bun run test:load` e registre ambiente, metodologia, throughput, p50/p95/p99, taxa de erro, conflitos de concorrência e outbox lag. Não há meta de RPS — a qualidade do experimento e a honestidade da análise pesam mais que o número bruto.
+
+<!-- project-documentation -->
+
+---
+
+## Executar o projeto
+
+O enunciado acima foi preservado integralmente. As instruções abaixo descrevem a
+implementação entregue. Consulte a [arquitetura](ARCHITECTURE.md), a
+[matriz de testes](docs/test-matrix.md) e o [índice da documentação](docs/index.md).
+
+### Pré-requisitos e instalação
+
+- Bun **1.4.3**, fixado em [.bun-version](.bun-version).
+- Docker com Compose e Buildx, com daemon disponível.
+- Portas locais 3000, 15432 e 4566 livres para os defaults do Compose.
+
+Não é necessária conta AWS/LocalStack, credencial de empresa ou Node instalado.
+Imagens e pacotes estão fixados; o primeiro build precisa baixar dependências.
+Para Colima no macOS, veja a [preparação da stack](docs/runbooks/backend.md).
+
+Na raiz do checkout:
+
+```sh
+bun install --frozen-lockfile
+bun run doctor
+bun run check
+bun run stack:up
+bun run stack:migrate
+bun run stack:workers
+bun run stack:smoke
+```
+
+Migrations são explícitas: aplique-as antes de usar endpoints financeiros ou iniciar
+workers. A API inicia antes delas porque liveness só mede o processo.
+`stack:workers` inicia consumidor, publisher e worker de referências.
+O modo Docker usa defaults públicos locais e dispensa `.env`.
+Para rodar o backend no host, veja o [guia com .env e migrations](docs/runbooks/backend.md).
+
+### Conferir a aplicação
+
+```sh
+curl -fsS http://127.0.0.1:3000/health/live
+curl -fsS http://127.0.0.1:3000/health/ready
+curl -fsS http://127.0.0.1:3000/metrics
+curl -i http://127.0.0.1:3000/wallets \
+  -H 'Content-Type: application/json' \
+  -d '{"playerId":"player-demo","initialBalance":{"amount":"100.00","currency":"BRL"}}'
+```
+
+A criação retorna 201, o ID da wallet, saldo 100.00 BRL e versão 1. Repetir a criação
+para o mesmo player/moeda retorna 409. Use o ID nos exemplos de
+[aposta, replay, consultas e ledger](docs/runbooks/http.md).
+Dinheiro entra e sai como string decimal com duas casas. POST de transação exige
+Idempotency-Key; os resultados distinguem sucesso, replay, pendência, rejeição e conflito.
+
+[Envio por SQS e DLQ](docs/runbooks/messaging.md),
+[referências fora de ordem](docs/runbooks/references.md) e
+[reconciliação/health/métricas](docs/runbooks/observability.md) têm exemplos próprios.
+A fila de saída é wager-events.fifo; assinantes precisam deduplicar eventId duravelmente.
+
+### Executar todas as verificações
+
+Após subir a stack:
+
+```sh
+bun run check
+bun run stack:persistence
+bun run stack:messaging
+bun run stack:distributed
+bun run stack:smoke
+```
+
+`check` executa documentação, arquitetura, lint, formato, tipos, build e testes de
+harness/aplicação/domínio. Os outros comandos usam PostgreSQL/SQS reais e incluem
+bancos/filas descartáveis, três processos, 50 duplicatas, concorrência e mortes nos
+limites de commit/ack/publicação. Não use check/build simultaneamente com testes no
+mesmo checkout, pois recriam dist. A [matriz](docs/test-matrix.md) detalha as evidências.
+
+A [CI](.github/workflows/harness.yml) executa esses gates em pushes e pull requests.
+Configuração de workflow não comprova execução remota: veja os resultados registrados
+no [índice](docs/index.md) e na [auditoria de entrega](docs/delivery-review.md).
+
+### Encerrar e retomar
+
+```sh
+bun run stack:down
+```
+
+O volume PostgreSQL é preservado. Para retomar, repita stack:up, stack:migrate e
+stack:workers. LocalStack não tem volume persistente: recriar seu container remove
+mensagens locais; provisionar filas vazias não recupera mensagens anteriores.
+A limpeza com volumes é reservada à stack descartável da validação, conforme o
+[roteiro de reprodução limpa](docs/runbooks/delivery.md).
+
+### Decisões e limites
+
+Money usa bigint; PostgreSQL guarda NUMERIC exato. Lock pessimista por wallet,
+recibos idempotentes, inbox e outbox protegem efeitos entre instâncias. O transporte
+continua at-least-once, com IDs estáveis; não há promessa de exactly-once no broker.
+
+Autenticação foi omitida conforme permitido na seção 2. Endpoints financeiros estão
+abertos para desenvolvimento local; ARCHITECTURE descreve o guard de extensão e o
+desenho com IdP/OIDC e autorização. O SQS está restrito ao endpoint local pela configuração.
+
+Não foram implementados opcionais de carga, dashboard/OpenTelemetry ou partidas
+dobradas. Testes entre processos locais não equivalem a homologação AWS/múltiplos
+hosts nem a recuperação de perda de disco. Consulte as
+[decisões, interpretações e limitações](ARCHITECTURE.md).
