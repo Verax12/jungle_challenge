@@ -83,6 +83,29 @@ services:
       retries: 20
     stop_grace_period: 15s
 
+  migrate:
+    profiles: ['tools']
+    image: backend-challenge:local
+    build:
+      context: .
+      target: runtime
+    environment: *application-environment
+    command: ['bun', 'dist/composition/migrate.js', 'up']
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  persistence:
+    profiles: ['tools']
+    build:
+      context: .
+      target: build
+    environment: *application-environment
+    command: ['bun', 'run', 'test:persistence']
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   smoke:
     profiles: ['tools']
     build:

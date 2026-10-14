@@ -2,7 +2,8 @@
 
 ## Estado das garantias
 
-A T01 implementa a base executável e a T02 acrescenta modelos financeiros puros.
+A T01 implementa a base executável, a T02 acrescenta modelos financeiros puros e
+a T03 implementa schema/mapeamento com testes de PostgreSQL real.
 Ainda não há caso de uso financeiro persistente ou endpoint de negócio. O catálogo
 registra o estado individual de cada requisito. Testes de unidade comprovam regras
 locais; harness e smoke tests não significam correção financeira distribuída.
@@ -48,8 +49,11 @@ T01 adiciona smoke tests com PostgreSQL e LocalStack reais, executados separadam
 por `test:smoke`/`stack:smoke` e pelo job `stack` na CI. T02 inclui `test:domain` no
 check e, portanto, na CI: valores exatos, estados, reversões, ledger, eventos e
 mensagens. A sequência de movimentos em memória não é teste de concorrência.
-T03 e T07 acrescentarão
-persistência financeira e mensageria; T09 completará a validação distribuída. Não usar testes vazios,
+T03 acrescenta `test:persistence`/`stack:persistence`, fora do check sem Docker e
+incluído no job stack da CI. Testa migrations, mapeamento e SQL direto, com disputas
+de unicidade sincronizadas entre duas conexões PostgreSQL. Esses resultados não
+substituem a disputa de apostas no caso de uso ou os cenários com três instâncias.
+T07 acrescentará mensageria; T09 completará a validação distribuída. Não usar testes vazios,
 skips ou stubs como aceitação dos requisitos futuros. Não enfraquecer um gate para
 ocultar uma falha financeira ou um teste instável.
 

@@ -28,6 +28,8 @@ jobs:
         with:
           bun-version-file: .bun-version
       - run: bun run stack:up
+      - run: bun run stack:migrate
+      - run: bun run stack:persistence
       - run: bun run stack:smoke
       - name: Diagnostics on failure
         if: failure()

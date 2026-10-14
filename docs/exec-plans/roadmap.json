@@ -51,7 +51,7 @@
       "id": "T03",
       "title": "Schema e persistência",
       "dependsOn": ["T02"],
-      "status": "planned",
+      "status": "completed",
       "scope": "Mapeamento ORM, migrations reversíveis e invariantes no PostgreSQL.",
       "acceptanceCriteria": [
         "Constraints cobrem unicidade, imutabilidade, não-negatividade e consistência.",

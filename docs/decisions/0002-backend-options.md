@@ -11,6 +11,11 @@ Atualização T02: a [ADR 0004](0004-financial-domain.md) escolheu centavos bigi
 sem biblioteca decimal, e suporte explícito a BRL/USD/EUR. Representação SQL e
 políticas operacionais continuam pendentes; o backoff do modelo recebe parâmetros.
 
+Atualização T03: o [ADR 0005](0005-schema-persistence.md) aceitou numeric sem
+arredondamento, mapeamento MikroORM separado e constraints no PostgreSQL. O lock por
+wallet já protege INSERT de ledger; sua aquisição antes da leitura pelo caso de uso
+será implementada e validada na T04. TTL, tentativas e mapeamento HTTP seguem propostos.
+
 ## Contexto
 
 O README fixa parte da stack e deixa escolhas ao candidato. O plano inicial

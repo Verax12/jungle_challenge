@@ -12,6 +12,7 @@ Se não houver plano ativo, identifique a próxima tarefa no roadmap e aguarde s
 
 - O README é a fonte dos requisitos; não o reescreva durante a preparação.
 - Trabalhe no checkout atual, sem worktrees, uma tarefa por vez.
+- Abra sempre uma branch nova `codex/tNN-descricao` para cada etapa, partindo da entrega anterior; não reutilize a branch da etapa concluída.
 - Priorize requisitos obrigatórios. Não implemente opcionais ou etapas futuras por iniciativa própria.
 - Não adicione comentários ou assinaturas de autoria por IA ao código.
 - Registre escolhas não prescritas pelo enunciado como propostas até a decisão da etapa.
@@ -29,6 +30,8 @@ Se não houver plano ativo, identifique a próxima tarefa no roadmap e aguarde s
 - `bun run check`: harness, build e testes de domínio/HTTP/configuração, sem containers.
 - `bun run test:domain`: regras financeiras e modelos puros, sem banco ou broker.
 - `bun run stack:up` e `bun run stack:smoke`: stack e smoke em containers reais.
+- `bun run stack:migrate`: aplicar migrations no banco local configurado.
+- `bun run stack:persistence` ou `bun run test:persistence`: integração PostgreSQL em bancos descartáveis; veja [persistência](docs/runbooks/persistence.md).
 - `bun run check:docs` e `bun run check:architecture`: verificações direcionadas.
 - `bun run lint`, `bun run typecheck`, `bun run format:check`: qualidade estática.
 - `bun run test:harness`: testes dos verificadores.

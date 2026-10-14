@@ -23,6 +23,7 @@ Isso já foi configurado nesta máquina. Não é necessário mudar o contexto gl
 ```sh
 bun run doctor
 bun run stack:up
+bun run stack:migrate
 bun run stack:smoke
 ```
 
@@ -74,6 +75,7 @@ com dados que precisa preservar. A limpeza de volumes na CI ocorre apenas no run
 
 ## Limites
 
-Liveness não certifica disponibilidade do banco/broker. Readiness, autenticação,
-migrations, domínio financeiro, inbox/outbox e métricas ainda pertencem às próximas
-etapas. O smoke atual comprova instalação e comunicação, não correção financeira.
+Liveness não certifica disponibilidade do banco/broker. Domínio puro e schema já
+existem; consulte [migrations e testes](persistence.md). Ainda faltam casos de uso,
+endpoints financeiros, readiness, autenticação, workers e métricas.
+O smoke atual comprova instalação e comunicação, não correção financeira distribuída.

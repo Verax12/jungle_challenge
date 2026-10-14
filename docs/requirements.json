@@ -50,12 +50,13 @@
       "summary": "Usar MikroORM ou TypeORM, justificar ORM, Money e estratégia transacional; não usar outros ORMs.",
       "readmeSections": ["4"],
       "taskId": "T03",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "review",
-          "description": "Conferir dependências, mapeamentos e decisões documentadas.",
-          "status": "planned"
+          "description": "MikroORM, EntitySchema e conversores dos cinco modelos revisados; round trips reais preservam Money e rehydrate. ADR 0005 define o protocolo transacional para T04.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T03-schema-persistence.md"
         }
       ]
     },
@@ -64,12 +65,13 @@
       "summary": "Migrations versionadas e reversíveis.",
       "readmeSections": ["4", "13"],
       "taskId": "T03",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Aplicar e reverter migrations no PostgreSQL real.",
-          "status": "planned"
+          "description": "Migration versionada aplicada, revertida e reaplicada em PostgreSQL real, também pela CLI compilada; execução repetida de up é idempotente.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T03-schema-persistence.md"
         }
       ]
     },
@@ -121,12 +123,13 @@
       "summary": "Ledger não pode ser sobrescrito nem excluído; imutabilidade garantida no schema.",
       "readmeSections": ["5", "6.4"],
       "taskId": "T03",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "UPDATE e DELETE diretos são rejeitados pelo PostgreSQL.",
-          "status": "planned"
+          "description": "UPDATE, DELETE e TRUNCATE diretos do ledger são rejeitados pelo PostgreSQL.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T03-schema-persistence.md"
         }
       ]
     },
@@ -149,12 +152,13 @@
       "summary": "Unicidade, imutabilidade e não-negatividade do modelo aplicadas no schema.",
       "readmeSections": ["5"],
       "taskId": "T03",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Tentar violar cada invariante diretamente via SQL.",
-          "status": "planned"
+          "description": "SQL direto rejeita violações de unicidade, imutabilidade, escala e não-negatividade; constraints diferidas rejeitam inconsistências no commit.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T03-schema-persistence.md"
         }
       ]
     },
@@ -253,12 +257,13 @@
       "summary": "No máximo uma wallet por playerId e currency.",
       "readmeSections": ["6.2"],
       "taskId": "T03",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Criação concorrente e SQL direto respeitam unique constraint.",
-          "status": "planned"
+          "description": "Criação concorrente em duas conexões PostgreSQL com PIDs distintos e barreira aceita uma única wallet por player/moeda.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T03-schema-persistence.md"
         }
       ]
     },
@@ -267,11 +272,17 @@
       "summary": "Saldo nunca negativo e sem lost update.",
       "readmeSections": ["6.2"],
       "taskId": "T03",
-      "status": "planned",
+      "status": "implemented",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Constraint de saldo e concorrência real impedem valores negativos.",
+          "description": "Constraint rejeita saldo negativo e commit rejeita saldo divergente do ledger; round trip e rollback foram testados em PostgreSQL real.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T03-schema-persistence.md"
+        },
+        {
+          "kind": "concurrency",
+          "description": "T04/T09: comprovar ausência de lost update no caso de uso com apostas concorrentes e múltiplas instâncias.",
           "status": "planned"
         }
       ]
@@ -367,12 +378,13 @@
       "summary": "No máximo um lançamento por transação financeira e wallet.",
       "readmeSections": ["6.4"],
       "taskId": "T03",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Constraint rejeita lançamento duplicado inclusive em concorrência.",
-          "status": "planned"
+          "description": "Duas conexões PostgreSQL disputam o primeiro lançamento da mesma transação/wallet; apenas uma confirma e o saldo final reflete um único efeito.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T03-schema-persistence.md"
         }
       ]
     },
@@ -528,12 +540,13 @@
       "summary": "Referência não pode ser revertida duas vezes pelo mesmo tipo de operação.",
       "readmeSections": ["7"],
       "taskId": "T03",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Unique constraint e reversões concorrentes.",
-          "status": "planned"
+          "description": "Duas conexões PostgreSQL disputam reversões processadas do mesmo tipo sobre a mesma referência; índice parcial permite apenas uma, preservando rejeições auditáveis.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T03-schema-persistence.md"
         }
       ]
     },

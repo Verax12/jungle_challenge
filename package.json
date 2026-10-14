@@ -14,6 +14,12 @@
     "test:app": "bun test tests/app",
     "test:domain": "bun test tests/domain",
     "test:smoke": "bun test tests/smoke --timeout 20000",
+    "test:persistence": "bun run build && bun test tests/persistence --timeout 30000",
+    "db:migrate": "bun run build && bun dist/composition/migrate.js up",
+    "db:rollback": "bun run build && bun dist/composition/migrate.js down",
+    "db:status": "bun run build && bun dist/composition/migrate.js status",
+    "stack:migrate": "docker compose run --rm --build migrate",
+    "stack:persistence": "docker compose run --rm --build persistence",
     "infra:up": "docker compose up -d --wait postgres localstack",
     "infra:provision": "bun src/composition/provision-queues.ts",
     "stack:up": "docker compose up --build -d --wait",
@@ -42,10 +48,12 @@
   "dependencies": {
     "@aws-sdk/client-sqs": "3.1151.0",
     "@mikro-orm/core": "6.6.17",
+    "@mikro-orm/migrations": "6.6.17",
     "@mikro-orm/postgresql": "6.6.17",
     "@nestjs/common": "11.2.7",
     "@nestjs/core": "11.2.7",
     "@nestjs/platform-express": "11.2.7",
+    "ajv": "8.13.0",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2"
   }
