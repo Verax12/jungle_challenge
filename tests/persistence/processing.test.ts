@@ -1,6 +1,6 @@
 import { ReceiptEntity } from '../../src/adapters/persistence/entities.js';
 import { IdempotencyConflictError } from '../../src/application/idempotency.js';
-import { afterAll, beforeAll, expect, test } from 'bun:test';
+import { afterAll, afterEach, beforeAll, expect, test } from 'bun:test';
 import { LockMode, IsolationLevel } from '@mikro-orm/core';
 import type { EntityManager } from '@mikro-orm/postgresql';
 import type { FailureCode } from '../../src/domain/errors.js';
@@ -34,6 +34,7 @@ import {
   unique,
   sql,
   expectSqlFailure,
+  assertWalletsReconciled,
 } from './helpers.js';
 
 let fixture: Awaited<ReturnType<typeof disposableDatabase>>;
@@ -52,6 +53,9 @@ beforeAll(async () => {
 afterAll(async () => {
   await monitor?.close(true);
   await fixture?.close();
+});
+afterEach(async () => {
+  await assertWalletsReconciled(fixture.orm.em.fork());
 });
 async function open(amount = '100.00', currency = 'BRL') {
   return service.createWallet(

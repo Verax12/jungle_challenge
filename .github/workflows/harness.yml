@@ -31,6 +31,7 @@ jobs:
       - run: bun run stack:migrate
       - run: bun run stack:persistence
       - run: bun run stack:messaging
+      - run: bun run stack:distributed
       - run: bun run stack:smoke
       - run: docker compose run --rm reference-worker bun dist/composition/reference-main.js --once
       - run: docker compose run --rm consumer bun dist/composition/messaging-main.js consumer --once

@@ -59,7 +59,8 @@ manualmente para simular uma resolução.
 O [workflow](../../.github/workflows/harness.yml) roda em pushes e pull requests com
 permissão de leitura do repositório. Executa instalação congelada e `bun run check`,
 mais um job que sobe a stack real, executa smoke tests e limpa os containers.
-Esse job também aplica migrations e executa testes de persistência em bancos descartáveis.
+Esse job também aplica migrations e executa persistência, mensageria e testes
+distribuídos em bancos/filas descartáveis, além de conferir os endpoints dos workers.
 Não publica, não faz deploy e não requer segredos configurados pelo usuário.
 O setup-bun lê a versão de `.bun-version`, conforme
 a [documentação da action](https://github.com/oven-sh/setup-bun#using-version-file).

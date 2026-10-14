@@ -83,6 +83,13 @@ describe('documentation', () => {
   test('verified status requires an actual evidence artifact', () => {
     requirements((items) => {
       items[0]!.status = 'verified';
+      items[0]!.evidence = [
+        {
+          kind: 'integration',
+          description: 'Ainda não executado',
+          status: 'planned',
+        },
+      ];
     });
     expect(checkDocs(root).join('\n')).toContain('verificado sem evidência');
     requirements((items) => {

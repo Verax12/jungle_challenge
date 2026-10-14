@@ -13,7 +13,8 @@ A T04 acrescenta criação de wallet e processamento transacional com outbox e l
 por wallet. A T05 liga esses casos de uso ao HTTP e grava recibos imutáveis.
 A T06 acrescenta agenda persistente e worker de referências.
 A T07 acrescenta consumidor SQS, inbox atômica e publishers concorrentes.
-A T08 acrescenta reconciliação, logs, métricas e readiness. A matriz distribuída T09 continua pendente.
+A T08 acrescenta reconciliação, logs, métricas e readiness. A T09 valida a matriz
+distribuída com processos independentes, PostgreSQL e SQS locais reais.
 
 O [README](README.md) define o produto. O [catálogo](docs/requirements.json) liga
 os requisitos às tarefas e às evidências esperadas.
@@ -139,8 +140,8 @@ Na entrega T04, a entrada era interna e duplicatas falhavam como conflito. A T05
 passa a calcular o hash no caso de uso e a responder replay por recibo persistente;
 a entrada HTTP usa esse mesmo processamento. O consumidor T07 usa o mesmo processamento. Infraestrutura/programação provocam rollback, sem
 inventar rejeição de negócio. Testes reais cobrem duas apostas concorrentes e progresso
-de wallets independentes. T07 cobre recuperação e mensageria; três processos
-simultâneos continuam na matriz T09.
+de wallets independentes. T07 cobre recuperação e mensageria; T09 exercita três
+processos simultâneos, cinquenta duplicatas e reinícios com saldo reconciliado.
 
 ## Idempotência e HTTP implementados na T05
 
@@ -261,3 +262,12 @@ público e responde por dependência. Liveness independe delas. Readiness não c
 schema atualizado nem ausência de backlog. Worker --once não abre listener.
 Veja [ADR 0010](docs/decisions/0010-reconciliation-observability.md) e
 [operação](docs/runbooks/observability.md) para métricas, limites e diagnóstico.
+
+## Validação distribuída da T09
+
+A [matriz obrigatória](docs/test-matrix.md) cobre três processos independentes,
+50 submissões por HTTP/SQS, locks de wallet, publishers concorrentes e mortes nos
+limites de commit/ack/publicação. O coordenador e as barreiras existem somente em
+tests e carregam os módulos reais compilados; não alteram a composição de produção.
+PostgreSQL e LocalStack são reais e os recursos de cada cenário são descartáveis.
+Processos em um host não equivalem a homologação AWS ou tolerância a perda de disco.

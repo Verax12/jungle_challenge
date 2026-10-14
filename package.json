@@ -39,7 +39,9 @@
     "start:consumer": "bun dist/composition/messaging-main.js consumer",
     "start:publisher": "bun dist/composition/messaging-main.js publisher",
     "test:messaging": "bun run build && bun test tests/messaging --timeout 30000",
+    "test:distributed": "bun run build && bun test tests/distributed --timeout 45000",
     "stack:messaging": "docker compose run --rm --build messaging",
+    "stack:distributed": "docker compose run --rm --build distributed",
     "stack:workers": "docker compose --profile workers up --build -d --wait consumer publisher reference-worker"
   },
   "devDependencies": {

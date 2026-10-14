@@ -147,7 +147,7 @@
       "id": "T09",
       "title": "Testes distribuídos e recuperação",
       "dependsOn": ["T08"],
-      "status": "planned",
+      "status": "completed",
       "scope": "Completar a matriz obrigatória de concorrência e falhas com infraestrutura real.",
       "acceptanceCriteria": [
         "50 reenvios paralelos geram efeito único.",

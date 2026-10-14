@@ -6,7 +6,9 @@ A T01 implementa a base executável, a T02 acrescenta modelos financeiros puros 
 a T03 implementa schema/mapeamento com testes de PostgreSQL real.
 A T04 executa abertura e operações com lock, ledger e eventos atômicos. A T05
 acrescenta endpoints HTTP, recibos idempotentes e replay. A T06 acrescenta worker
-de referências, com agenda e recuperação testadas em PostgreSQL. A T07 acrescenta consumidor/publisher com PostgreSQL e SQS reais. O catálogo
+de referências, com agenda e recuperação testadas em PostgreSQL. A T07 acrescenta
+consumidor/publisher com PostgreSQL e SQS reais, a T08 instrumenta observabilidade e
+a T09 valida concorrência/recuperação entre processos independentes. O catálogo
 registra o estado individual de cada requisito. Testes de unidade comprovam regras
 locais; harness e smoke tests não significam correção financeira distribuída.
 
@@ -66,7 +68,7 @@ movimentos e troca de processo, concorrência de chaves, paginação sob inserç
 conexão PostgreSQL recusada. Testes isolados de mapeamento de falhas não são prova de
 recuperação distribuída. O reinício sequencial de um processo não equivale a três
 instâncias simultâneas.
-T07 acrescenta mensageria; T09 completará a validação distribuída. Não usar testes vazios,
+T07 acrescenta mensageria; T09 completa a matriz distribuída local. Não usar testes vazios,
 skips ou stubs como aceitação dos requisitos futuros. Não enfraquecer um gate para
 ocultar uma falha financeira ou um teste instável.
 
@@ -91,8 +93,8 @@ T07 acrescenta test:messaging/stack:messaging e execução na CI, usando bancos 
 exclusivos por fixture. Testa inbox/ack, redelivery, retries, DLQ, concorrência de
 consumidores e publishers, e processos mortos entre commit/ack e envio/publishedAt.
 O contrato de assinante usa deduplicação SQL por eventId com efeito também SQL;
-não representa um assinante de negócio implantado. Três instâncias completas e
-50 reenvios continuam na matriz T09. LocalStack real não equivale a homologação em AWS.
+não representa um assinante de negócio implantado. T09 acrescenta três instâncias e
+50 reenvios. LocalStack real não equivale a homologação em AWS.
 
 T08 acrescenta testes de reconciliação via HTTP com snapshot único sob transação
 concorrente, precisão de 36 dígitos e divergência deliberada sem reparo. Somente os
@@ -101,3 +103,13 @@ normal permanece protegido. Logs são capturados, métricas são consultadas ap�
 fluxos reais e lock timeout é produzido segurando uma wallet em outra conexão.
 Probes testam dependências recusadas e sockets abertos que não respondem, além do
 caminho saudável. Readiness não equivale à matriz distribuída T09.
+
+T09 acrescenta test:distributed/stack:distributed, executado também no job stack
+da CI. A [matriz obrigatória](test-matrix.md) mapeia cada cenário aos testes reais;
+o [runbook](runbooks/distributed.md) explica barreiras, processos e limites.
+Além das reconciliações por cenário, as suítes de processamento e HTTP conferem
+todas as wallets após cada teste. Referências e mensageria já mantêm essa proteção.
+As fixtures documentais copiam tests para validar os links da matriz: não se deve
+ignorar links para código nem afrouxar o check quando a documentação passa a citá-los.
+Casos negativos do catálogo devem definir explicitamente o estado inválido, sem
+presumir que um requisito específico continuará planejado conforme o projeto avança.

@@ -7,6 +7,7 @@
 - [Arquitetura](../ARCHITECTURE.md): estado atual e camadas planejadas.
 - [Catálogo de requisitos](requirements.json): requisitos, tarefas e evidências.
 - [Qualidade e rastreabilidade](quality.md): como interpretar os estados e validar entregas.
+- [Matriz de testes obrigatórios](test-matrix.md): cenários do enunciado e evidências executáveis.
 
 ## Planejamento
 
@@ -21,6 +22,7 @@
 - [Plano T06 — referências fora de ordem](exec-plans/completed/T06-pending-references.md).
 - [Plano T07 — SQS, inbox e outbox](exec-plans/completed/T07-sqs-inbox-outbox.md).
 - [Plano T08 — reconciliação e observabilidade](exec-plans/completed/T08-reconciliation-observability.md).
+- [Plano T09 — testes distribuídos e evidências](exec-plans/completed/T09-distributed-recovery.md).
 - [Dívida técnica](exec-plans/tech-debt.md).
 
 ## Decisões
@@ -48,6 +50,7 @@
 - [Worker de referências](runbooks/references.md).
 - [Consumidor SQS e publisher](runbooks/messaging.md).
 - [Reconciliação, health e métricas](runbooks/observability.md).
+- [Testes distribuídos e recuperação](runbooks/distributed.md).
 - [Diagnóstico de verificações](runbooks/troubleshooting.md).
 
 ## Referências
@@ -59,8 +62,7 @@
 As referências orientam o processo. Requisitos do produto continuam definidos pelo
 enunciado, e as restrições desta entrega prevalecem sobre exemplos das referências.
 
-Estado atual: T00 a T08 concluídas; não há plano ativo. Próxima tarefa: T09 —
-testes distribuídos e recuperação, aguardando seleção e nova branch.
+Estado atual: T00 a T09 concluídas; próxima tarefa T10, aguardando seleção e nova branch.
 HTTP, referências, consumidor SQS, inbox e publicação da outbox estão disponíveis;
 reconciliação, readiness, logs e métricas também estão disponíveis. A matriz
-distribuída completa segue pendente na T09.
+distribuída local foi validada com processos independentes e infraestrutura real.

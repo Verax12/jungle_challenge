@@ -199,6 +199,19 @@ services:
       localstack:
         condition: service_healthy
 
+  distributed:
+    profiles: ['tools']
+    build:
+      context: .
+      target: build
+    environment: *application-environment
+    command: ['bun', 'run', 'test:distributed']
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+
   smoke:
     profiles: ['tools']
     build:

@@ -7,12 +7,13 @@
       "summary": "Processar operações distribuídas corretamente sob duplicação, desordem, simultaneidade e indisponibilidade.",
       "readmeSections": ["1", "3"],
       "taskId": "T09",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "concurrency",
-          "description": "Cenários de falha e concorrência com saldo reconciliado, sem perda de eventos confirmados.",
-          "status": "planned"
+          "description": "Matriz local com três processos, 50 duplicatas HTTP/SQS, disputa de saldo, crashes transacionais, referências fora de ordem e reinícios; suítes anteriores cobrem falhas operacionais. Limites explícitos na matriz.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
         }
       ]
     },
@@ -704,12 +705,13 @@
       "summary": "Duas apostas 80.00 em saldo 100.00: um PROCESSED, um REJECTED, saldo 20.00 e um débito.",
       "readmeSections": ["8"],
       "taskId": "T09",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "concurrency",
-          "description": "Execução simultânea em processos distintos e redelivery sem débito extra.",
-          "status": "planned"
+          "description": "Três APIs reais: duas apostas de 80.00 sobre 100.00 observadas na cadeia de locks; um PROCESSED, um REJECTED/INSUFFICIENT_FUNDS, saldo 20.00 e um débito. Outra wallet progride durante o bloqueio.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
         }
       ]
     },
@@ -988,12 +990,13 @@
       "summary": "Commit seguido de morte antes de publicar: outra instância publica e duplicata é segura para consumidor.",
       "readmeSections": ["11"],
       "taskId": "T09",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "concurrency",
-          "description": "Falha controlada e consumidor idempotente por eventId.",
-          "status": "planned"
+          "description": "SIGKILL do consumidor após commit deixa quatro eventos pendentes; dois publishers independentes publicam todos. Crash após send preserva IDs; teste de assinante da suíte messaging confirma efeito SQL único com duplicatas reais.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
         }
       ]
     },
@@ -1068,12 +1071,13 @@
       "summary": "Cobrir Money/escala/entradas, Wallet, cinco operações, moeda e conflito de payload.",
       "readmeSections": ["13"],
       "taskId": "T09",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "review",
-          "description": "Conferir casos unitários obrigatórios contra os testes reais.",
-          "status": "planned"
+          "description": "Matriz revisada: Money/escala/entradas, Wallet, cinco operações, moeda e estados nas suítes de domínio; novo teste unitário de replay rejeita a mesma chave com payloadHash divergente.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
         }
       ]
     },
@@ -1082,12 +1086,13 @@
       "summary": "Integração usa PostgreSQL e LocalStack/MiniStack reais para constraints, atomicidade, inbox, publishers, retry, DLQ e restart.",
       "readmeSections": ["13"],
       "taskId": "T09",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Suíte real em containers, sem substituição integral por mocks.",
-          "status": "planned"
+          "description": "126 testes de persistência, 37 de mensageria, oito distribuídos e seis smoke passaram usando PostgreSQL/LocalStack reais. Migrations, constraints, atomicidade, inbox, publishers, retry/DLQ e reinícios ligados aos testes na matriz.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
         }
       ]
     },
@@ -1096,12 +1101,13 @@
       "summary": "Mesma aposta enviada 50 vezes em paralelo gera um único débito.",
       "readmeSections": ["13"],
       "taskId": "T09",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "concurrency",
-          "description": "Barreira de início e 50 envios paralelos com auditoria do ledger.",
-          "status": "planned"
+          "description": "50 requisições HTTP paralelas em três APIs e 50 envios SQS para três consumidores: um débito e 49 replays por cenário; IDs e grupos de transporte distintos impedem que FIFO esconda duplicatas.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
         }
       ]
     },
@@ -1110,12 +1116,13 @@
       "summary": "Wallets distintas são processadas em paralelo.",
       "readmeSections": ["13"],
       "taskId": "T09",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "concurrency",
-          "description": "Operações sobre wallets distintas progridem sem lock global.",
-          "status": "planned"
+          "description": "Uma terceira API confirma operação em outra wallet enquanto duas APIs continuam na cadeia de locks da wallet disputada. Saldo e ledger de ambas reconciliados.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
         }
       ]
     },
@@ -1124,12 +1131,13 @@
       "summary": "Executar concorrência com pelo menos três processos/instâncias simultâneos.",
       "readmeSections": ["13"],
       "taskId": "T09",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "concurrency",
-          "description": "Registrar processos reais ativos compartilhando PostgreSQL e broker.",
-          "status": "planned"
+          "description": "PIDs de sistema e SQL distintos registrados em macOS e Linux; três APIs simultâneas observadas no grafo de locks e três consumidores simultâneos na barreira após receive.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
         }
       ]
     },
@@ -1138,12 +1146,13 @@
       "summary": "Matar worker depois do commit e antes do ack preserva efeito único no redelivery.",
       "readmeSections": ["13"],
       "taskId": "T09",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "concurrency",
-          "description": "Injetar parada no ponto exato, reiniciar e reconciliar saldo/ledger.",
-          "status": "planned"
+          "description": "SIGKILL após commit antes de DeleteMessage; inbox/ledger/outbox já visíveis. Novo consumidor após expiração real da visibilidade faz replay e ack sem novo débito.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
         }
       ]
     },
@@ -1152,12 +1161,13 @@
       "summary": "REFUND/ROLLBACK antes da referência e reinício mantêm consistência final.",
       "readmeSections": ["13"],
       "taskId": "T09",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "concurrency",
-          "description": "Receber reversão primeiro, reiniciar serviço e concluir com referência tardia.",
-          "status": "planned"
+          "description": "Dois testes: REFUND e ROLLBACK pendentes antes do BET. Após restart, novos consumidor, worker de referências e API resolvem uma vez; GET processado e recibo original preservado.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
         }
       ]
     },
@@ -1166,12 +1176,13 @@
       "summary": "Em todos os testes obrigatórios, saldo corresponde ao reconstruído pelo ledger.",
       "readmeSections": ["13"],
       "taskId": "T09",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Asserção de reconciliação ao final de cada cenário financeiro obrigatório.",
-          "status": "planned"
+          "description": "Todos os cenários distribuídos reconciliam saldo esperado e ledger. Fixtures de mensageria/referências verificam todas as wallets; afterEach de processamento/HTTP também consulta soma assinada NUMERIC.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
         }
       ]
     },

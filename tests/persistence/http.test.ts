@@ -3,7 +3,7 @@ import { credit } from './helpers.js';
 import { LockMode } from '@mikro-orm/core';
 import { WagerTransactionKind } from '../../src/domain/wager-transaction.js';
 import { WalletEntity } from '../../src/adapters/persistence/entities.js';
-import { afterAll, beforeAll, expect, test } from 'bun:test';
+import { afterAll, afterEach, beforeAll, expect, test } from 'bun:test';
 import { request as nodeRequest } from 'node:http';
 import { createApplication } from '../../src/composition/bootstrap.js';
 import { DatabaseHttpServices } from '../../src/composition/http-services.js';
@@ -20,6 +20,7 @@ import {
   unique,
   sql,
   expectSqlFailure,
+  assertWalletsReconciled,
 } from './helpers.js';
 import { canonicalJson } from '../../src/application/idempotency.js';
 import { financialRuntime } from '../../src/adapters/runtime/financial-runtime.js';
@@ -38,6 +39,9 @@ beforeAll(async () => {
 afterAll(async () => {
   await app?.close();
   await fixture?.close();
+});
+afterEach(async () => {
+  await assertWalletsReconciled(fixture.orm.em.fork());
 });
 async function call(
   path: string,

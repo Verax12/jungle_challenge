@@ -50,6 +50,16 @@ export async function sql(
     .getConnection()
     .execute(query, params, 'all', em.getTransactionContext());
 }
+
+export async function assertWalletsReconciled(em: EntityManager) {
+  const mismatches = await sql(
+    em,
+    `select w.id from wallets w where w.balance <> coalesce(
+    (select sum(case direction when 'CREDIT' then amount else -amount end)
+    from wallet_ledger_entries where wallet_id=w.id),0)`,
+  );
+  expect(mismatches).toEqual([]);
+}
 export async function wallet(
   em: EntityManager,
   id = unique(),

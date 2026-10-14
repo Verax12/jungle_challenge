@@ -31,6 +31,7 @@ export function documentationFixture(): string {
     'AGENTS.md',
     'ARCHITECTURE.md',
     'docs',
+    'tests',
     '.github',
     '.bun-version',
     'package.json',
