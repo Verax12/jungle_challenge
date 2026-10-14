@@ -23,6 +23,9 @@ tentativas permanecem propostas para suas etapas.
 Atualização T05: o [ADR 0007](0007-idempotency-http.md) aceita SHA-256 canônico,
 recibos, replay e mapeamento HTTP. TTL, backoff e tentativas continuam propostos.
 
+Atualização T06: o [ADR 0008](0008-pending-references.md) aceita TTL de 24 h e
+backoff de 1 s até 60 s para referências. Retry/DLQ de SQS e publicação seguem na T07.
+
 ## Contexto
 
 O README fixa parte da stack e deixa escolhas ao candidato. O plano inicial

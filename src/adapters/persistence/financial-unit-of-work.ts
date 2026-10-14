@@ -1,3 +1,6 @@
+import type { ReferenceJob } from '../../application/reference-schedule.js';
+import { ReferenceJobEntity } from './entities.js';
+import type { ReferenceJobRecord, TransactionRecord } from './entities.js';
 import type {
   ProcessingReceipt,
   RequestIdentity,
@@ -37,8 +40,94 @@ import {
 } from './mappers.js';
 
 export class MikroFinancialSession implements FinancialSession {
+  private readonly claimedJobs = new Map<string, ReferenceJobRecord>();
+  private readonly claimedTransactions = new Map<string, TransactionRecord>();
   private readonly lockedWallets = new Map<string, WalletRecord>();
   constructor(private readonly em: EntityManager) {}
+  scheduleReference(job: ReferenceJob): void {
+    this.em.create(ReferenceJobEntity, {
+      ...job,
+      nextAttemptAt: new Date(job.nextAttemptAt),
+      expiresAt: new Date(job.expiresAt),
+      completedAt: null,
+    });
+  }
+  async claimReference(now: string) {
+    const connection = this.em.getConnection();
+    const context = this.em.getTransactionContext();
+    await connection.execute(
+      "set local lock_timeout = '2s'",
+      [],
+      'all',
+      context,
+    );
+    await connection.execute(
+      "set local statement_timeout = '5s'",
+      [],
+      'all',
+      context,
+    );
+    const candidates = await connection.execute<
+      { transaction_id: string; wallet_id: string }[]
+    >(
+      `
+      select j.transaction_id, t.wallet_id from reference_jobs j
+      join wager_transactions t on t.id = j.transaction_id
+      join wallets w on w.id = t.wallet_id
+      where j.completed_at is null and j.next_attempt_at <= ? and t.status = 'PENDING_REFERENCE'
+      order by j.next_attempt_at, j.transaction_id
+      limit 1 for update of w skip locked`,
+      [now],
+      'all',
+      context,
+    );
+    const candidate = candidates[0];
+    if (!candidate) return undefined;
+    const wallet = await this.lockWallet(candidate.wallet_id);
+    const record = await this.em.findOneOrFail(
+      ReferenceJobEntity,
+      { transactionId: candidate.transaction_id },
+      { lockMode: LockMode.PESSIMISTIC_WRITE, refresh: true },
+    );
+    const transaction = await this.em.findOneOrFail(
+      TransactionEntity,
+      { id: candidate.transaction_id },
+      { refresh: true },
+    );
+    if (
+      record.completedAt ||
+      record.nextAttemptAt.toISOString() > now ||
+      transaction.status !== WagerTransactionStatus.PendingReference
+    )
+      return undefined;
+    this.claimedJobs.set(transaction.id, record);
+    this.claimedTransactions.set(transaction.id, transaction);
+    return {
+      wallet: wallet!,
+      transaction: transactionMapper.toDomain(transaction),
+      job: {
+        ...record,
+        nextAttemptAt: record.nextAttemptAt.toISOString(),
+        expiresAt: record.expiresAt.toISOString(),
+        completedAt: null,
+      },
+    };
+  }
+  updateReference(job: ReferenceJob): void {
+    const record = this.claimedJobs.get(job.transactionId);
+    if (!record) throw new Error('Reference job must be claimed before update');
+    this.em.assign(record, {
+      ...job,
+      nextAttemptAt: new Date(job.nextAttemptAt),
+      expiresAt: new Date(job.expiresAt),
+      completedAt: job.completedAt === null ? null : new Date(job.completedAt),
+    });
+  }
+  updateTransaction(transaction: WagerTransaction): void {
+    const record = this.claimedTransactions.get(transaction.id);
+    if (!record) throw new Error('Transaction must be claimed before update');
+    this.em.assign(record, transactionMapper.toRecord(transaction));
+  }
   async findReceipts(identity: RequestIdentity): Promise<ProcessingReceipt[]> {
     const rows = await this.em.find(
       ReceiptEntity,

@@ -1,3 +1,4 @@
+import { newReferenceJob, nextReferenceAttempt } from './reference-schedule.js';
 import { canonicalJson, replay } from './idempotency.js';
 import type { ProcessingResult } from './idempotency.js';
 import { FinancialConflictError } from './ports/financial-store.js';
@@ -148,46 +149,12 @@ export class FinancialProcessing {
         const at = [now, wallet.updatedAt, transaction.createdAt]
           .sort()
           .at(-1)!;
-        const reference =
-          transaction.referenceExternalTransactionId === undefined
-            ? undefined
-            : await session.findReference(
-                transaction.providerId,
-                transaction.referenceExternalTransactionId,
-              );
-        const alreadyReversed =
-          reference && transaction.requiresReference()
-            ? await session.wasReversed(reference.id, transaction.kind)
-            : false;
-        let entry: WalletLedgerEntry | undefined;
-        try {
-          ensure(wallet.playerId === transaction.playerId, 'WALLET_MISMATCH');
-          ensure(
-            wallet.currency === transaction.money.currency,
-            'CURRENCY_MISMATCH',
-          );
-          entry = wallet.apply(transaction, {
-            entryId: this.runtime.newId(),
-            at,
-            alreadyReversed,
-            ...(reference ? { reference } : {}),
-          });
-        } catch (error) {
-          if (
-            !(error instanceof DomainError) ||
-            error.code === 'INVALID_INPUT' ||
-            error.code === 'INFRASTRUCTURE_PERMANENT'
-          )
-            throw error;
-          if (error.code === 'REFERENCE_NOT_FOUND')
-            transaction.markPendingReference();
-          else transaction.reject(error.code);
-        }
-        if (entry) {
-          session.updateWallet(wallet);
-          session.insertLedger(entry, wallet.version);
-        }
+        const entry = await this.apply(session, wallet, transaction, at);
         session.insertTransaction(transaction);
+        if (transaction.status === WagerTransactionStatus.PendingReference)
+          session.scheduleReference(
+            newReferenceJob(transaction.id, transaction.createdAt, context),
+          );
         this.recordEvents(session, wallet, transaction, entry, context, at);
         const result: ProcessingResult = {
           transactionId: transaction.id,
@@ -223,6 +190,101 @@ export class FinancialProcessing {
         return { ...committed, idempotentReplay: true };
       });
     }
+  }
+
+  async retryReference() {
+    return this.unit.run(async (session) => {
+      const claimed = await session.claimReference(this.runtime.now());
+      if (!claimed) return undefined;
+      const { job, transaction, wallet } = claimed;
+      const now = this.runtime.now();
+      instant(now);
+      const at = [now, wallet.updatedAt, transaction.createdAt].sort().at(-1)!;
+      let entry: WalletLedgerEntry | undefined;
+      if (now >= job.expiresAt) transaction.reject('REFERENCE_NOT_FOUND');
+      else entry = await this.apply(session, wallet, transaction, at);
+      job.attempts++;
+      if (transaction.status === WagerTransactionStatus.PendingReference) {
+        job.nextAttemptAt = nextReferenceAttempt(
+          now,
+          job.attempts,
+          job.expiresAt,
+        );
+      } else {
+        job.completedAt = at;
+        session.updateTransaction(transaction);
+        this.recordEvents(
+          session,
+          wallet,
+          transaction,
+          entry,
+          {
+            correlationId: job.correlationId,
+            ...(job.causationId === null
+              ? {}
+              : { causationId: job.causationId }),
+          },
+          at,
+        );
+      }
+      session.updateReference(job);
+      return {
+        transactionId: transaction.id,
+        walletId: wallet.id,
+        providerId: transaction.providerId,
+        correlationId: job.correlationId,
+        status: transaction.status,
+        attempts: job.attempts,
+      };
+    });
+  }
+
+  private async apply(
+    session: FinancialSession,
+    wallet: Wallet,
+    transaction: WagerTransaction,
+    at: string,
+  ) {
+    const reference =
+      transaction.referenceExternalTransactionId === undefined
+        ? undefined
+        : await session.findReference(
+            transaction.providerId,
+            transaction.referenceExternalTransactionId,
+          );
+    const alreadyReversed =
+      reference && transaction.requiresReference()
+        ? await session.wasReversed(reference.id, transaction.kind)
+        : false;
+    let entry: WalletLedgerEntry | undefined;
+    try {
+      ensure(wallet.playerId === transaction.playerId, 'WALLET_MISMATCH');
+      ensure(
+        wallet.currency === transaction.money.currency,
+        'CURRENCY_MISMATCH',
+      );
+      entry = wallet.apply(transaction, {
+        entryId: this.runtime.newId(),
+        at,
+        alreadyReversed,
+        ...(reference ? { reference } : {}),
+      });
+    } catch (error) {
+      if (
+        !(error instanceof DomainError) ||
+        error.code === 'INVALID_INPUT' ||
+        error.code === 'INFRASTRUCTURE_PERMANENT'
+      )
+        throw error;
+      if (error.code === 'REFERENCE_NOT_FOUND')
+        transaction.markPendingReference();
+      else transaction.reject(error.code);
+    }
+    if (entry) {
+      session.updateWallet(wallet);
+      session.insertLedger(entry, wallet.version);
+    }
+    return entry;
   }
 
   private recordEvents(

@@ -99,7 +99,7 @@
       "id": "T06",
       "title": "Referências fora de ordem",
       "dependsOn": ["T05"],
-      "status": "planned",
+      "status": "completed",
       "scope": "Resolução de referências, worker agendado e política de espera limitada.",
       "acceptanceCriteria": [
         "Pendência persistida, backoff e limite justificados.",

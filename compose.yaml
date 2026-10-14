@@ -83,6 +83,20 @@ services:
       retries: 20
     stop_grace_period: 15s
 
+  reference-worker:
+    profiles: ['workers']
+    image: backend-challenge:local
+    build:
+      context: .
+      target: runtime
+    environment: *application-environment
+    command: ['bun', 'dist/composition/reference-main.js']
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    stop_grace_period: 15s
+
   migrate:
     profiles: ['tools']
     image: backend-challenge:local

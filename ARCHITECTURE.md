@@ -11,6 +11,7 @@ wallet, transações, ledger, inbox/outbox e eventos, com testes de unidade.
 A T03 acrescenta EntitySchema, mapeadores, migrations e constraints no PostgreSQL.
 A T04 acrescenta criação de wallet e processamento transacional com outbox e lock
 por wallet. A T05 liga esses casos de uso ao HTTP e grava recibos imutáveis.
+A T06 acrescenta agenda persistente e worker de referências.
 Consumidores e garantias financeiras distribuídas completas continuam pendentes.
 
 O [README](README.md) define o produto. O [catálogo](docs/requirements.json) liga
@@ -80,8 +81,8 @@ os grava na outbox de acordo com o resultado de cada operação. Inbox e Outbox
 modelam transições e retry parametrizado, sem consumidores ou publishers. IDs e
 instantes ISO UTC entram como argumentos; o domínio não lê relógio nem cria UUIDs.
 
-O mapeamento SQL está definido na T03 e a API financeira na T05. TTL e tentativas
-seguem pendentes para as etapas de workers.
+O mapeamento SQL está definido na T03 e a API financeira na T05. A política de
+referências está definida na T06; retries de mensageria seguem na T07.
 
 ## Persistência implementada na T03
 
@@ -126,7 +127,7 @@ abertura zero cria apenas wallet com versão 1. BET/WIN/REFUND/ROLLBACK aplicado
 mudam saldo, ledger e versão. LOSS produz Processed sem movimento. Rejeições de
 negócio geram transação REJECTED com código e evento, preservando saldo/versão.
 Referências são buscadas por provider/ID externo; ausência fica PENDING_REFERENCE,
-com evento. Resolver essas pendências e definir TTL/backoff pertencem à T06.
+com evento. A T06 resolve essas pendências com agenda e TTL/backoff persistidos.
 
 Uma nova migration permite guardar os dados recebidos quando player/moeda divergem
 da wallet, somente em REJECTED com o código correspondente. As demais transações
@@ -155,7 +156,7 @@ recibo confirmado para decidir conflito/replay. Não existe cache de deduplicaç
 
 Replays de aplicação, LOSS, rejeição e pendência preservam saldo/status originais.
 GET da transação mostra o estado atual; o aceite pendente não será reescrito quando
-T06 resolver sua referência. Dados T04 sem recibo retornam conflito, sem backfill
+o worker T06 resolver sua referência. Dados T04 sem recibo retornam conflito, sem backfill
 inventado. Mudar a chave da mesma identidade externa também é conflito.
 
 FinancialQueries fornece GETs de wallet, transação e ledger. Cursor base64url
@@ -167,6 +168,29 @@ O [runbook HTTP](docs/runbooks/http.md) contém rotas, exemplos e a matriz de st
 Conexões são inicializadas sob demanda e fechadas no shutdown; liveness permanece
 independente do banco. Erros retornam códigos sem conteúdo SQL ou dados internos.
 Readiness, reconciliação e observabilidade completa seguem na T08.
+
+## Referências implementadas na T06
+
+reference_jobs persiste horário devido, contador, expiração, conclusão e contexto.
+FinancialProcessing.retryReference usa as mesmas regras da submissão e atualiza a
+transação existente. Claim adquire wallet com FOR UPDATE SKIP LOCKED antes de bloquear
+agenda e reler estado. Wallets livres progridem mesmo com outra ocupada; uma wallet
+continua serializada contra HTTP e demais workers. Efeitos, conclusão e eventos são
+atômicos. Falha antes do commit preserva agenda; commit concluído impede reaplicação.
+
+Espera inicial de 1 s, exponencial até 60 s, TTL de 24 h desde createdAt. Expiração
+rejeita com REFERENCE_NOT_FOUND e grava evento na outbox. Referência encontrada
+não processada é rejeitada, conforme ADR 0004. Não há reordenação de cadeias pendentes.
+Uma tentativa ainda sem referência só atualiza a agenda. Recibo original não muda.
+
+O processo reference-main executa rodadas de até 100 tentativas, com pausa de 500 ms.
+SIGTERM interrompe novas seleções e aguarda trabalho atual; SIGKILL antes do commit
+é recuperado pelo rollback PostgreSQL. O perfil Compose workers inicia explicitamente
+após migrations. Sem nova dependência de scheduler. Migração 0004 inclui pendências
+anteriores mantendo prazo e correlação quando disponível na outbox.
+
+Veja [ADR 0008](docs/decisions/0008-pending-references.md) e [operação do worker](docs/runbooks/references.md).
+Publicação, inbox e ack continuam na T07; o worker de referências apenas grava eventos.
 
 ## Autenticação e autorização
 

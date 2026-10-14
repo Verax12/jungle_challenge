@@ -561,12 +561,13 @@
       "summary": "Resolver referência por providerId e ID externo, no mesmo provider/player/wallet/moeda/rodada.",
       "readmeSections": ["7"],
       "taskId": "T06",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Matriz de referências incompatíveis e IDs externos iguais em provedores distintos.",
-          "status": "planned"
+          "description": "PostgreSQL real: referências atrasadas consultadas por provider/ID externo, com rejeição por escopo, estado, tipo e valor incompatíveis, sem movimento indevido.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T06-pending-references.md"
         }
       ]
     },
@@ -620,18 +621,13 @@
       "summary": "Referência ausente persiste PENDING_REFERENCE e é reprocessada.",
       "readmeSections": ["7", "7.1"],
       "taskId": "T06",
-      "status": "implemented",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "T04: referência ausente persiste PENDING_REFERENCE e evento sem mudar saldo/ledger. Worker de resolução ainda ausente.",
+          "description": "REFUND/ROLLBACK/WIN antes da referência são aplicados uma vez; contexto, saldo, ledger e recibo original preservados, com agenda atômica.",
           "status": "verified",
-          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
-        },
-        {
-          "kind": "integration",
-          "description": "Reversão chega antes da referência, aguarda e é aplicada apenas uma vez.",
-          "status": "planned"
+          "path": "docs/exec-plans/completed/T06-pending-references.md"
         }
       ]
     },
@@ -655,12 +651,13 @@
       "summary": "Worker agendado para PENDING_REFERENCE com backoff exponencial e limite/TTL justificado.",
       "readmeSections": ["7.1"],
       "taskId": "T06",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Verificar agendamento persistido, múltiplos workers e retomada.",
-          "status": "planned"
+          "description": "Agenda persistida com backoff exponencial e TTL de 24 h; claims concorrentes, SIGTERM/reinício e SIGKILL antes do commit testados com processos e PostgreSQL reais.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T06-pending-references.md"
         }
       ]
     },
@@ -669,11 +666,17 @@
       "summary": "Esgotamento da espera rejeita com código de referência inexistente e publica evento.",
       "readmeSections": ["7.1"],
       "taskId": "T06",
-      "status": "planned",
+      "status": "implemented",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Expiração determinística e evento de rejeição via outbox.",
+          "description": "TTL determinístico gera REJECTED/REFERENCE_NOT_FOUND, conclusão de agenda e evento de rejeição na outbox no mesmo commit; publicação ainda não implementada.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T06-pending-references.md"
+        },
+        {
+          "kind": "integration",
+          "description": "T07: publicar efetivamente o evento de expiração pelo publisher da outbox e observar no broker.",
           "status": "planned"
         }
       ]

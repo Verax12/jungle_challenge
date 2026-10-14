@@ -5,7 +5,8 @@
 A T01 implementa a base executável, a T02 acrescenta modelos financeiros puros e
 a T03 implementa schema/mapeamento com testes de PostgreSQL real.
 A T04 executa abertura e operações com lock, ledger e eventos atômicos. A T05
-acrescenta endpoints HTTP, recibos idempotentes e replay. Consumidor ainda não existe. O catálogo
+acrescenta endpoints HTTP, recibos idempotentes e replay. A T06 acrescenta worker
+de referências, com agenda e recuperação testadas em PostgreSQL. Consumidor ainda não existe. O catálogo
 registra o estado individual de cada requisito. Testes de unidade comprovam regras
 locais; harness e smoke tests não significam correção financeira distribuída.
 
@@ -37,7 +38,7 @@ cobertura semântica do enunciado requer revisão humana do catálogo.
 
 Não substituir completamente banco e broker por mocks. Testes distribuídos precisam
 de sincronização e evidências determinísticas, sem usar apenas sequências de chamadas
-ou esperas arbitrárias como prova de paralelismo. Injeção de falha será planejada na T09.
+ou esperas arbitrárias como prova de paralelismo. T04 a T06 já injetam falhas transacionais; ack e publishers serão exercitados na T07/T09.
 
 ## Gates atuais e evolução
 
@@ -77,3 +78,11 @@ ocultar uma falha financeira ou um teste instável.
 - Logs e relatórios evitam segredos e payloads financeiros completos?
 - Comandos e evidências relatados foram realmente executados?
 - A próxima sessão consegue localizar o próximo passo sem ler o chat?
+
+A T06 testa claims concorrentes, expiração com relógio injetado, rollback após flush,
+reinício real após SIGTERM e SIGKILL antes do commit. Relógio controlado não é evidência
+de 24 horas contínuas de carga. O processo agendado e o banco são reais nos cenários
+de recuperação. A publicação do evento de expiração permanece pendente para T07.
+
+Build/check e testes com subprocessos compilados devem rodar sequencialmente no mesmo
+checkout, pois ambos recriam/consomem dist. Containers têm seu próprio filesystem.

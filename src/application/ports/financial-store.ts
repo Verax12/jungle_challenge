@@ -1,3 +1,4 @@
+import type { ReferenceJob } from '../reference-schedule.js';
 import type { ProcessingReceipt, RequestIdentity } from '../idempotency.js';
 import type { Wallet } from '../../domain/wallet.js';
 import type {
@@ -8,6 +9,15 @@ import type { WalletLedgerEntry } from '../../domain/ledger.js';
 import type { OutboxMessage } from '../../domain/messages.js';
 
 export interface FinancialSession {
+  scheduleReference(job: ReferenceJob): void;
+  claimReference(
+    now: string,
+  ): Promise<
+    | { job: ReferenceJob; transaction: WagerTransaction; wallet: Wallet }
+    | undefined
+  >;
+  updateReference(job: ReferenceJob): void;
+  updateTransaction(transaction: WagerTransaction): void;
   findReceipts(identity: RequestIdentity): Promise<ProcessingReceipt[]>;
   insertReceipt(receipt: ProcessingReceipt): void;
   lockWallet(id: string): Promise<Wallet | undefined>;

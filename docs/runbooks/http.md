@@ -77,7 +77,7 @@ página é nextCursor null. Cursor opaco não é mecanismo de autenticação/ass
 | 500  | Falha inesperada                                      | INTERNAL_ERROR, sem SQL/stack/payload     |
 
 Replay de uma pendência mantém a resposta inicial 202; GET da transação é a fonte do
-estado atual. O worker que resolverá essas pendências pertence à T06. T07 adicionará
+estado atual. O [worker T06](references.md) resolve essas pendências sem alterar o recibo original. T07 adicionará
 inbox/consumidor/publicação. Readiness e reconciliação HTTP ainda pertencem à T08.
 
 Transações antigas, criadas antes da T05 e sem recibo, não recebem saldo original

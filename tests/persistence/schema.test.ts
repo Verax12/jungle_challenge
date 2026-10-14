@@ -26,10 +26,10 @@ test('migration up is repeatable, down removes its objects, and up restores the 
   const other = await disposableDatabase();
   try {
     const migrator = other.orm.getMigrator();
-    expect(await migrator.getPendingMigrations()).toHaveLength(3);
+    expect(await migrator.getPendingMigrations()).toHaveLength(4);
     await migrator.up();
     await migrator.up();
-    expect(await migrator.getExecutedMigrations()).toHaveLength(3);
+    expect(await migrator.getExecutedMigrations()).toHaveLength(4);
     expect(await migrator.getPendingMigrations()).toHaveLength(0);
     await migrator.down({ to: 0 });
     expect(
@@ -52,7 +52,7 @@ test('migration up is repeatable, down removes its objects, and up restores the 
     ).toEqual([]);
     await migrator.up();
     await wallet(other.orm.em);
-    expect(await migrator.getExecutedMigrations()).toHaveLength(3);
+    expect(await migrator.getExecutedMigrations()).toHaveLength(4);
   } finally {
     await other.close();
   }
@@ -148,7 +148,7 @@ test('TRUNCATE is forbidden even when all related audit tables are targeted', as
     () =>
       sql(
         fixture.orm.em,
-        'truncate wallets, wager_transactions, wallet_ledger_entries, inbox_messages, outbox_messages, processing_receipts',
+        'truncate wallets, wager_transactions, wallet_ledger_entries, inbox_messages, outbox_messages, processing_receipts, reference_jobs',
       ),
     '23514',
   );

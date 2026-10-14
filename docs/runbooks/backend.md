@@ -78,5 +78,5 @@ com dados que precisa preservar. A limpeza de volumes na CI ocorre apenas no run
 Liveness não certifica disponibilidade do banco/broker. Domínio puro e schema já
 existem; a T04 acrescenta casos de uso transacionais internos. Consulte
 [migrations e testes](persistence.md). A [API financeira](http.md) existe na T05; readiness,
-workers e métricas permanecem pendentes. Autenticação foi explicitamente omitida.
+o [worker de referências](references.md) existe na T06. Consumidor, publisher e métricas permanecem pendentes. Autenticação foi explicitamente omitida.
 O smoke atual comprova instalação e comunicação, não correção financeira distribuída.

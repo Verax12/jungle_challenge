@@ -33,6 +33,10 @@ function setup() {
     hash: (value) => value,
   };
   const session: FinancialSession = {
+    scheduleReference: () => {},
+    claimReference: async () => undefined,
+    updateReference: () => {},
+    updateTransaction: () => {},
     findReceipts: async () => [],
     insertReceipt: () => {},
     lockWallet: async () => wallet,

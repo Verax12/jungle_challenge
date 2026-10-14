@@ -23,7 +23,7 @@
     "infra:up": "docker compose up -d --wait postgres localstack",
     "infra:provision": "bun src/composition/provision-queues.ts",
     "stack:up": "docker compose up --build -d --wait",
-    "stack:down": "docker compose down",
+    "stack:down": "docker compose --profile workers down",
     "stack:smoke": "docker compose run --rm --build smoke",
     "doctor": "bun scripts/doctor.ts",
     "check:docs": "bun scripts/check-docs.ts",
@@ -33,7 +33,9 @@
     "format": "bun --bun prettier --write .",
     "typecheck": "bun --bun tsc --noEmit",
     "test:harness": "bun test tests/harness",
-    "check": "bun scripts/check.ts"
+    "check": "bun scripts/check.ts",
+    "start:references": "bun dist/composition/reference-main.js",
+    "stack:references": "docker compose --profile workers up --build -d reference-worker"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",

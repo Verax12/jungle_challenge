@@ -177,7 +177,31 @@ export const ReceiptEntity = new EntitySchema<ReceiptRecord>({
     failureCode: { type: 'string', nullable: true },
   },
 });
+export interface ReferenceJobRecord {
+  transactionId: string;
+  correlationId: string;
+  causationId: string | null;
+  attempts: number;
+  nextAttemptAt: Date;
+  expiresAt: Date;
+  completedAt: Date | null;
+}
+export const ReferenceJobEntity = new EntitySchema<ReferenceJobRecord>({
+  name: 'ReferenceJobRecord',
+  tableName: 'reference_jobs',
+  properties: {
+    transactionId: { ...id, primary: true },
+    correlationId: id,
+    causationId: { ...id, nullable: true },
+    attempts: { type: 'integer' },
+    nextAttemptAt: date,
+    expiresAt: date,
+    completedAt: { ...date, nullable: true },
+  },
+});
+
 export const entities = [
+  ReferenceJobEntity,
   ReceiptEntity,
   WalletEntity,
   TransactionEntity,

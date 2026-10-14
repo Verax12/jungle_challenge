@@ -6,6 +6,8 @@ import { Migration202610140001 } from './migrations/Migration202610140001.js';
 import { Migration202610140002 } from './migrations/Migration202610140002.js';
 import { Migration202610140003 } from './migrations/Migration202610140003.js';
 
+import { Migration202610140004 } from './migrations/Migration202610140004.js';
+
 export function connectDatabase(config: AppConfig['database']) {
   return MikroORM.init({
     host: config.host,
@@ -20,6 +22,7 @@ export function connectDatabase(config: AppConfig['database']) {
         Migration202610140001,
         Migration202610140002,
         Migration202610140003,
+        Migration202610140004,
       ],
       transactional: true,
       allOrNothing: true,
