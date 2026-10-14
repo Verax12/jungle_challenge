@@ -18,14 +18,21 @@ export const queueNames: QueueNames = {
   events: 'wager-events.fifo',
 };
 export const maxReceiveCount = 5;
-export function createLocalSqsClient(config: AppConfig['sqs']): SQSClient {
+export function createLocalSqsClient(
+  config: AppConfig['sqs'],
+  operational = false,
+): SQSClient {
   return new SQSClient({
     endpoint: config.endpoint,
     region: config.region,
     credentials: { accessKeyId: 'test', secretAccessKey: 'test' },
     useQueueUrlAsEndpoint: false,
-    maxAttempts: 3,
-    requestHandler: { connectionTimeout: 3000, requestTimeout: 5000 },
+    maxAttempts: operational ? 1 : 3,
+    requestHandler: {
+      throwOnRequestTimeout: true,
+      connectionTimeout: operational ? 1000 : 3000,
+      requestTimeout: operational ? 1500 : 5000,
+    },
   });
 }
 export async function queueUrls(

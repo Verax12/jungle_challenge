@@ -13,6 +13,7 @@ beforeAll(async () => {
   app = await createApplication(true, {
     processing: { createWallet: fail, process: fail },
     queries: {
+      reconciliation: fail,
       wallet: fail,
       transaction: fail,
       externalTransaction: fail,

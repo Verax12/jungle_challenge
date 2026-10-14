@@ -263,6 +263,7 @@ export class FinancialProcessing {
         walletId: wallet.id,
         providerId: transaction.providerId,
         correlationId: job.correlationId,
+        messageId: job.causationId,
         status: transaction.status,
         attempts: job.attempts,
       };

@@ -20,6 +20,9 @@ describe('environment configuration', () => {
       expect(() => loadConfig({ ...env, PORT: port })).toThrow(
         ConfigurationError,
       );
+      expect(() => loadConfig({ ...env, METRICS_PORT: port })).toThrow(
+        ConfigurationError,
+      );
       expect(() => loadConfig({ ...env, DB_PORT: port })).toThrow(
         ConfigurationError,
       );

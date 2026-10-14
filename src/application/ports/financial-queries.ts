@@ -22,7 +22,12 @@ export interface LedgerView {
   walletVersion: number;
   createdAt: string;
 }
+import type { reconcileWallet } from '../reconcile-wallet.js';
 export interface FinancialQueries {
+  reconciliation(
+    walletId: string,
+    context?: { correlationId: string },
+  ): Promise<ReturnType<typeof reconcileWallet>>;
   wallet(id: string): Promise<WalletView>;
   transaction(id: string): Promise<TransactionView>;
   externalTransaction(

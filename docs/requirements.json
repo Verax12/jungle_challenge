@@ -838,12 +838,13 @@
       "summary": "POST reconciliação retorna saldos, diferença, consistência e quantidade de lançamentos.",
       "readmeSections": ["9"],
       "taskId": "T08",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Casos consistentes e divergentes com aritmética exata e visão coerente.",
-          "status": "planned"
+          "description": "HTTP com zero, 36 dígitos, diferença assinada, wallet inexistente e snapshot coerente antes/depois de commit concorrente em PostgreSQL real.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T08-reconciliation-observability.md"
         }
       ]
     },
@@ -852,12 +853,13 @@
       "summary": "Divergência é logada, contabilizada e retornada, sem correção silenciosa.",
       "readmeSections": ["9"],
       "taskId": "T08",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Divergência induzida produz resposta/log/métrica e preserva dados.",
-          "status": "planned"
+          "description": "Divergência induzida no banco descartável retorna consistent=false, log contextual e contador; dados permanecem inalterados pelo endpoint.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T08-reconciliation-observability.md"
         }
       ]
     },
@@ -866,12 +868,13 @@
       "summary": "Liveness separada de readiness, health aberto, readiness verifica PostgreSQL e SQS.",
       "readmeSections": ["9", "12"],
       "taskId": "T08",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Processo vivo e dependências indisponíveis produzem estados adequados.",
-          "status": "planned"
+          "description": "Probes HTTP com PostgreSQL/SQS saudáveis, conexões recusadas e sockets sem resposta; live continua público. API e três workers respondem na imagem de produção.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T08-reconciliation-observability.md"
         }
       ]
     },
@@ -1035,12 +1038,13 @@
       "summary": "Logs JSON com correlationId, messageId, transactionId, walletId e providerId, sem dados sensíveis/payloads completos.",
       "readmeSections": ["12"],
       "taskId": "T08",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Capturar logs de fluxos HTTP/SQS e conferir contexto e ausência de conteúdo sensível.",
-          "status": "planned"
+          "description": "Captura de logs HTTP/SQS verifica contexto de correlação e ausência de dinheiro, body, chave, hash e SQL; serialização e falha do sink testadas.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T08-reconciliation-observability.md"
         }
       ]
     },
@@ -1049,12 +1053,13 @@
       "summary": "Métricas de status, duplicatas, retries, DLQ, conflitos de lock, outbox lag e latência.",
       "readmeSections": ["12"],
       "taskId": "T08",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Exercitar cenários e verificar incrementos/observações das métricas.",
-          "status": "planned"
+          "description": "Scrapes após processamento, replay, retries, DLQ, publicação e timeout real de lock verificam gauges, contadores e histograma sem IDs como labels.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T08-reconciliation-observability.md"
         }
       ]
     },

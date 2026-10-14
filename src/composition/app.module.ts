@@ -8,21 +8,34 @@ import {
 } from '../adapters/http/financial.controller.js';
 import type { FinancialHttpServices } from '../adapters/http/financial.controller.js';
 
+import {
+  OperationsController,
+  OPERATIONS,
+} from '../adapters/http/operations.controller.js';
+import type { Operations } from '../adapters/observability/operations.js';
+
 @Module({})
 export class AppModule {
-  static register(services?: FinancialHttpServices): DynamicModule {
+  static register(
+    services?: FinancialHttpServices,
+    operations?: Operations,
+  ): DynamicModule {
     return {
       module: AppModule,
       controllers: [
         LivenessController,
+        ...(operations ? [OperationsController] : []),
         ...(services ? [FinancialController] : []),
       ],
-      providers: services
-        ? [
-            { provide: FINANCIAL_HTTP, useValue: services },
-            OpenBusinessAccessGuard,
-          ]
-        : [],
+      providers: [
+        ...(operations ? [{ provide: OPERATIONS, useValue: operations }] : []),
+        ...(services
+          ? [
+              { provide: FINANCIAL_HTTP, useValue: services },
+              OpenBusinessAccessGuard,
+            ]
+          : []),
+      ],
     };
   }
 }

@@ -26,7 +26,21 @@ export class PublishOutbox {
           [this.runtime.now(), message.occurredAt].sort().at(-1)!,
         );
       session.save(message);
+      const payload = message.payload as {
+        correlationId?: string;
+        causationId?: string;
+        data?: {
+          walletId?: string;
+          transactionId?: string;
+          providerId?: string;
+        };
+      };
       return {
+        correlationId: payload.correlationId,
+        messageId: payload.causationId,
+        walletId: payload.data?.walletId,
+        transactionId: payload.data?.transactionId,
+        providerId: payload.data?.providerId,
         eventId: message.id,
         status: published ? 'published' : 'retry',
         attempts: message.attempts,

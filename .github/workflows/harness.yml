@@ -35,6 +35,12 @@ jobs:
       - run: docker compose run --rm reference-worker bun dist/composition/reference-main.js --once
       - run: docker compose run --rm consumer bun dist/composition/messaging-main.js consumer --once
       - run: docker compose run --rm publisher bun dist/composition/messaging-main.js publisher --once
+      - run: bun run stack:workers
+      - name: Worker operational endpoints
+        run: |
+          for worker in consumer publisher reference-worker; do
+            docker compose exec -T "$worker" bun -e "for(const path of ['health/ready','metrics']){const r=await fetch('http://127.0.0.1:9464/'+path);if(!r.ok)process.exit(1)}"
+          done
       - name: Diagnostics on failure
         if: failure()
         run: docker compose ps -a && docker compose logs --no-color --tail 100

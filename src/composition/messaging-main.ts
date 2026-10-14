@@ -11,6 +11,12 @@ import { PublishOutbox } from '../application/publish-outbox.js';
 import { financialRuntime } from '../adapters/runtime/financial-runtime.js';
 import { runMessageWorker } from '../adapters/workers/message-worker.js';
 import { createFinancialProcessing } from './financial-processing.js';
+import { Telemetry } from '../adapters/observability/telemetry.js';
+import { Operations } from '../adapters/observability/operations.js';
+import { startWorkerServer } from '../adapters/observability/worker-server.js';
+const telemetry = new Telemetry();
+let operations: Operations | undefined;
+let server: ReturnType<typeof startWorkerServer> | undefined;
 const controller = new AbortController();
 const stop = () => controller.abort();
 process.on('SIGTERM', stop);
@@ -23,14 +29,20 @@ try {
     throw new Error('Expected consumer or publisher');
   const config = loadConfig(process.env);
   database = await connectDatabase(config.database);
+  operations = new Operations(config, telemetry);
+  if (!process.argv.includes('--once'))
+    server = startWorkerServer(
+      operations,
+      config.http.host,
+      config.metrics.port,
+    );
   client = createLocalSqsClient(config.sqs);
   const urls = await queueUrls(client);
-  const report = (event: Record<string, unknown>) =>
-    console.log(JSON.stringify(event));
+  const report = telemetry.report;
   const consumer = new SqsConsumer(
     client,
     urls,
-    createFinancialProcessing(database),
+    createFinancialProcessing(database, telemetry),
     report,
   );
   const publisher = new PublishOutbox(
@@ -42,7 +54,9 @@ try {
     mode === 'consumer'
       ? () => consumer.once(controller.signal)
       : async () => {
-          const result = await publisher.once();
+          const result = await telemetry.observe('outbox', {}, () =>
+            publisher.once(),
+          );
           if (result)
             report({
               level: result.status === 'retry' ? 'warn' : 'info',
@@ -65,6 +79,8 @@ try {
   );
   process.exitCode = 1;
 } finally {
+  await server?.stop();
+  await operations?.onApplicationShutdown();
   await database?.close(true);
   client?.destroy();
   process.off('SIGTERM', stop);

@@ -7,6 +7,7 @@ export interface AppConfig {
     readonly user: string;
     readonly password: string;
   };
+  readonly metrics: { readonly port: number };
   readonly sqs: { readonly endpoint: string; readonly region: string };
 }
 
@@ -50,6 +51,7 @@ export function loadConfig(env: Record<string, string | undefined>): AppConfig {
     throw new ConfigurationError('SQS_ENDPOINT');
   }
   return {
+    metrics: { port: port('METRICS_PORT', '9464') },
     http: { host: text('HOST', '127.0.0.1'), port: port('PORT', '3000') },
     database: {
       host: text('DB_HOST', '127.0.0.1'),

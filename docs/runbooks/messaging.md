@@ -122,5 +122,5 @@ SIGTERM interrompe novas seleções e aguarda trabalho em andamento; Compose con
 redelivera após visibilidade. `stack:down` inclui o perfil workers e preserva volumes.
 
 A [decisão 0009](../decisions/0009-sqs-inbox-outbox.md) explica atomicidade, hashes,
-trade-offs de rede/locks e limites. Métricas, readiness e reconciliação ficam na T08;
+trade-offs de rede/locks e limites. Métricas, readiness e reconciliação estão no [guia da T08](observability.md);
 a matriz completa de três instâncias e 50 reenvios fica na T09.

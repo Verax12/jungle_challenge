@@ -131,7 +131,7 @@
       "id": "T08",
       "title": "Reconciliação e observabilidade",
       "dependsOn": ["T07"],
-      "status": "planned",
+      "status": "completed",
       "scope": "Reconciliação, logs, métricas e health checks exigidos.",
       "acceptanceCriteria": [
         "Reconciliação detecta divergências sem correção silenciosa.",

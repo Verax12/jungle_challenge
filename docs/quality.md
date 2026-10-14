@@ -93,3 +93,11 @@ consumidores e publishers, e processos mortos entre commit/ack e envio/published
 O contrato de assinante usa deduplicação SQL por eventId com efeito também SQL;
 não representa um assinante de negócio implantado. Três instâncias completas e
 50 reenvios continuam na matriz T09. LocalStack real não equivale a homologação em AWS.
+
+T08 acrescenta testes de reconciliação via HTTP com snapshot único sob transação
+concorrente, precisão de 36 dígitos e divergência deliberada sem reparo. Somente os
+bancos descartáveis permitem a injeção controlada que contorna triggers; o schema
+normal permanece protegido. Logs são capturados, métricas são consultadas após
+fluxos reais e lock timeout é produzido segurando uma wallet em outra conexão.
+Probes testam dependências recusadas e sockets abertos que não respondem, além do
+caminho saudável. Readiness não equivale à matriz distribuída T09.

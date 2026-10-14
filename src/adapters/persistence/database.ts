@@ -8,7 +8,10 @@ import { Migration202610140003 } from './migrations/Migration202610140003.js';
 
 import { Migration202610140004 } from './migrations/Migration202610140004.js';
 
-export function connectDatabase(config: AppConfig['database']) {
+export function connectDatabase(
+  config: AppConfig['database'],
+  operational = false,
+) {
   return MikroORM.init({
     host: config.host,
     port: config.port,
@@ -28,7 +31,22 @@ export function connectDatabase(config: AppConfig['database']) {
       allOrNothing: true,
       disableForeignKeys: false,
     },
-    pool: { min: 0, max: 2 },
+    pool: {
+      min: 0,
+      max: 2,
+      ...(operational ? { acquireTimeoutMillis: 2000 } : {}),
+    },
+    ...(operational
+      ? {
+          driverOptions: {
+            connection: {
+              connectionTimeoutMillis: 2000,
+              statement_timeout: 2000,
+              query_timeout: 2500,
+            },
+          },
+        }
+      : {}),
     debug: false,
   });
 }

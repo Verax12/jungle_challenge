@@ -1,3 +1,4 @@
+import { reconcileWallet } from '../../application/reconcile-wallet.js';
 import type { MikroORM } from '@mikro-orm/postgresql';
 import type {
   FinancialQueries,
@@ -36,6 +37,32 @@ function transactionView(record: TransactionRecord): TransactionView {
 }
 export class MikroFinancialQueries implements FinancialQueries {
   constructor(private readonly orm: MikroORM) {}
+  async reconciliation(walletId: string) {
+    const rows = await this.orm.em.getConnection().execute<
+      {
+        id: string;
+        currency: string;
+        balance: string;
+        calculated: string;
+        entries: string;
+      }[]
+    >(
+      `select w.id, w.currency, round(w.balance,2)::text as balance, round(coalesce(sum(case l.direction when 'CREDIT' then l.amount else -l.amount end),0.00),2)::text as calculated, count(l.id)::text as entries
+       from wallets w left join wallet_ledger_entries l on l.wallet_id=w.id where w.id=? group by w.id`,
+      [walletId],
+    );
+    const row = rows[0];
+    if (!row) throw new WalletNotFoundError();
+    const checkedEntries = Number(row.entries);
+    if (!Number.isSafeInteger(checkedEntries))
+      throw new Error('Entry count exceeds safe integer');
+    return reconcileWallet({
+      walletId: row.id,
+      storedBalance: { amount: row.balance, currency: row.currency },
+      calculatedBalance: { amount: row.calculated, currency: row.currency },
+      checkedEntries,
+    });
+  }
   async wallet(id: string) {
     const wallet = await this.orm.em.fork().findOne(WalletEntity, { id });
     if (!wallet) throw new WalletNotFoundError();

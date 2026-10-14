@@ -19,3 +19,5 @@
 Novos registros devem conter contexto, estado, decisão ou proposta, consequências
 e verificação. Mantenha decisões aceitas separadas das sugestões. Ao substituir uma
 decisão, preserve o registro antigo e indique o novo documento.
+
+- [0010 — reconciliação e observabilidade](0010-reconciliation-observability.md): aceito na T08.

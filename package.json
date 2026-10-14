@@ -40,7 +40,7 @@
     "start:publisher": "bun dist/composition/messaging-main.js publisher",
     "test:messaging": "bun run build && bun test tests/messaging --timeout 30000",
     "stack:messaging": "docker compose run --rm --build messaging",
-    "stack:workers": "docker compose --profile workers up --build -d consumer publisher reference-worker"
+    "stack:workers": "docker compose --profile workers up --build -d --wait consumer publisher reference-worker"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",
@@ -60,6 +60,7 @@
     "@nestjs/common": "11.2.7",
     "@nestjs/core": "11.2.7",
     "@nestjs/platform-express": "11.2.7",
+    "@prometheus-io/client": "0.16.1",
     "ajv": "8.13.0",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2"

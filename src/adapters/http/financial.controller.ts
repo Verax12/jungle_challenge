@@ -24,6 +24,7 @@ export interface FinancialHttpServices {
   queries: FinancialQueries;
 }
 interface HttpRequest {
+  correlationId?: string;
   headers: Record<string, string | string[] | undefined>;
   rawHeaders: string[];
 }
@@ -41,7 +42,10 @@ export class OpenBusinessAccessGuard implements CanActivate {
 function context(request: HttpRequest) {
   const supplied = request.headers['x-correlation-id'];
   return {
-    correlationId: supplied === undefined ? randomUUID() : textId(supplied),
+    correlationId:
+      supplied === undefined
+        ? (request.correlationId ?? randomUUID())
+        : textId(supplied),
   };
 }
 @Controller()
@@ -56,6 +60,18 @@ export class FinancialController {
       walletBody(body),
       context(request),
     );
+  }
+  @Post('wallets/:walletId/reconciliation')
+  async reconciliation(
+    @Param('walletId') walletId: string,
+    @Req() request: HttpRequest,
+    @Res() response: HttpResponse,
+  ) {
+    const result = await this.services.queries.reconciliation(
+      textId(walletId),
+      context(request),
+    );
+    response.status(200).json(result);
   }
   @Get('wallets/:walletId')
   wallet(@Param('walletId') walletId: string) {

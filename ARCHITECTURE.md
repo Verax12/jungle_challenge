@@ -13,7 +13,7 @@ A T04 acrescenta criação de wallet e processamento transacional com outbox e l
 por wallet. A T05 liga esses casos de uso ao HTTP e grava recibos imutáveis.
 A T06 acrescenta agenda persistente e worker de referências.
 A T07 acrescenta consumidor SQS, inbox atômica e publishers concorrentes.
-Reconciliação, observabilidade completa e matriz distribuída T09 continuam pendentes.
+A T08 acrescenta reconciliação, logs, métricas e readiness. A matriz distribuída T09 continua pendente.
 
 O [README](README.md) define o produto. O [catálogo](docs/requirements.json) liga
 os requisitos às tarefas e às evidências esperadas.
@@ -169,7 +169,7 @@ paginação. Limite padrão 50, máximo 100, sem offsets.
 O [runbook HTTP](docs/runbooks/http.md) contém rotas, exemplos e a matriz de status.
 Conexões são inicializadas sob demanda e fechadas no shutdown; liveness permanece
 independente do banco. Erros retornam códigos sem conteúdo SQL ou dados internos.
-Readiness, reconciliação e observabilidade completa seguem na T08.
+Readiness, reconciliação e observabilidade são implementadas na T08.
 
 ## Referências implementadas na T06
 
@@ -237,3 +237,27 @@ players autorizados; conferir acesso às wallets nas consultas e nas mutações.
 Header/body com providerId não provam identidade. SQS é canal interno, mantendo
 as validações do mesmo caso de uso. A ausência atual de autorização não é uma
 garantia de isolamento entre usuários.
+
+## Reconciliação e observabilidade implementadas na T08
+
+Reconciliação usa uma consulta SQL de snapshot único para saldo e soma assinada do
+ledger. Money calcula a diferença exata, armazenado menos calculado. HTTP retorna
+200 tanto para consistência como divergência, sinalizando consistent; não escreve
+dados financeiros. Divergências geram log e contador, sem reparo automático.
+
+ObservedFinancialProcessing instrumenta os casos de uso na camada de adapters,
+após confirmação transacional. HTTP devolve correlationId; SQS, referências e
+publisher preservam contexto. Telemetry restringe campos dos logs e labels das
+métricas; não exporta dinheiro ou payloads. O cliente Prometheus oficial, fixado,
+expõe registries locais em /metrics na API e METRICS_PORT nos workers.
+
+Contadores/histogramas são por processo, com possibilidade de perder observação
+após crash. Gauges de status/outbox vêm de PostgreSQL; profundidade da DLQ é
+aproximada pelo broker. Gauges globais repetidos não devem ser somados. Coleta falha
+com 503 sem publicar zeros artificiais. Não há exporter remoto ou dashboard.
+
+Operations usa pool separado e probes limitados para PostgreSQL/SQS; readiness é
+público e responde por dependência. Liveness independe delas. Readiness não comprova
+schema atualizado nem ausência de backlog. Worker --once não abre listener.
+Veja [ADR 0010](docs/decisions/0010-reconciliation-observability.md) e
+[operação](docs/runbooks/observability.md) para métricas, limites e diagnóstico.

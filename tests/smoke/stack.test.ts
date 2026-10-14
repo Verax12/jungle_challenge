@@ -132,3 +132,21 @@ test('production image exposes financial queries through its database connection
   expect(response.status).toBe(404);
   expect(await response.json()).toEqual({ code: 'WALLET_NOT_FOUND' });
 });
+
+test('production API exposes public readiness and Prometheus metrics', async () => {
+  const url =
+    process.env.SMOKE_APP_URL ?? `http://127.0.0.1:${config.http.port}`;
+  const ready = await fetch(`${url}/health/ready`, {
+    signal: AbortSignal.timeout(5000),
+  });
+  expect(ready.status).toBe(200);
+  expect(await ready.json()).toEqual({
+    status: 'ready',
+    checks: { postgres: 'up', sqs: 'up' },
+  });
+  const metrics = await fetch(`${url}/metrics`, {
+    signal: AbortSignal.timeout(5000),
+  });
+  expect(metrics.status).toBe(200);
+  expect(await metrics.text()).toContain('wagering_outbox_lag_seconds');
+});
