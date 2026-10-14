@@ -14,6 +14,8 @@
 
 - [0008 — referências fora de ordem](0008-pending-references.md): aceito.
 
+- [0009 — SQS, inbox e outbox](0009-sqs-inbox-outbox.md): aceito.
+
 Novos registros devem conter contexto, estado, decisão ou proposta, consequências
 e verificação. Mantenha decisões aceitas separadas das sugestões. Ao substituir uma
 decisão, preserve o registro antigo e indique o novo documento.

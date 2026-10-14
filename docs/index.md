@@ -19,6 +19,7 @@
 - [Plano T04 — processamento transacional](exec-plans/completed/T04-transactional-processing.md).
 - [Plano T05 — idempotência e HTTP](exec-plans/completed/T05-idempotency-http.md).
 - [Plano T06 — referências fora de ordem](exec-plans/completed/T06-pending-references.md).
+- [Plano T07 — SQS, inbox e outbox](exec-plans/completed/T07-sqs-inbox-outbox.md).
 - [Dívida técnica](exec-plans/tech-debt.md).
 
 ## Decisões
@@ -34,6 +35,7 @@
 
 - [ADR 0007 — idempotência e HTTP](decisions/0007-idempotency-http.md).
 - [ADR 0008 — referências fora de ordem](decisions/0008-pending-references.md).
+- [ADR 0009 — SQS, inbox e outbox](decisions/0009-sqs-inbox-outbox.md).
 
 ## Operação
 
@@ -42,6 +44,7 @@
 - [Migrations e testes de persistência](runbooks/persistence.md).
 - [API HTTP e replay](runbooks/http.md).
 - [Worker de referências](runbooks/references.md).
+- [Consumidor SQS e publisher](runbooks/messaging.md).
 - [Diagnóstico de verificações](runbooks/troubleshooting.md).
 
 ## Referências
@@ -53,7 +56,7 @@
 As referências orientam o processo. Requisitos do produto continuam definidos pelo
 enunciado, e as restrições desta entrega prevalecem sobre exemplos das referências.
 
-Estado atual: T00 a T06 concluídas; não há plano ativo. Próxima tarefa: T07 —
-SQS, inbox e outbox, aguardando seleção do usuário e nova branch. HTTP, replay e
-worker de referências estão disponíveis; consumidor, publicação e reconciliação
-seguem pendentes.
+Estado atual: T00 a T07 concluídas; não há plano ativo. Próxima tarefa: T08 —
+reconciliação e observabilidade, aguardando seleção do usuário e nova branch.
+HTTP, referências, consumidor SQS, inbox e publicação da outbox estão disponíveis;
+readiness, métricas e matriz distribuída completa seguem pendentes.

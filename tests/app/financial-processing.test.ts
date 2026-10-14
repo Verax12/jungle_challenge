@@ -33,6 +33,8 @@ function setup() {
     hash: (value) => value,
   };
   const session: FinancialSession = {
+    receiveInbox: async (message) => message,
+    completeInbox: () => {},
     scheduleReference: () => {},
     claimReference: async () => undefined,
     updateReference: () => {},

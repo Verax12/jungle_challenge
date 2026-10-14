@@ -17,7 +17,7 @@ export function textId(value: unknown): string {
   );
   return value;
 }
-function object(
+export function object(
   value: unknown,
   allowed: string[],
   required = allowed,

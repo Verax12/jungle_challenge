@@ -41,7 +41,7 @@ test('MikroORM executes a query against real PostgreSQL', async () => {
   }
 });
 
-test('queue provisioning is idempotent and both required queues are FIFO', async () => {
+test('queue provisioning is idempotent and all three queues are FIFO with a redrive policy', async () => {
   const client = createLocalSqsClient(config.sqs);
   try {
     await provisionQueues(client);
@@ -59,6 +59,17 @@ test('queue provisioning is idempotent and both required queues are FIFO', async
       );
       expect(Attributes?.FifoQueue).toBe('true');
       expect(Attributes?.ContentBasedDeduplication).toBe('false');
+      if (QueueName === queueNames.transactions) {
+        const configured = await client.send(
+          new GetQueueAttributesCommand({
+            QueueUrl: QueueUrl!,
+            AttributeNames: ['RedrivePolicy'],
+          }),
+        );
+        expect(JSON.parse(configured.Attributes!.RedrivePolicy!)).toMatchObject(
+          { maxReceiveCount: 5 },
+        );
+      }
     }
   } finally {
     client.destroy();

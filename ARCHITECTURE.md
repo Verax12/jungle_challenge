@@ -12,7 +12,8 @@ A T03 acrescenta EntitySchema, mapeadores, migrations e constraints no PostgreSQ
 A T04 acrescenta criação de wallet e processamento transacional com outbox e lock
 por wallet. A T05 liga esses casos de uso ao HTTP e grava recibos imutáveis.
 A T06 acrescenta agenda persistente e worker de referências.
-Consumidores e garantias financeiras distribuídas completas continuam pendentes.
+A T07 acrescenta consumidor SQS, inbox atômica e publishers concorrentes.
+Reconciliação, observabilidade completa e matriz distribuída T09 continuam pendentes.
 
 O [README](README.md) define o produto. O [catálogo](docs/requirements.json) liga
 os requisitos às tarefas e às evidências esperadas.
@@ -53,15 +54,15 @@ e não comprova regras de negócio, ausência de dinheiro em `number` ou seguran
 
 ## Fronteiras financeiras previstas
 
-O mesmo caso de uso atenderá HTTP e SQS. A unidade de concorrência será a wallet.
+O mesmo caso de uso atende HTTP e SQS. A unidade de concorrência é a wallet.
 Saldo, ledger, transação e outbox confirmam juntos pela unidade transacional da T04.
-A integração da inbox, publicação e ack após commit continuam para T07.
+A T07 integra inbox na mesma unidade, com ack após commit e publicação da outbox.
 
 O [ADR 0003](docs/decisions/0003-backend-foundation.md) registra NestJS, MikroORM e
 LocalStack, build e limites da stack local. A [ADR 0005](docs/decisions/0005-schema-persistence.md)
 define representação SQL; o [ADR 0006](docs/decisions/0006-transactional-processing.md)
 detalha a execução transacional implementada. O [ADR 0007](docs/decisions/0007-idempotency-http.md) define HTTP e idempotência;
-protocolo SQS continua pendente.
+o [ADR 0009](docs/decisions/0009-sqs-inbox-outbox.md) define protocolo SQS e publicação.
 Consulte [execução local](docs/runbooks/backend.md) para setup e smoke tests.
 
 ## Modelo implementado na T02
@@ -78,11 +79,11 @@ por wallet. A T05 persiste o resultado original para replay.
 
 Os quatro tipos de evento têm factories e envelopes imutáveis; FinancialProcessing
 os grava na outbox de acordo com o resultado de cada operação. Inbox e Outbox
-modelam transições e retry parametrizado, sem consumidores ou publishers. IDs e
+modelam transições e retry parametrizado, utilizados pelos componentes da T07. IDs e
 instantes ISO UTC entram como argumentos; o domínio não lê relógio nem cria UUIDs.
 
 O mapeamento SQL está definido na T03 e a API financeira na T05. A política de
-referências está definida na T06; retries de mensageria seguem na T07.
+referências está definida na T06; retries de mensageria estão definidos na T07.
 
 ## Persistência implementada na T03
 
@@ -112,7 +113,7 @@ Cada execução usa um EntityManager separado; não há lock global.
 
 O evento é armazenado como envelope JSONB completo, protegido contra alteração;
 a T04 grava os eventos na mesma unidade transacional dos efeitos financeiros.
-Publicação e inbox permanecem na T07. O schema não impede
+A T07 acrescenta publicação e inbox atômica. O schema não impede
 um administrador de remover/desativar suas proteções. Veja [operação da persistência](docs/runbooks/persistence.md).
 
 ## Processamento implementado na T04
@@ -136,9 +137,10 @@ não foi reescrita; down recusa dados incompatíveis sem apagar a auditoria.
 
 Na entrega T04, a entrada era interna e duplicatas falhavam como conflito. A T05
 passa a calcular o hash no caso de uso e a responder replay por recibo persistente;
-a entrada HTTP usa esse mesmo processamento. Consumidor continua pendente. Infraestrutura/programação provocam rollback, sem
+a entrada HTTP usa esse mesmo processamento. O consumidor T07 usa o mesmo processamento. Infraestrutura/programação provocam rollback, sem
 inventar rejeição de negócio. Testes reais cobrem duas apostas concorrentes e progresso
-de wallets independentes; três processos, recuperação e mensageria continuam no roadmap.
+de wallets independentes. T07 cobre recuperação e mensageria; três processos
+simultâneos continuam na matriz T09.
 
 ## Idempotência e HTTP implementados na T05
 
@@ -190,7 +192,38 @@ após migrations. Sem nova dependência de scheduler. Migração 0004 inclui pen
 anteriores mantendo prazo e correlação quando disponível na outbox.
 
 Veja [ADR 0008](docs/decisions/0008-pending-references.md) e [operação do worker](docs/runbooks/references.md).
-Publicação, inbox e ack continuam na T07; o worker de referências apenas grava eventos.
+O worker de referências apenas grava eventos; o publisher T07 os publica após commit.
+
+## SQS, inbox e outbox implementados na T07
+
+Consumer e publisher são processos separados da API e do worker de referências.
+SqsConsumer valida o envelope e chama FinancialProcessing.process com contexto de
+inbox. INSERT ON CONFLICT e lock por consumerName/messageId precedem o lock de wallet;
+hash do envelope é conferido antes dos efeitos. Inbox, recibo, transação, wallet,
+ledger, agenda quando houver e outbox confirmam juntos. Replay também completa a inbox.
+DeleteMessage só ocorre depois do retorno do commit.
+
+Rejeição financeira e pendência recebem ack. Entrada inválida/conflito vai à DLQ;
+falhas transitórias têm visibilidade exponencial e limite de cinco recebimentos.
+Redrive nativo cobre mortes sem tratamento. Envio à DLQ precede ack; falha no envio
+mantém origem. Long polling é cancelado em shutdown; trabalho em curso é concluído
+ou redeliverado pelo timeout se a infraestrutura impedir confirmação.
+
+PublishOutbox seleciona uma linha devida com FOR UPDATE SKIP LOCKED, envia à fila
+wager-events.fifo e marca publishedAt. Eventos ainda sem commit financeiro não são
+visíveis. O lock fica aberto durante a chamada limitada de rede; cada processo tem
+pool próprio e não bloqueia wallets. Erros persistem backoff de 1 s até 60 s, sem
+limite que descarte eventos. SIGKILL libera posse pelo rollback PostgreSQL.
+
+Queda depois do envio e antes de publishedAt pode duplicar entrega. O envelope e
+eventId permanecem estáveis, e FIFO deduplica somente na sua janela; assinantes
+precisam de inbox persistente por eventId junto dos próprios efeitos. Não há promessa
+de exactly-once ou ordem global de eventos. O teste de contrato de assinante usa
+inbox e efeito SQL descartáveis; não implementa outro produto consumidor.
+
+A [operação de mensageria](docs/runbooks/messaging.md) descreve execução, envio,
+DLQ e shutdown. O ADR 0009 registra hashes distintos de inbox/negócio, retenção,
+limites, política de falhas e trade-offs de conexão durante envio.
 
 ## Autenticação e autorização
 
@@ -201,6 +234,6 @@ sem validação de tokens. Health não usa esse guard. Não há credenciais arte
 Uma implantação autenticada substituiria o guard por integração OIDC/JWT com IdP:
 validar issuer, audience, assinatura e expiração; associar identidade a provider e
 players autorizados; conferir acesso às wallets nas consultas e nas mutações.
-Header/body com providerId não provam identidade. SQS será canal interno, mantendo
+Header/body com providerId não provam identidade. SQS é canal interno, mantendo
 as validações do mesmo caso de uso. A ausência atual de autorização não é uma
 garantia de isolamento entre usuários.

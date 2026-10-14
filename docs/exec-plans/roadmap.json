@@ -115,7 +115,7 @@
       "id": "T07",
       "title": "SQS, inbox e outbox",
       "dependsOn": ["T06"],
-      "status": "planned",
+      "status": "completed",
       "scope": "Consumidor, publicação, retentativas, DLQ e encerramento seguro.",
       "acceptanceCriteria": [
         "Inbox e efeitos financeiros atômicos; ack após commit.",

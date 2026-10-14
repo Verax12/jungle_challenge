@@ -35,7 +35,12 @@
     "test:harness": "bun test tests/harness",
     "check": "bun scripts/check.ts",
     "start:references": "bun dist/composition/reference-main.js",
-    "stack:references": "docker compose --profile workers up --build -d reference-worker"
+    "stack:references": "docker compose --profile workers up --build -d reference-worker",
+    "start:consumer": "bun dist/composition/messaging-main.js consumer",
+    "start:publisher": "bun dist/composition/messaging-main.js publisher",
+    "test:messaging": "bun run build && bun test tests/messaging --timeout 30000",
+    "stack:messaging": "docker compose run --rm --build messaging",
+    "stack:workers": "docker compose --profile workers up --build -d consumer publisher reference-worker"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",

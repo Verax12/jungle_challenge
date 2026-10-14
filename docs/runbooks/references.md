@@ -94,6 +94,7 @@ A suíte references usa bancos descartáveis e relógio injetado para avançar 2
 sem esperar esse tempo. Testes de reinício/morte usam processos e PostgreSQL reais.
 O fechamento de cada cenário confere saldo reconstruído pelo ledger.
 
-Eventos ficam na outbox; publicação SQS será implementada na T07. Os testes desta
-etapa não comprovam ack, redelivery ou publicação. A [decisão 0008](../decisions/0008-pending-references.md)
+Eventos são gravados na outbox; o [publisher T07](messaging.md) os envia ao SQS.
+Os testes específicos da T06 não comprovam ack, redelivery ou publicação; a suíte
+messaging da T07 cobre essas garantias. A [decisão 0008](../decisions/0008-pending-references.md)
 registra política, locks, limitações de ordenação e recuperação.

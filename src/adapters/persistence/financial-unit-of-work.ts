@@ -24,15 +24,17 @@ import type {
   WagerTransactionKind,
 } from '../../domain/wager-transaction.js';
 import type { WalletLedgerEntry } from '../../domain/ledger.js';
-import type { OutboxMessage } from '../../domain/messages.js';
+import type { InboxMessage, OutboxMessage } from '../../domain/messages.js';
 import {
+  InboxEntity,
   WalletEntity,
   TransactionEntity,
   LedgerEntity,
   OutboxEntity,
 } from './entities.js';
-import type { WalletRecord } from './entities.js';
+import type { WalletRecord, InboxRecord } from './entities.js';
 import {
+  inboxMapper,
   walletMapper,
   transactionMapper,
   ledgerMapper,
@@ -40,10 +42,57 @@ import {
 } from './mappers.js';
 
 export class MikroFinancialSession implements FinancialSession {
+  private readonly inboxRecords = new Map<string, InboxRecord>();
   private readonly claimedJobs = new Map<string, ReferenceJobRecord>();
   private readonly claimedTransactions = new Map<string, TransactionRecord>();
   private readonly lockedWallets = new Map<string, WalletRecord>();
   constructor(private readonly em: EntityManager) {}
+  async receiveInbox(message: InboxMessage): Promise<InboxMessage> {
+    const connection = this.em.getConnection();
+    const context = this.em.getTransactionContext();
+    await connection.execute(
+      "set local lock_timeout = '2s'",
+      [],
+      'all',
+      context,
+    );
+    await connection.execute(
+      "set local statement_timeout = '5s'",
+      [],
+      'all',
+      context,
+    );
+    await connection.execute(
+      `insert into inbox_messages (consumer_name,message_id,payload_hash,received_at)
+      values (?,?,?,?) on conflict (consumer_name,message_id) do nothing`,
+      [
+        message.consumerName,
+        message.messageId,
+        message.payloadHash,
+        message.receivedAt,
+      ],
+      'all',
+      context,
+    );
+    const record = await this.em.findOneOrFail(
+      InboxEntity,
+      { consumerName: message.consumerName, messageId: message.messageId },
+      { lockMode: LockMode.PESSIMISTIC_WRITE, refresh: true },
+    );
+    this.inboxRecords.set(
+      JSON.stringify([message.consumerName, message.messageId]),
+      record,
+    );
+    return inboxMapper.toDomain(record);
+  }
+  completeInbox(message: InboxMessage): void {
+    const record = this.inboxRecords.get(
+      JSON.stringify([message.consumerName, message.messageId]),
+    );
+    if (!record)
+      throw new Error('Inbox message must be received before completion');
+    this.em.assign(record, inboxMapper.toRecord(message));
+  }
   scheduleReference(job: ReferenceJob): void {
     this.em.create(ReferenceJobEntity, {
       ...job,

@@ -26,6 +26,10 @@ recibos, replay e mapeamento HTTP. TTL, backoff e tentativas continuam propostos
 Atualização T06: o [ADR 0008](0008-pending-references.md) aceita TTL de 24 h e
 backoff de 1 s até 60 s para referências. Retry/DLQ de SQS e publicação seguem na T07.
 
+Atualização T07: o [ADR 0009](0009-sqs-inbox-outbox.md) aceita cinco recebimentos,
+DLQ, fila separada de eventos, inbox atômica e publicação com retry persistido.
+As propostas acima são histórico; os ADRs de cada etapa são as decisões vigentes.
+
 ## Contexto
 
 O README fixa parte da stack e deixa escolhas ao candidato. O plano inicial

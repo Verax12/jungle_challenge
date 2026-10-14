@@ -6,7 +6,7 @@ A T01 implementa a base executável, a T02 acrescenta modelos financeiros puros 
 a T03 implementa schema/mapeamento com testes de PostgreSQL real.
 A T04 executa abertura e operações com lock, ledger e eventos atômicos. A T05
 acrescenta endpoints HTTP, recibos idempotentes e replay. A T06 acrescenta worker
-de referências, com agenda e recuperação testadas em PostgreSQL. Consumidor ainda não existe. O catálogo
+de referências, com agenda e recuperação testadas em PostgreSQL. A T07 acrescenta consumidor/publisher com PostgreSQL e SQS reais. O catálogo
 registra o estado individual de cada requisito. Testes de unidade comprovam regras
 locais; harness e smoke tests não significam correção financeira distribuída.
 
@@ -38,7 +38,7 @@ cobertura semântica do enunciado requer revisão humana do catálogo.
 
 Não substituir completamente banco e broker por mocks. Testes distribuídos precisam
 de sincronização e evidências determinísticas, sem usar apenas sequências de chamadas
-ou esperas arbitrárias como prova de paralelismo. T04 a T06 já injetam falhas transacionais; ack e publishers serão exercitados na T07/T09.
+ou esperas arbitrárias como prova de paralelismo. T04 a T06 já injetam falhas transacionais; T07 cobre ack e publishers; T09 amplia a matriz distribuída.
 
 ## Gates atuais e evolução
 
@@ -66,7 +66,7 @@ movimentos e troca de processo, concorrência de chaves, paginação sob inserç
 conexão PostgreSQL recusada. Testes isolados de mapeamento de falhas não são prova de
 recuperação distribuída. O reinício sequencial de um processo não equivale a três
 instâncias simultâneas.
-T07 acrescentará mensageria; T09 completará a validação distribuída. Não usar testes vazios,
+T07 acrescenta mensageria; T09 completará a validação distribuída. Não usar testes vazios,
 skips ou stubs como aceitação dos requisitos futuros. Não enfraquecer um gate para
 ocultar uma falha financeira ou um teste instável.
 
@@ -82,7 +82,14 @@ ocultar uma falha financeira ou um teste instável.
 A T06 testa claims concorrentes, expiração com relógio injetado, rollback após flush,
 reinício real após SIGTERM e SIGKILL antes do commit. Relógio controlado não é evidência
 de 24 horas contínuas de carga. O processo agendado e o banco são reais nos cenários
-de recuperação. A publicação do evento de expiração permanece pendente para T07.
+de recuperação. A suíte messaging da T07 observa o evento de expiração publicado no broker.
 
 Build/check e testes com subprocessos compilados devem rodar sequencialmente no mesmo
 checkout, pois ambos recriam/consomem dist. Containers têm seu próprio filesystem.
+
+T07 acrescenta test:messaging/stack:messaging e execução na CI, usando bancos e filas
+exclusivos por fixture. Testa inbox/ack, redelivery, retries, DLQ, concorrência de
+consumidores e publishers, e processos mortos entre commit/ack e envio/publishedAt.
+O contrato de assinante usa deduplicação SQL por eventId com efeito também SQL;
+não representa um assinante de negócio implantado. Três instâncias completas e
+50 reenvios continuam na matriz T09. LocalStack real não equivale a homologação em AWS.

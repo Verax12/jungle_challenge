@@ -37,8 +37,9 @@ PostgreSQL/LocalStack saudáveis, provisionamento das filas e inicialização da
 | PostgreSQL    | `127.0.0.1:15432`                   |
 | SQS           | `http://127.0.0.1:4566`             |
 
-As filas são `wager-transactions.fifo` e `wager-transactions-dlq.fifo`. Não existem
-consumidores ou redrive de negócio ainda. O smoke usa uma fila temporária própria
+As filas de comandos são `wager-transactions.fifo` e `wager-transactions-dlq.fifo`;
+a T07 acrescenta `wager-events.fifo`, consumidor, redrive e publisher, iniciados
+explicitamente por `bun run stack:workers` após migrations. Veja [mensageria](messaging.md). O smoke usa uma fila temporária própria
 para envio/recebimento e a remove no final; não injeta mensagens nas filas de negócio.
 
 ## Aplicação no host, dependências em containers
@@ -78,5 +79,5 @@ com dados que precisa preservar. A limpeza de volumes na CI ocorre apenas no run
 Liveness não certifica disponibilidade do banco/broker. Domínio puro e schema já
 existem; a T04 acrescenta casos de uso transacionais internos. Consulte
 [migrations e testes](persistence.md). A [API financeira](http.md) existe na T05; readiness,
-o [worker de referências](references.md) existe na T06. Consumidor, publisher e métricas permanecem pendentes. Autenticação foi explicitamente omitida.
+o [worker de referências](references.md) existe na T06. Consumidor/publisher existem na T07; métricas permanecem pendentes. Autenticação foi explicitamente omitida.
 O smoke atual comprova instalação e comunicação, não correção financeira distribuída.

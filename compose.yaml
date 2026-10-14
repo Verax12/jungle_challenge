@@ -97,6 +97,38 @@ services:
     restart: unless-stopped
     stop_grace_period: 15s
 
+  consumer:
+    profiles: ['workers']
+    image: backend-challenge:local
+    build:
+      context: .
+      target: runtime
+    environment: *application-environment
+    command: ['bun', 'dist/composition/messaging-main.js', 'consumer']
+    depends_on:
+      postgres:
+        condition: service_healthy
+      queues:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    stop_grace_period: 60s
+
+  publisher:
+    profiles: ['workers']
+    image: backend-challenge:local
+    build:
+      context: .
+      target: runtime
+    environment: *application-environment
+    command: ['bun', 'dist/composition/messaging-main.js', 'publisher']
+    depends_on:
+      postgres:
+        condition: service_healthy
+      queues:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    stop_grace_period: 60s
+
   migrate:
     profiles: ['tools']
     image: backend-challenge:local
@@ -118,6 +150,19 @@ services:
     command: ['bun', 'run', 'test:persistence']
     depends_on:
       postgres:
+        condition: service_healthy
+
+  messaging:
+    profiles: ['tools']
+    build:
+      context: .
+      target: build
+    environment: *application-environment
+    command: ['bun', 'run', 'test:messaging']
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
         condition: service_healthy
 
   smoke:

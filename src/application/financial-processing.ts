@@ -12,7 +12,7 @@ import {
 } from '../domain/wager-transaction.js';
 import type { CreateWagerTransactionProps } from '../domain/wager-transaction.js';
 import type { WalletLedgerEntry } from '../domain/ledger.js';
-import { OutboxMessage } from '../domain/messages.js';
+import { InboxMessage, OutboxMessage } from '../domain/messages.js';
 import {
   WagerTransactionProcessed,
   WagerTransactionRejected,
@@ -24,6 +24,7 @@ import type {
   FinancialUnitOfWork,
   FinancialSession,
   FinancialRuntime,
+  InboxDelivery,
 } from './ports/financial-store.js';
 import { WalletNotFoundError } from './ports/financial-store.js';
 
@@ -98,7 +99,11 @@ export class FinancialProcessing {
     });
   }
 
-  async process(command: ProcessWagerCommand, context: ProcessingContext) {
+  async process(
+    command: ProcessWagerCommand,
+    context: ProcessingContext,
+    delivery?: InboxDelivery,
+  ) {
     validateContext(context);
     const payloadHash = this.runtime.hash(
       canonicalJson({
@@ -129,7 +134,7 @@ export class FinancialProcessing {
       money: Money.from(command.money),
     });
     try {
-      return await this.unit.run(async (session) => {
+      return await this.request(delivery, async (session) => {
         const existing = replay(
           await session.findReceipts(command),
           command,
@@ -180,7 +185,7 @@ export class FinancialProcessing {
         error.resource !== 'transaction'
       )
         throw error;
-      return this.unit.run(async (session) => {
+      return this.request(delivery, async (session) => {
         const committed = replay(
           await session.findReceipts(command),
           command,
@@ -190,6 +195,31 @@ export class FinancialProcessing {
         return { ...committed, idempotentReplay: true };
       });
     }
+  }
+
+  private request<T>(
+    delivery: InboxDelivery | undefined,
+    work: (session: FinancialSession) => Promise<T>,
+  ): Promise<T> {
+    return this.unit.run(async (session) => {
+      const inbox = delivery
+        ? await session.receiveInbox(
+            InboxMessage.receive({
+              ...delivery,
+              receivedAt: this.runtime.now(),
+            }),
+          )
+        : undefined;
+      if (inbox && delivery) inbox.assertPayload(delivery.payloadHash);
+      const result = await work(session);
+      if (inbox && !inbox.isProcessed()) {
+        inbox.markProcessed(
+          [this.runtime.now(), inbox.receivedAt].sort().at(-1)!,
+        );
+        session.completeInbox(inbox);
+      }
+      return result;
+    });
   }
 
   async retryReference() {

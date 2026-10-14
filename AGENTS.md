@@ -30,6 +30,8 @@ Se não houver plano ativo, identifique a próxima tarefa no roadmap e aguarde s
 - `bun run check`: harness, build e testes de domínio/HTTP/configuração, sem containers.
 - `bun run test:domain`: regras financeiras e modelos puros, sem banco ou broker.
 - `bun run stack:up` e `bun run stack:smoke`: stack e smoke em containers reais.
+- `bun run stack:workers`: iniciar consumidor, publisher e referências após migrations; veja [mensageria](docs/runbooks/messaging.md).
+- `bun run test:messaging` e `bun run stack:messaging`: integração PostgreSQL/SQS em recursos descartáveis.
 - `bun run stack:references`: iniciar worker de referências após migrations; veja [operação](docs/runbooks/references.md).
 - `bun run stack:migrate`: aplicar migrations no banco local configurado.
 - `bun run stack:persistence` ou `bun run test:persistence`: integração PostgreSQL em bancos descartáveis; veja [persistência](docs/runbooks/persistence.md).

@@ -111,12 +111,13 @@
       "summary": "Nunca publicar evento antes do commit da transação financeira.",
       "readmeSections": ["5", "11"],
       "taskId": "T07",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Falha antes do commit não publica; falha depois do commit recupera outbox.",
-          "status": "planned"
+          "description": "Publisher não observa outbox de transação SQL ainda aberta; após commit, publica envelopes armazenados.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
         }
       ]
     },
@@ -351,7 +352,7 @@
       "summary": "OPENING é interno, recusado tanto por HTTP como por fila.",
       "readmeSections": ["6.3", "9", "10"],
       "taskId": "T05",
-      "status": "implemented",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
@@ -361,8 +362,9 @@
         },
         {
           "kind": "integration",
-          "description": "T07: comprovar rejeição externa de OPENING pelo consumidor SQS real.",
-          "status": "planned"
+          "description": "Consumidor real SQS recusa OPENING e envia mensagem inválida à DLQ sem efeitos.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
         }
       ]
     },
@@ -451,18 +453,13 @@
       "summary": "Transação, wallet, ledger, inbox SQS e eventos de outbox participam da mesma transação SQL.",
       "readmeSections": ["6.5", "11"],
       "taskId": "T07",
-      "status": "implemented",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "T04: wallet, transação, ledger e eventos confirmam juntos; falhas após flush e no commit revertem tudo. Ainda sem inbox no caso de uso.",
+          "description": "Inbox, recibo e efeitos participam da unidade financeira; falha após flush reverte inbox, saldo, ledger e outbox em PostgreSQL real.",
           "status": "verified",
-          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
-        },
-        {
-          "kind": "integration",
-          "description": "T07: incorporar inbox SQS à unidade transacional e validar ack/redelivery com banco e broker reais.",
-          "status": "planned"
+          "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
         }
       ]
     },
@@ -666,7 +663,7 @@
       "summary": "Esgotamento da espera rejeita com código de referência inexistente e publica evento.",
       "readmeSections": ["7.1"],
       "taskId": "T06",
-      "status": "implemented",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
@@ -676,8 +673,9 @@
         },
         {
           "kind": "integration",
-          "description": "T07: publicar efetivamente o evento de expiração pelo publisher da outbox e observar no broker.",
-          "status": "planned"
+          "description": "Após TTL T06, publisher envia WagerTransactionRejected com REFERENCE_NOT_FOUND, observado na fila de eventos real.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
         }
       ]
     },
@@ -882,12 +880,13 @@
       "summary": "Filas wager-transactions.fifo e wager-transactions-dlq.fifo com envelope exigido.",
       "readmeSections": ["10"],
       "taskId": "T07",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Provisionamento e entrega real pelo broker local.",
-          "status": "planned"
+          "description": "Filas FIFO exigidas provisionadas com redrive nativo, DLQ e envelope validado; fila adicional de eventos separada.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
         }
       ]
     },
@@ -896,12 +895,13 @@
       "summary": "HTTP e SQS reutilizam o mesmo caso de uso; identidade de provedor validada no domínio.",
       "readmeSections": ["10"],
       "taskId": "T07",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Mesma regra e mesmo efeito para as duas entradas.",
-          "status": "planned"
+          "description": "SQS chama FinancialProcessing.process, usado pelo HTTP; replay entre canais, domínio e recusa de OPENING validados.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
         }
       ]
     },
@@ -910,12 +910,13 @@
       "summary": "Inbox deduplica por consumerName/messageId com payloadHash persistido.",
       "readmeSections": ["10"],
       "taskId": "T07",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Redelivery e mensagem repetida não duplicam efeitos; payload divergente detectado.",
-          "status": "planned"
+          "description": "Duas conexões/PIDs disputam consumerName/messageId recebido por grupos FIFO distintos, produzindo uma inbox e um efeito. Hash divergente vai à DLQ.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
         }
       ]
     },
@@ -924,12 +925,13 @@
       "summary": "Ack somente depois do commit; redelivery seguro.",
       "readmeSections": ["10"],
       "taskId": "T07",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Falha antes/depois do commit comprova momento do ack e ausência de efeito duplicado.",
-          "status": "planned"
+          "description": "Teste consulta dados confirmados no momento do DeleteMessage; SIGKILL após commit antes de ack seguido de redelivery preserva débito único.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
         }
       ]
     },
@@ -938,12 +940,13 @@
       "summary": "Negócio terminal com ack, transitório com backoff, permanente com DLQ e limite de tentativas.",
       "readmeSections": ["10"],
       "taskId": "T07",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Forçar cada classe de erro e conferir estado, retries e destino da mensagem.",
-          "status": "planned"
+          "description": "Negócio/replay recebe ack; entrada permanente vai à DLQ; backoff 1/2/4/8 s e quinta falha transitória/DLQ nativa testados. Falha no envio à DLQ preserva origem.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
         }
       ]
     },
@@ -952,12 +955,13 @@
       "summary": "SIGTERM conclui mensagens em andamento ou devolve visibilidade.",
       "readmeSections": ["10"],
       "taskId": "T07",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Encerrar consumidor durante processamento e demonstrar recuperação.",
-          "status": "planned"
+          "description": "Processo recebe SIGTERM durante trabalho e conclui ack; cancelamento após receive devolve visibilidade. Renovação real a cada 10 s testada.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
         }
       ]
     },
@@ -966,12 +970,13 @@
       "summary": "Publishers concorrentes recuperam eventos após crash e não perdem nem duplicam indefinidamente.",
       "readmeSections": ["11"],
       "taskId": "T07",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
-          "kind": "concurrency",
-          "description": "Dois publishers, claim recuperável, publicação e retry persistido.",
-          "status": "planned"
+          "kind": "integration",
+          "description": "Dois publishers em conexões/PIDs distintos selecionam linhas diferentes; SIGKILL após envio antes da marcação é recuperado. EventId estável e deduplicação SQL do assinante testados.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
         }
       ]
     },

@@ -102,5 +102,5 @@ o volume PostgreSQL. As tabelas continuam disponíveis na próxima inicializaç�
 Os casos de uso internos estão em src/application/financial-processing.ts, ligados
 ao banco por createFinancialProcessing em src/composition/financial-processing.ts.
 A T05 acrescenta [endpoints financeiros e replay original](http.md). O [worker de referências](references.md) existe na T06, com recuperação
-após SIGTERM e SIGKILL testada. Publicação, readiness e três instâncias completas
-continuam pendentes.
+após SIGTERM e SIGKILL testada. A T07 usa o mesmo schema para inbox e publicação; não acrescenta migration.
+Readiness e três instâncias completas continuam pendentes.

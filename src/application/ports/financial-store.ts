@@ -6,9 +6,16 @@ import type {
   WagerTransactionKind,
 } from '../../domain/wager-transaction.js';
 import type { WalletLedgerEntry } from '../../domain/ledger.js';
-import type { OutboxMessage } from '../../domain/messages.js';
+import type { InboxMessage, OutboxMessage } from '../../domain/messages.js';
 
+export interface InboxDelivery {
+  readonly consumerName: string;
+  readonly messageId: string;
+  readonly payloadHash: string;
+}
 export interface FinancialSession {
+  receiveInbox(message: InboxMessage): Promise<InboxMessage>;
+  completeInbox(message: InboxMessage): void;
   scheduleReference(job: ReferenceJob): void;
   claimReference(
     now: string,

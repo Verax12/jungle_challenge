@@ -30,8 +30,11 @@ jobs:
       - run: bun run stack:up
       - run: bun run stack:migrate
       - run: bun run stack:persistence
+      - run: bun run stack:messaging
       - run: bun run stack:smoke
       - run: docker compose run --rm reference-worker bun dist/composition/reference-main.js --once
+      - run: docker compose run --rm consumer bun dist/composition/messaging-main.js consumer --once
+      - run: docker compose run --rm publisher bun dist/composition/messaging-main.js publisher --once
       - name: Diagnostics on failure
         if: failure()
         run: docker compose ps -a && docker compose logs --no-color --tail 100
