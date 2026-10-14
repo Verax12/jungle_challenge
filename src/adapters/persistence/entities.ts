@@ -149,7 +149,36 @@ export const OutboxEntity = new EntitySchema<OutboxRecord>({
     publishedAt: { ...date, nullable: true },
   },
 });
+export interface ReceiptRecord {
+  transactionId: string;
+  idempotencyKey: string;
+  providerId: string;
+  externalTransactionId: string;
+  payloadHash: string;
+  status: WagerTransactionStatus;
+  balance: string;
+  currency: string;
+  walletVersion: number;
+  failureCode: FailureCode | null;
+}
+export const ReceiptEntity = new EntitySchema<ReceiptRecord>({
+  name: 'ReceiptRecord',
+  tableName: 'processing_receipts',
+  properties: {
+    transactionId: { ...id, primary: true },
+    idempotencyKey: id,
+    providerId: id,
+    externalTransactionId: id,
+    payloadHash: { type: 'string' },
+    status: { type: 'string' },
+    balance: amount,
+    currency,
+    walletVersion: { type: 'integer' },
+    failureCode: { type: 'string', nullable: true },
+  },
+});
 export const entities = [
+  ReceiptEntity,
   WalletEntity,
   TransactionEntity,
   LedgerEntity,

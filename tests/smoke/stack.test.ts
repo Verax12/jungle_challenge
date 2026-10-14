@@ -111,3 +111,13 @@ test('SQS sends, receives and acknowledges a probe on an isolated temporary FIFO
     }
   }
 });
+
+test('production image exposes financial queries through its database connection', async () => {
+  const url =
+    process.env.SMOKE_APP_URL ?? `http://127.0.0.1:${config.http.port}`;
+  const response = await fetch(`${url}/wallets/${randomUUID()}`, {
+    signal: AbortSignal.timeout(5000),
+  });
+  expect(response.status).toBe(404);
+  expect(await response.json()).toEqual({ code: 'WALLET_NOT_FOUND' });
+});

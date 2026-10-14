@@ -1,3 +1,4 @@
+import type { ProcessingReceipt, RequestIdentity } from '../idempotency.js';
 import type { Wallet } from '../../domain/wallet.js';
 import type {
   WagerTransaction,
@@ -7,6 +8,8 @@ import type { WalletLedgerEntry } from '../../domain/ledger.js';
 import type { OutboxMessage } from '../../domain/messages.js';
 
 export interface FinancialSession {
+  findReceipts(identity: RequestIdentity): Promise<ProcessingReceipt[]>;
+  insertReceipt(receipt: ProcessingReceipt): void;
   lockWallet(id: string): Promise<Wallet | undefined>;
   findReference(
     providerId: string,

@@ -49,6 +49,8 @@ quando essa perda for desejada. Reversões financeiras de apostas usam novas ope
 nunca down de migration. A segunda migration permite rejeições auditáveis de
 player/moeda incompatível. Seu down restaura a FK anterior: falha e preserva tudo
 caso existam rejeições incompatíveis com ela. Não exclua auditoria para forçar o down.
+A migration 0003 cria recibos idempotentes; seu down remove os recibos, preservando
+as transações financeiras, que deixam de ter replay original disponível.
 Os testes cobrem tanto reversão completa num banco vazio quanto upgrade/reversão
 com dados existentes e falha segura diante dessas rejeições.
 
@@ -97,5 +99,6 @@ acrescente uma nova migration versionada.
 o volume PostgreSQL. As tabelas continuam disponíveis na próxima inicialização.
 Os casos de uso internos estão em src/application/financial-processing.ts, ligados
 ao banco por createFinancialProcessing em src/composition/financial-processing.ts.
-Ainda não há endpoints financeiros, replay original, workers ou publicação.
+A T05 acrescenta [endpoints financeiros e replay original](http.md). Workers e
+publicação continuam pendentes.
 Readiness, testes de múltiplas instâncias e recuperação financeira continuam pendentes.

@@ -1,3 +1,6 @@
+import { canonicalJson, replay } from './idempotency.js';
+import type { ProcessingResult } from './idempotency.js';
+import { FinancialConflictError } from './ports/financial-store.js';
 import { DomainError, ensure } from '../domain/errors.js';
 import { Money } from '../domain/money.js';
 import type { MoneyProps } from '../domain/money.js';
@@ -29,7 +32,7 @@ export interface ProcessingContext {
 }
 export type ProcessWagerCommand = Omit<
   CreateWagerTransactionProps,
-  'id' | 'createdAt' | 'money'
+  'id' | 'createdAt' | 'money' | 'payloadHash'
 > & {
   readonly money: MoneyProps;
 };
@@ -96,67 +99,130 @@ export class FinancialProcessing {
 
   async process(command: ProcessWagerCommand, context: ProcessingContext) {
     validateContext(context);
+    const payloadHash = this.runtime.hash(
+      canonicalJson({
+        providerId: command.providerId,
+        externalTransactionId: command.externalTransactionId,
+        walletId: command.walletId,
+        playerId: command.playerId,
+        roundId: command.roundId,
+        gameId: command.gameId,
+        kind: command.kind,
+        money: {
+          amount: command.money.amount,
+          currency: command.money.currency,
+        },
+        ...(command.referenceExternalTransactionId === undefined
+          ? {}
+          : {
+              referenceExternalTransactionId:
+                command.referenceExternalTransactionId,
+            }),
+      }),
+    );
     const transaction = WagerTransaction.create({
       ...command,
+      payloadHash,
       id: this.runtime.newId(),
       createdAt: this.runtime.now(),
       money: Money.from(command.money),
     });
-    return this.unit.run(async (session) => {
-      const wallet = await session.lockWallet(transaction.walletId);
-      if (!wallet) throw new WalletNotFoundError();
-      const now = this.runtime.now();
-      instant(now);
-      const at = [now, wallet.updatedAt, transaction.createdAt].sort().at(-1)!;
-      const reference =
-        transaction.referenceExternalTransactionId === undefined
-          ? undefined
-          : await session.findReference(
-              transaction.providerId,
-              transaction.referenceExternalTransactionId,
-            );
-      const alreadyReversed =
-        reference && transaction.requiresReference()
-          ? await session.wasReversed(reference.id, transaction.kind)
-          : false;
-      let entry: WalletLedgerEntry | undefined;
-      try {
-        ensure(wallet.playerId === transaction.playerId, 'WALLET_MISMATCH');
-        ensure(
-          wallet.currency === transaction.money.currency,
-          'CURRENCY_MISMATCH',
+    try {
+      return await this.unit.run(async (session) => {
+        const existing = replay(
+          await session.findReceipts(command),
+          command,
+          payloadHash,
         );
-        entry = wallet.apply(transaction, {
-          entryId: this.runtime.newId(),
-          at,
-          alreadyReversed,
-          ...(reference ? { reference } : {}),
+        if (existing) return { ...existing, idempotentReplay: true };
+        const wallet = await session.lockWallet(transaction.walletId);
+        if (!wallet) throw new WalletNotFoundError();
+        const concurrent = replay(
+          await session.findReceipts(command),
+          command,
+          payloadHash,
+        );
+        if (concurrent) return { ...concurrent, idempotentReplay: true };
+        const now = this.runtime.now();
+        instant(now);
+        const at = [now, wallet.updatedAt, transaction.createdAt]
+          .sort()
+          .at(-1)!;
+        const reference =
+          transaction.referenceExternalTransactionId === undefined
+            ? undefined
+            : await session.findReference(
+                transaction.providerId,
+                transaction.referenceExternalTransactionId,
+              );
+        const alreadyReversed =
+          reference && transaction.requiresReference()
+            ? await session.wasReversed(reference.id, transaction.kind)
+            : false;
+        let entry: WalletLedgerEntry | undefined;
+        try {
+          ensure(wallet.playerId === transaction.playerId, 'WALLET_MISMATCH');
+          ensure(
+            wallet.currency === transaction.money.currency,
+            'CURRENCY_MISMATCH',
+          );
+          entry = wallet.apply(transaction, {
+            entryId: this.runtime.newId(),
+            at,
+            alreadyReversed,
+            ...(reference ? { reference } : {}),
+          });
+        } catch (error) {
+          if (
+            !(error instanceof DomainError) ||
+            error.code === 'INVALID_INPUT' ||
+            error.code === 'INFRASTRUCTURE_PERMANENT'
+          )
+            throw error;
+          if (error.code === 'REFERENCE_NOT_FOUND')
+            transaction.markPendingReference();
+          else transaction.reject(error.code);
+        }
+        if (entry) {
+          session.updateWallet(wallet);
+          session.insertLedger(entry, wallet.version);
+        }
+        session.insertTransaction(transaction);
+        this.recordEvents(session, wallet, transaction, entry, context, at);
+        const result: ProcessingResult = {
+          transactionId: transaction.id,
+          status: transaction.status,
+          ...(transaction.failureCode
+            ? { failureCode: transaction.failureCode }
+            : {}),
+          balance: wallet.balance.toJSON(),
+          walletVersion: wallet.version,
+        };
+        session.insertReceipt({
+          idempotencyKey: command.idempotencyKey,
+          providerId: command.providerId,
+          externalTransactionId: command.externalTransactionId,
+          payloadHash,
+          result,
         });
-      } catch (error) {
-        if (
-          !(error instanceof DomainError) ||
-          error.code === 'INVALID_INPUT' ||
-          error.code === 'INFRASTRUCTURE_PERMANENT'
-        )
-          throw error;
-        if (error.code === 'REFERENCE_NOT_FOUND')
-          transaction.markPendingReference();
-        else transaction.reject(error.code);
-      }
-      if (entry) {
-        session.updateWallet(wallet);
-        session.insertLedger(entry, wallet.version);
-      }
-      session.insertTransaction(transaction);
-      this.recordEvents(session, wallet, transaction, entry, context, at);
-      return {
-        transactionId: transaction.id,
-        status: transaction.status,
-        failureCode: transaction.failureCode,
-        balance: wallet.balance.toJSON(),
-        walletVersion: wallet.version,
-      };
-    });
+        return { ...result, idempotentReplay: false };
+      });
+    } catch (error) {
+      if (
+        !(error instanceof FinancialConflictError) ||
+        error.resource !== 'transaction'
+      )
+        throw error;
+      return this.unit.run(async (session) => {
+        const committed = replay(
+          await session.findReceipts(command),
+          command,
+          payloadHash,
+        );
+        if (!committed) throw error;
+        return { ...committed, idempotentReplay: true };
+      });
+    }
   }
 
   private recordEvents(

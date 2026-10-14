@@ -17,6 +17,7 @@
 - [Plano T02 — domínio financeiro e evidências](exec-plans/completed/T02-financial-domain.md).
 - [Plano T03 — schema, persistência e evidências](exec-plans/completed/T03-schema-persistence.md).
 - [Plano T04 — processamento transacional](exec-plans/completed/T04-transactional-processing.md).
+- [Plano T05 — idempotência e HTTP](exec-plans/completed/T05-idempotency-http.md).
 - [Dívida técnica](exec-plans/tech-debt.md).
 
 ## Decisões
@@ -30,11 +31,14 @@
 
 - [ADR 0006 — processamento transacional](decisions/0006-transactional-processing.md).
 
+- [ADR 0007 — idempotência e HTTP](decisions/0007-idempotency-http.md).
+
 ## Operação
 
 - [Ambiente e comandos](runbooks/environment.md).
 - [Execução da stack local](runbooks/backend.md).
 - [Migrations e testes de persistência](runbooks/persistence.md).
+- [API HTTP e replay](runbooks/http.md).
 - [Diagnóstico de verificações](runbooks/troubleshooting.md).
 
 ## Referências
@@ -46,6 +50,6 @@
 As referências orientam o processo. Requisitos do produto continuam definidos pelo
 enunciado, e as restrições desta entrega prevalecem sobre exemplos das referências.
 
-Estado atual: T00 a T04 concluídas; não há plano ativo. Próxima tarefa: T05 —
-idempotência e HTTP, aguardando seleção do usuário e nova branch. Casos de uso
-financeiros internos já persistem efeitos e eventos; endpoints e workers seguem pendentes.
+Estado atual: T00 a T05 concluídas; não há plano ativo. Próxima tarefa: T06 —
+referências fora de ordem, aguardando seleção do usuário e nova branch. HTTP e replay
+persistente estão disponíveis; workers, publicação e reconciliação seguem pendentes.

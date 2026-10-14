@@ -33,6 +33,8 @@ function setup() {
     hash: (value) => value,
   };
   const session: FinancialSession = {
+    findReceipts: async () => [],
+    insertReceipt: () => {},
     lockWallet: async () => wallet,
     findReference: async () => undefined,
     wasReversed: async () => false,
@@ -53,7 +55,6 @@ function setup() {
     providerId: 'provider',
     externalTransactionId: 'external',
     idempotencyKey: 'key',
-    payloadHash: 'hash',
     roundId: 'round',
     gameId: 'game',
     kind: WagerTransactionKind.Loss,

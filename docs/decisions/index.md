@@ -10,6 +10,8 @@
 
 - [0006 — processamento transacional](0006-transactional-processing.md): aceito.
 
+- [0007 — idempotência e HTTP](0007-idempotency-http.md): aceito.
+
 Novos registros devem conter contexto, estado, decisão ou proposta, consequências
 e verificação. Mantenha decisões aceitas separadas das sugestões. Ao substituir uma
 decisão, preserve o registro antigo e indique o novo documento.

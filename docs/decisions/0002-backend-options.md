@@ -20,6 +20,9 @@ Atualização T04: o [ADR 0006](0006-transactional-processing.md) aceitou e test
 READ COMMITTED com lock pessimista antes da leitura da wallet. HTTP, TTL e
 tentativas permanecem propostas para suas etapas.
 
+Atualização T05: o [ADR 0007](0007-idempotency-http.md) aceita SHA-256 canônico,
+recibos, replay e mapeamento HTTP. TTL, backoff e tentativas continuam propostos.
+
 ## Contexto
 
 O README fixa parte da stack e deixa escolhas ao candidato. O plano inicial

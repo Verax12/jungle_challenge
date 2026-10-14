@@ -1,3 +1,5 @@
+import { ReceiptEntity } from '../../src/adapters/persistence/entities.js';
+import { IdempotencyConflictError } from '../../src/application/idempotency.js';
 import { afterAll, beforeAll, expect, test } from 'bun:test';
 import { LockMode, IsolationLevel } from '@mikro-orm/core';
 import type { EntityManager } from '@mikro-orm/postgresql';
@@ -68,7 +70,6 @@ function command(
     providerId: 'provider',
     externalTransactionId: unique(),
     idempotencyKey: unique(),
-    payloadHash: 'internal-test-hash',
     roundId: 'round',
     gameId: 'game',
     kind: Kind.Bet,
@@ -418,17 +419,20 @@ test('reference in another wallet is rejected without touching either balance', 
   await assertBalance(second, '100.00', 1, 1);
 });
 
-test('duplicate identity fails without another financial effect; replay contract remains T05', async () => {
+test('matching identity replays; changed key or external identity conflicts without another effect', async () => {
   const wallet = await open();
   const input = command(wallet);
   const first = await service.process(input, context());
+  expect(await service.process(input, context())).toEqual({
+    ...first,
+    idempotentReplay: true,
+  });
   for (const repeated of [
-    input,
     { ...input, idempotencyKey: unique() },
     { ...input, externalTransactionId: unique() },
   ]) {
     await expect(service.process(repeated, context())).rejects.toBeInstanceOf(
-      FinancialConflictError,
+      IdempotencyConflictError,
     );
   }
   await assertOutcome(first.transactionId, Status.Processed, true);
@@ -510,6 +514,11 @@ test('deferred failure at commit returns no success and rolls back all effects',
     await fixture.orm.em.fork().count(TransactionEntity, {
       externalTransactionId: input.externalTransactionId,
     }),
+  ).toBe(0);
+  expect(
+    await fixture.orm.em
+      .fork()
+      .count(ReceiptEntity, { idempotencyKey: input.idempotencyKey }),
   ).toBe(0);
   await assertBalance(wallet, '100.00', 1, 1);
 });
@@ -617,8 +626,8 @@ test('two real sessions betting 80 on 100 yield one debit and one rejection, wit
       result.failureCode,
     );
   for (const input of inputs)
-    await expect(service.process(input, context())).rejects.toBeInstanceOf(
-      FinancialConflictError,
+    expect((await service.process(input, context())).idempotentReplay).toBe(
+      true,
     );
   await assertBalance(wallet, '20.00', 2, 2);
 });
@@ -712,7 +721,7 @@ test('schema upgrade preserves data and down never discards incompatible rejecti
       },
       context(),
     );
-    await migrator.up();
+    await migrator.up({ to: 'Migration202610140002' });
     await migrator.down();
     expect(await migrator.getExecutedMigrations()).toHaveLength(1);
     await migrator.up();
@@ -720,8 +729,11 @@ test('schema upgrade preserves data and down never discards incompatible rejecti
       command(wallet, { money: { amount: '25.00', currency: 'USD' } }),
       context(),
     );
-    await expectSqlFailure(() => migrator.down(), '23503');
-    expect(await migrator.getExecutedMigrations()).toHaveLength(2);
+    await expectSqlFailure(
+      () => migrator.down({ to: 'Migration202610140001' }),
+      '23503',
+    );
+    expect(await migrator.getExecutedMigrations()).toHaveLength(3);
     const em = isolated.orm.em.fork();
     expect(
       (

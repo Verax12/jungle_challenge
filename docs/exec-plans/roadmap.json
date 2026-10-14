@@ -82,7 +82,7 @@
       "id": "T05",
       "title": "Idempotência e HTTP",
       "dependsOn": ["T04"],
-      "status": "planned",
+      "status": "completed",
       "scope": "Idempotência persistente, hash, replay, endpoints, consultas e extensão de autenticação.",
       "acceptanceCriteria": [
         "Header é fonte da verdade; payload conflitante falha.",

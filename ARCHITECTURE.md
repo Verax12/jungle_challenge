@@ -4,13 +4,14 @@
 
 O harness está concluído. A T01 acrescenta bootstrap NestJS executado pelo Bun,
 configuração validada, build TypeScript e Compose com PostgreSQL e SQS via LocalStack.
-Existe apenas o endpoint `/health/live`, sem dependência de banco ou broker.
+O endpoint `/health/live` não depende de banco ou broker. A T05 acrescenta os
+endpoints financeiros de criação, submissão e consulta, com replay persistente.
 O provisionamento cria filas vazias. A T02 implementa modelos de domínio de Money,
 wallet, transações, ledger, inbox/outbox e eventos, com testes de unidade.
 A T03 acrescenta EntitySchema, mapeadores, migrations e constraints no PostgreSQL.
 A T04 acrescenta criação de wallet e processamento transacional com outbox e lock
-por wallet. Esses casos de uso ainda não estão ligados ao servidor HTTP ou à fila;
-consumidores e garantias financeiras distribuídas completas continuam pendentes.
+por wallet. A T05 liga esses casos de uso ao HTTP e grava recibos imutáveis.
+Consumidores e garantias financeiras distribuídas completas continuam pendentes.
 
 O [README](README.md) define o produto. O [catálogo](docs/requirements.json) liga
 os requisitos às tarefas e às evidências esperadas.
@@ -58,7 +59,8 @@ A integração da inbox, publicação e ack após commit continuam para T07.
 O [ADR 0003](docs/decisions/0003-backend-foundation.md) registra NestJS, MikroORM e
 LocalStack, build e limites da stack local. A [ADR 0005](docs/decisions/0005-schema-persistence.md)
 define representação SQL; o [ADR 0006](docs/decisions/0006-transactional-processing.md)
-detalha a execução transacional implementada. Protocolos HTTP/SQS continuam pendentes.
+detalha a execução transacional implementada. O [ADR 0007](docs/decisions/0007-idempotency-http.md) define HTTP e idempotência;
+protocolo SQS continua pendente.
 Consulte [execução local](docs/runbooks/backend.md) para setup e smoke tests.
 
 ## Modelo implementado na T02
@@ -71,15 +73,15 @@ Wallet.open devolve a wallet e, se houver saldo inicial, OPENING e ledger. Walle
 valida uma transação e seus fatos de referência antes de mudar estado, devolvendo o
 ledger correspondente. LOSS só muda o estado da transação. A aplicação T04 persiste
 esses objetos na mesma transação SQL; a unidade transacional garante a serialização
-por wallet. Replay do resultado original pertence à T05.
+por wallet. A T05 persiste o resultado original para replay.
 
 Os quatro tipos de evento têm factories e envelopes imutáveis; FinancialProcessing
 os grava na outbox de acordo com o resultado de cada operação. Inbox e Outbox
 modelam transições e retry parametrizado, sem consumidores ou publishers. IDs e
 instantes ISO UTC entram como argumentos; o domínio não lê relógio nem cria UUIDs.
 
-O mapeamento SQL está definido na T03. A API financeira ainda não existe, e a política
-de HTTP/TTL/tentativas segue pendente.
+O mapeamento SQL está definido na T03 e a API financeira na T05. TTL e tentativas
+seguem pendentes para as etapas de workers.
 
 ## Persistência implementada na T03
 
@@ -131,8 +133,50 @@ da wallet, somente em REJECTED com o código correspondente. As demais transaç�
 continuam sujeitas ao escopo, e rejeição nunca pode ter ledger. A migration anterior
 não foi reescrita; down recusa dados incompatíveis sem apagar a auditoria.
 
-A entrada atual é interna e exige payloadHash pronto. Duplicatas falham com conflito
-sem repetir efeitos; não há ainda replay de resposta original, hash canônico externo,
-contrato HTTP ou consumidor. Infraestrutura/programação provocam rollback, sem
+Na entrega T04, a entrada era interna e duplicatas falhavam como conflito. A T05
+passa a calcular o hash no caso de uso e a responder replay por recibo persistente;
+a entrada HTTP usa esse mesmo processamento. Consumidor continua pendente. Infraestrutura/programação provocam rollback, sem
 inventar rejeição de negócio. Testes reais cobrem duas apostas concorrentes e progresso
 de wallets independentes; três processos, recuperação e mensageria continuam no roadmap.
+
+## Idempotência e HTTP implementados na T05
+
+FinancialProcessing calcula SHA-256 de JSON com chaves ordenadas recursivamente,
+incluindo somente os campos de negócio documentados no ADR 0007. Header e metadados
+não entram no hash. O contrato HTTP rejeita campos extras e usa exclusivamente
+Idempotency-Key do header; OPENING continua reservado à factory interna.
+
+processing_receipts guarda identidade, hash, status, balance, walletVersion e código
+de falha da resposta inicial. Schema exige identidade/resultado coerentes no commit
+e proíbe alteração/exclusão. O recibo é persistido junto de transação, saldo, ledger
+e outbox. Consulta antes/depois do lock resolve duplicatas na mesma wallet; corrida
+entre wallets termina nas unique constraints, com rollback seguido de consulta ao
+recibo confirmado para decidir conflito/replay. Não existe cache de deduplicação.
+
+Replays de aplicação, LOSS, rejeição e pendência preservam saldo/status originais.
+GET da transação mostra o estado atual; o aceite pendente não será reescrito quando
+T06 resolver sua referência. Dados T04 sem recibo retornam conflito, sem backfill
+inventado. Mudar a chave da mesma identidade externa também é conflito.
+
+FinancialQueries fornece GETs de wallet, transação e ledger. Cursor base64url
+versionado ordena por walletVersion, fixa teto da primeira página e valida a wallet.
+Ele não é assinado nem representa autorização. Novos lançamentos exigem nova
+paginação. Limite padrão 50, máximo 100, sem offsets.
+
+O [runbook HTTP](docs/runbooks/http.md) contém rotas, exemplos e a matriz de status.
+Conexões são inicializadas sob demanda e fechadas no shutdown; liveness permanece
+independente do banco. Erros retornam códigos sem conteúdo SQL ou dados internos.
+Readiness, reconciliação e observabilidade completa seguem na T08.
+
+## Autenticação e autorização
+
+Conforme a seção 2 do README, autenticação foi omitida. Os endpoints financeiros
+estão abertos para uso local; OpenBusinessAccessGuard é o ponto de extensão explícito,
+sem validação de tokens. Health não usa esse guard. Não há credenciais artesanais.
+
+Uma implantação autenticada substituiria o guard por integração OIDC/JWT com IdP:
+validar issuer, audience, assinatura e expiração; associar identidade a provider e
+players autorizados; conferir acesso às wallets nas consultas e nas mutações.
+Header/body com providerId não provam identidade. SQS será canal interno, mantendo
+as validações do mesmo caso de uso. A ausência atual de autorização não é uma
+garantia de isolamento entre usuários.

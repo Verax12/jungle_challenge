@@ -4,8 +4,8 @@
 
 A T01 implementa a base executável, a T02 acrescenta modelos financeiros puros e
 a T03 implementa schema/mapeamento com testes de PostgreSQL real.
-A T04 executa abertura e operações com lock, ledger e eventos atômicos. Ainda não
-há endpoint de negócio ou consumidor. O catálogo
+A T04 executa abertura e operações com lock, ledger e eventos atômicos. A T05
+acrescenta endpoints HTTP, recibos idempotentes e replay. Consumidor ainda não existe. O catálogo
 registra o estado individual de cada requisito. Testes de unidade comprovam regras
 locais; harness e smoke tests não significam correção financeira distribuída.
 
@@ -60,6 +60,11 @@ pg_blocking_pids demonstra duas sessões esperando na cadeia de locks antes de l
 Outra wallet deve confirmar antes da liberação. Polling tem prazo; esperar um tempo
 fixo não é usado como prova de concorrência. Falha inicial de observação mostrou que
 o segundo waiter pode esperar pelo primeiro, exigindo percorrer a cadeia completa.
+T05 inclui HTTP real na suíte de persistência: contratos, recibos, replay após
+movimentos e troca de processo, concorrência de chaves, paginação sob inserções e
+conexão PostgreSQL recusada. Testes isolados de mapeamento de falhas não são prova de
+recuperação distribuída. O reinício sequencial de um processo não equivale a três
+instâncias simultâneas.
 T07 acrescentará mensageria; T09 completará a validação distribuída. Não usar testes vazios,
 skips ou stubs como aceitação dos requisitos futuros. Não enfraquecer um gate para
 ocultar uma falha financeira ou um teste instável.

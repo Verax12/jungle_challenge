@@ -39,6 +39,7 @@ Se não houver plano ativo, identifique a próxima tarefa no roadmap e aguarde s
 
 Use a versão de Bun em `.bun-version`. Veja [preparação e execução](docs/runbooks/environment.md).
 Para a aplicação e Docker, consulte [stack local](docs/runbooks/backend.md).
+Para endpoints, replay e limites de autenticação, veja [API HTTP](docs/runbooks/http.md).
 
 ## Ciclo de entrega
 

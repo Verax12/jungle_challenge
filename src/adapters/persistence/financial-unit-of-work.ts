@@ -1,3 +1,8 @@
+import type {
+  ProcessingReceipt,
+  RequestIdentity,
+} from '../../application/idempotency.js';
+import { ReceiptEntity } from './entities.js';
 import {
   IsolationLevel,
   LockMode,
@@ -34,6 +39,48 @@ import {
 export class MikroFinancialSession implements FinancialSession {
   private readonly lockedWallets = new Map<string, WalletRecord>();
   constructor(private readonly em: EntityManager) {}
+  async findReceipts(identity: RequestIdentity): Promise<ProcessingReceipt[]> {
+    const rows = await this.em.find(
+      ReceiptEntity,
+      {
+        $or: [
+          { idempotencyKey: identity.idempotencyKey },
+          {
+            providerId: identity.providerId,
+            externalTransactionId: identity.externalTransactionId,
+          },
+        ],
+      },
+      { refresh: true },
+    );
+    return rows.map((row) => ({
+      idempotencyKey: row.idempotencyKey,
+      providerId: row.providerId,
+      externalTransactionId: row.externalTransactionId,
+      payloadHash: row.payloadHash,
+      result: {
+        transactionId: row.transactionId,
+        status: row.status,
+        balance: { amount: row.balance, currency: row.currency },
+        walletVersion: row.walletVersion,
+        ...(row.failureCode ? { failureCode: row.failureCode } : {}),
+      },
+    }));
+  }
+  insertReceipt(receipt: ProcessingReceipt): void {
+    this.em.create(ReceiptEntity, {
+      transactionId: receipt.result.transactionId,
+      idempotencyKey: receipt.idempotencyKey,
+      providerId: receipt.providerId,
+      externalTransactionId: receipt.externalTransactionId,
+      payloadHash: receipt.payloadHash,
+      status: receipt.result.status,
+      balance: receipt.result.balance.amount,
+      currency: receipt.result.balance.currency,
+      walletVersion: receipt.result.walletVersion,
+      failureCode: receipt.result.failureCode ?? null,
+    });
+  }
   async lockWallet(id: string) {
     const record = await this.em.findOne(
       WalletEntity,
@@ -97,7 +144,9 @@ export class MikroFinancialUnitOfWork implements FinancialUnitOfWork {
           throw new FinancialConflictError('wallet');
         if (
           constraint === 'transactions_external' ||
-          constraint === 'wager_transactions_idempotency_key_key'
+          constraint === 'wager_transactions_idempotency_key_key' ||
+          constraint === 'processing_receipts_idempotency_key_key' ||
+          constraint === 'receipts_external'
         )
           throw new FinancialConflictError('transaction');
       }

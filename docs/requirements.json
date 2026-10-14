@@ -21,12 +21,13 @@
       "summary": "Documentar ausência de autenticação, desenho com IdP e ponto de extensão; não implementar credenciais artesanais.",
       "readmeSections": ["2"],
       "taskId": "T05",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "review",
-          "description": "Revisar ARCHITECTURE e extensão explícita; health aberto e fila interna com identidade validada.",
-          "status": "planned"
+          "description": "Ausência de autenticação documentada em ARCHITECTURE e ADR 0007; OpenBusinessAccessGuard delimita integração IdP/OIDC e autorização futura. Health permanece público; nenhuma credencial artesanal.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T05-idempotency-http.md"
         }
       ]
     },
@@ -95,12 +96,13 @@
       "summary": "Idempotência persistente; memória e FIFO não são garantias suficientes.",
       "readmeSections": ["5"],
       "taskId": "T05",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Reenvio após reinício e concorrência com registros persistidos.",
-          "status": "planned"
+          "description": "Recibo PostgreSQL imutável na mesma transação dos efeitos. Submissões HTTP simultâneas produzem um efeito e replay; processo novo recupera resposta persistida sem memória compartilhada.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T05-idempotency-http.md"
         }
       ]
     },
@@ -349,11 +351,17 @@
       "summary": "OPENING é interno, recusado tanto por HTTP como por fila.",
       "readmeSections": ["6.3", "9", "10"],
       "taskId": "T05",
-      "status": "planned",
+      "status": "implemented",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Submissão externa OPENING rejeitada nas duas entradas.",
+          "description": "POST HTTP recusa OPENING com 400; factory compartilhada também o rejeita. A entrada SQS real ainda não existe.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T05-idempotency-http.md"
+        },
+        {
+          "kind": "integration",
+          "description": "T07: comprovar rejeição externa de OPENING pelo consumidor SQS real.",
           "status": "planned"
         }
       ]
@@ -363,12 +371,13 @@
       "summary": "Mesma chave com payload divergente é conflito, não replay.",
       "readmeSections": ["6.3", "9"],
       "taskId": "T05",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Conflitos sequenciais e paralelos não alteram saldo nem resultado original.",
-          "status": "planned"
+          "description": "Payload diferente na mesma chave, chave diferente na identidade externa e identidades cruzadas retornam 409; casos sequenciais e concorrentes preservam o resultado anterior e saldo.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T05-idempotency-http.md"
         }
       ]
     },
@@ -596,12 +605,13 @@
       "summary": "Replay retorna resultado original, incluindo saldo observado naquele momento.",
       "readmeSections": ["7", "9"],
       "taskId": "T05",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Replay após outras movimentações e após reinício retorna snapshot original.",
-          "status": "planned"
+          "description": "Replay de aplicação, LOSS, rejeição e pendência mantém status/saldo/versão originais após outros movimentos; teste encerra um processo HTTP e confirma replay em outro processo.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T05-idempotency-http.md"
         }
       ]
     },
@@ -707,12 +717,13 @@
       "summary": "POST /wallets cria wallet, devolve contrato e trata duplicação como conflito.",
       "readmeSections": ["9"],
       "taskId": "T05",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "HTTP para abertura zero/positiva, moeda, validação e duplicação.",
-          "status": "planned"
+          "description": "HTTP cria wallet com saldo zero/positivo, contrato monetário em string e versão 1; duplicação retorna 409. A abertura e suas garantias continuam cobertas pela suíte de processamento.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T05-idempotency-http.md"
         }
       ]
     },
@@ -736,12 +747,13 @@
       "summary": "Consultar wallet, transação por ID e por providerId/externalTransactionId.",
       "readmeSections": ["9"],
       "taskId": "T05",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "GETs retornam recursos corretos e distinguem ausentes.",
-          "status": "planned"
+          "description": "GETs de wallet, transação interna e identidade provider/externa retornam recursos corretos, sem hash/chave interna; ausência retorna 404.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T05-idempotency-http.md"
         }
       ]
     },
@@ -750,12 +762,13 @@
       "summary": "GET ledger tem cursor estável e opaco, com limite e ordenação consistente.",
       "readmeSections": ["9"],
       "taskId": "T05",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Páginas sem lacunas/repetição sob inserções e tratamento de cursor inválido.",
-          "status": "planned"
+          "description": "Paginação por versão com teto fixado retorna páginas sem repetição durante inserção; cursor vinculado à wallet, limite e parâmetros inválidos são rejeitados.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T05-idempotency-http.md"
         }
       ]
     },
@@ -764,12 +777,13 @@
       "summary": "POST transação aceita o contrato de negócio e retorna transactionId, status, balance e idempotentReplay.",
       "readmeSections": ["9"],
       "taskId": "T05",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Contratos de sucesso, pendência, rejeição, entrada inválida e replay.",
-          "status": "planned"
+          "description": "HTTP real retorna transactionId, status, balance, walletVersion e idempotentReplay em sucesso, pendência, rejeição e replay; entrada inválida é recusada antes de qualquer efeito.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T05-idempotency-http.md"
         }
       ]
     },
@@ -778,12 +792,13 @@
       "summary": "Idempotency-Key obrigatório como fonte da verdade; não inferir silenciosamente o header ausente.",
       "readmeSections": ["9"],
       "taskId": "T05",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Header ausente recusado e chave fornecida respeitada.",
-          "status": "planned"
+          "description": "Header único obrigatório; ausência, duplicação e chave no corpo são recusadas. Chave fornecida é persistida no recibo.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T05-idempotency-http.md"
         }
       ]
     },
@@ -792,12 +807,13 @@
       "summary": "Hash de JSON canônico com chaves ordenadas e apenas campos de negócio; algoritmo documentado.",
       "readmeSections": ["9"],
       "taskId": "T05",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
-          "kind": "unit",
-          "description": "Ordem de chaves/metadados não alteram hash; mudança de negócio altera.",
-          "status": "planned"
+          "kind": "integration",
+          "description": "SHA-256 de JSON ordenado recursivamente; permutar campos e correlationId não altera hash, enquanto mudar campo de negócio conflita. Algoritmo e subconjunto documentados no ADR 0007.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T05-idempotency-http.md"
         }
       ]
     },
@@ -806,12 +822,13 @@
       "summary": "Distinguir consistentemente payload inválido, conflito, rejeição, pendência e infraestrutura transitória.",
       "readmeSections": ["9"],
       "taskId": "T05",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Matriz HTTP verificável sem depender de parsing de mensagens de erro.",
-          "status": "planned"
+          "description": "Matriz 201/200/202/400/404/409/422/503/500 verificada por HTTP. Conexão PostgreSQL realmente recusada retorna 503/Retry-After; falhas inesperadas retornam 500 genérico sem detalhes internos.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T05-idempotency-http.md"
         }
       ]
     },
