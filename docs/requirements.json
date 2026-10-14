@@ -138,11 +138,17 @@
       "summary": "Controle de concorrência por wallet, sem lock global nem read/calculate/update desprotegido; múltiplas instâncias.",
       "readmeSections": ["5", "8"],
       "taskId": "T04",
-      "status": "planned",
+      "status": "implemented",
       "evidence": [
         {
           "kind": "concurrency",
-          "description": "Disputa de saldo e wallets distintas processadas em paralelo.",
+          "description": "Caso de uso usa lock pessimista antes da leitura. Duas sessões comprovadas na cadeia pg_blocking_pids disputam 80.00 + 80.00 sobre 100.00; outra wallet confirma enquanto a primeira está bloqueada.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
+        {
+          "kind": "concurrency",
+          "description": "T09: comprovar três ou mais processos e recuperação distribuída; duas sessões no mesmo processo não substituem essa evidência.",
           "status": "planned"
         }
       ]
@@ -282,7 +288,13 @@
         },
         {
           "kind": "concurrency",
-          "description": "T04/T09: comprovar ausência de lost update no caso de uso com apostas concorrentes e múltiplas instâncias.",
+          "description": "T04: duas apostas simultâneas de 80.00 em saldo 100.00 não produzem lost update ou saldo negativo; ledger reconstrói 20.00.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
+        {
+          "kind": "concurrency",
+          "description": "T09: completar comprovação de concorrência com três ou mais processos e recuperação.",
           "status": "planned"
         }
       ]
@@ -292,12 +304,13 @@
       "summary": "Toda mudança de saldo tem ledger correspondente e vice-versa.",
       "readmeSections": ["6.2"],
       "taskId": "T04",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Commit/rollback e reconciliação demonstram correspondência das movimentações.",
-          "status": "planned"
+          "description": "Abertura e operações reais reconciliam saldo com soma do ledger; falha após flush e falha diferida no commit revertem saldo, transação, ledger e outbox.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
         }
       ]
     },
@@ -306,12 +319,13 @@
       "summary": "Version inicia em 1 e incrementa somente quando saldo muda.",
       "readmeSections": ["6.2", "9"],
       "taskId": "T04",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
-          "kind": "unit",
-          "description": "Abertura, operações financeiras, LOSS, rejeição e replay preservam version correta.",
-          "status": "planned"
+          "kind": "integration",
+          "description": "Abertura zero/positiva começa em 1; operações com efeito incrementam uma vez; LOSS, rejeições e tentativas duplicadas preservam versão.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
         }
       ]
     },
@@ -393,12 +407,13 @@
       "summary": "LOSS e transações REJECTED não alteram saldo nem geram ledger.",
       "readmeSections": ["6.4", "7"],
       "taskId": "T04",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Comparar saldo, versão e contagem do ledger após resultados sem efeito.",
-          "status": "planned"
+          "description": "LOSS, saldo insuficiente, moeda/player incompatível e referências inválidas mantêm saldo/versão e não geram ledger; eventos de resultado são persistidos.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
         }
       ]
     },
@@ -427,11 +442,17 @@
       "summary": "Transação, wallet, ledger, inbox SQS e eventos de outbox participam da mesma transação SQL.",
       "readmeSections": ["6.5", "11"],
       "taskId": "T07",
-      "status": "planned",
+      "status": "implemented",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Injetar falhas em etapas da persistência e verificar tudo ou nada.",
+          "description": "T04: wallet, transação, ledger e eventos confirmam juntos; falhas após flush e no commit revertem tudo. Ainda sem inbox no caso de uso.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
+        {
+          "kind": "integration",
+          "description": "T07: incorporar inbox SQS à unidade transacional e validar ack/redelivery com banco e broker reais.",
           "status": "planned"
         }
       ]
@@ -441,12 +462,13 @@
       "summary": "BET debita uma vez; saldo insuficiente gera rejeição.",
       "readmeSections": ["7"],
       "taskId": "T04",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Aposta válida e insuficiente com ledger, saldo e failureCode.",
-          "status": "planned"
+          "description": "BET aplicada debita uma vez; disputa simultânea de duas apostas de 80.00 em saldo 100.00 gera uma PROCESSED, uma REJECTED/INSUFFICIENT_FUNDS e saldo 20.00. Tentativas duplicadas falham sem novo efeito.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
         }
       ]
     },
@@ -455,12 +477,13 @@
       "summary": "WIN credita e pode referenciar BET da mesma rodada.",
       "readmeSections": ["7"],
       "taskId": "T04",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "WIN válido e referência incompatível de tipo ou escopo.",
-          "status": "planned"
+          "description": "WIN com e sem referência credita valor exato; referências de outro provider não são usadas e escopo/tipo incompatíveis são rejeitados.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
         }
       ]
     },
@@ -469,12 +492,13 @@
       "summary": "LOSS registra resultado sem movimentação financeira.",
       "readmeSections": ["7"],
       "taskId": "T04",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "LOSS processado sem ledger e com evento de processamento.",
-          "status": "planned"
+          "description": "LOSS é PROCESSED com evento correspondente, sem ledger, WalletBalanceChanged ou mudança de saldo/versão.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
         }
       ]
     },
@@ -483,12 +507,13 @@
       "summary": "REFUND reverte BET PROCESSED uma vez, por crédito integral.",
       "readmeSections": ["7"],
       "taskId": "T04",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "REFUND válido, referência de tipo incorreto e repetição.",
-          "status": "planned"
+          "description": "REFUND integral de BET processada credita; duplicação sequencial e concorrente produz rejeição auditável sem novo efeito.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
         }
       ]
     },
@@ -497,12 +522,13 @@
       "summary": "ROLLBACK inverte BET, WIN ou REFUND PROCESSED, uma vez por referência/tipo.",
       "readmeSections": ["7"],
       "taskId": "T04",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Inversão das direções para cada tipo permitido e bloqueio de duplicação.",
-          "status": "planned"
+          "description": "ROLLBACK de BET, WIN e REFUND inverte a direção corretamente; nova reversão do mesmo tipo é rejeitada, inclusive com duas sessões concorrentes.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
         }
       ]
     },
@@ -555,12 +581,13 @@
       "summary": "REFUND/ROLLBACK têm valor igual à referência; reversão parcial fora de escopo.",
       "readmeSections": ["7"],
       "taskId": "T04",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Reversões integrais aceitas e valor divergente rejeitado.",
-          "status": "planned"
+          "description": "Reversões integrais passam; referência de valor divergente gera REFERENCE_AMOUNT_MISMATCH sem movimento.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
         }
       ]
     },
@@ -583,8 +610,14 @@
       "summary": "Referência ausente persiste PENDING_REFERENCE e é reprocessada.",
       "readmeSections": ["7", "7.1"],
       "taskId": "T06",
-      "status": "planned",
+      "status": "implemented",
       "evidence": [
+        {
+          "kind": "integration",
+          "description": "T04: referência ausente persiste PENDING_REFERENCE e evento sem mudar saldo/ledger. Worker de resolução ainda ausente.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
         {
           "kind": "integration",
           "description": "Reversão chega antes da referência, aguarda e é aplicada apenas uma vez.",
@@ -597,12 +630,13 @@
       "summary": "Reversão que negativaria saldo é rejeitada, auditável e com código distinto de BET sem saldo.",
       "readmeSections": ["7"],
       "taskId": "T04",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "ROLLBACK de crédito sem saldo disponível não gera débito.",
-          "status": "planned"
+          "description": "ROLLBACK de crédito já consumido gera REJECTED/REVERSAL_INSUFFICIENT_FUNDS com evento e sem débito.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
         }
       ]
     },
@@ -687,12 +721,13 @@
       "summary": "Saldo inicial positivo gera OPENING e crédito no ledger na mesma transação SQL.",
       "readmeSections": ["9"],
       "taskId": "T04",
-      "status": "planned",
+      "status": "verified",
       "evidence": [
         {
           "kind": "integration",
-          "description": "Abertura atômica e rollback; saldo zero e versão inicial 1.",
-          "status": "planned"
+          "description": "Abertura positiva grava wallet, OPENING, ledger CREDIT e dois eventos; abertura zero não cria movimento. Exceção após flush reverte o conjunto.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
         }
       ]
     },
@@ -939,18 +974,19 @@
       "summary": "Eventos mínimos Processed incluindo LOSS, Rejected, PendingReference e BalanceChanged apenas quando saldo muda.",
       "readmeSections": ["11"],
       "taskId": "T02",
-      "status": "implemented",
+      "status": "verified",
       "evidence": [
         {
           "kind": "unit",
-          "description": "Factories dos quatro eventos verificam os estados; LOSS permite Processed e lançamento zero não permite BalanceChanged. Geração pelo caso de uso ainda pendente.",
+          "description": "Factories dos quatro eventos verificam os estados; LOSS permite Processed e lançamento zero não permite BalanceChanged.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T02-financial-domain.md"
         },
         {
           "kind": "integration",
-          "description": "T04/T07: comprovar geração e gravação atômica dos eventos pelo caso de uso, incluindo LOSS e rejeições.",
-          "status": "planned"
+          "description": "T04: caso de uso grava Processed, Rejected, PendingReference e BalanceChanged na mesma transação SQL; LOSS/rejeição não produzem BalanceChanged. Falhas revertem outbox e efeitos.",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T04-transactional-processing.md"
         }
       ]
     },

@@ -46,7 +46,11 @@ pública e exclusiva do desenvolvimento. As migrations e os testes não dependem
 `bun run db:rollback` reverte a última migration. Na versão inicial isso remove as
 cinco tabelas financeiras e seus dados; execute somente num banco descartável ou
 quando essa perda for desejada. Reversões financeiras de apostas usam novas operações,
-nunca down de migration. O teste de lifecycle faz up/down/up em seu próprio banco.
+nunca down de migration. A segunda migration permite rejeições auditáveis de
+player/moeda incompatível. Seu down restaura a FK anterior: falha e preserva tudo
+caso existam rejeições incompatíveis com ela. Não exclua auditoria para forçar o down.
+Os testes cobrem tanto reversão completa num banco vazio quanto upgrade/reversão
+com dados existentes e falha segura diante dessas rejeições.
 
 ## O que os testes comprovam
 
@@ -55,8 +59,12 @@ nunca down de migration. O teste de lifecycle faz up/down/up em seu próprio ban
 - Constraints rejeitam escala excedente, valores especiais, saldo negativo,
   duplicidades, alterações de ledger, referências inválidas e estados inconsistentes.
 - Disputas de unicidade usam duas conexões com PIDs PostgreSQL diferentes e uma
-  barreira antes das operações. Isso testa constraints reais, não o caso de uso futuro.
+  barreira antes das operações; esses testes verificam as constraints.
 - Uma falha após flush reverte o conjunto; inconsistência diferida falha no commit.
+- Casos de uso da T04 exercitam abertura, cinco operações, rejeições, eventos e
+  rollback. Duas apostas de 80.00 sobre 100.00 geram um débito, uma rejeição e 20.00.
+  REFUND/ROLLBACK concorrentes aplicam uma vez; outra wallet progride enquanto a
+  primeira está bloqueada. Todos os cenários conferem saldo versus soma do ledger.
 - O comando compilado de migrations funciona sem fontes TypeScript ou CLI global.
 
 Cada suíte cria um banco `challenge_test_<identificador aleatório>`, aplica migrations
@@ -87,5 +95,7 @@ acrescente uma nova migration versionada.
 
 `bun run stack:down` e `colima stop backend-challenge` liberam os serviços, mantendo
 o volume PostgreSQL. As tabelas continuam disponíveis na próxima inicialização.
-Ainda não há endpoints financeiros, repositories de caso de uso, workers ou publicação.
+Os casos de uso internos estão em src/application/financial-processing.ts, ligados
+ao banco por createFinancialProcessing em src/composition/financial-processing.ts.
+Ainda não há endpoints financeiros, replay original, workers ou publicação.
 Readiness, testes de múltiplas instâncias e recuperação financeira continuam pendentes.

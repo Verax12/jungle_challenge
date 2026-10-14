@@ -26,12 +26,12 @@ test('migration up is repeatable, down removes its objects, and up restores the 
   const other = await disposableDatabase();
   try {
     const migrator = other.orm.getMigrator();
-    expect(await migrator.getPendingMigrations()).toHaveLength(1);
+    expect(await migrator.getPendingMigrations()).toHaveLength(2);
     await migrator.up();
     await migrator.up();
-    expect(await migrator.getExecutedMigrations()).toHaveLength(1);
+    expect(await migrator.getExecutedMigrations()).toHaveLength(2);
     expect(await migrator.getPendingMigrations()).toHaveLength(0);
-    await migrator.down();
+    await migrator.down({ to: 0 });
     expect(
       await sql(
         other.orm.em,
@@ -52,7 +52,7 @@ test('migration up is repeatable, down removes its objects, and up restores the 
     ).toEqual([]);
     await migrator.up();
     await wallet(other.orm.em);
-    expect(await migrator.getExecutedMigrations()).toHaveLength(1);
+    expect(await migrator.getExecutedMigrations()).toHaveLength(2);
   } finally {
     await other.close();
   }

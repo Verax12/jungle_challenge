@@ -16,6 +16,10 @@ arredondamento, mapeamento MikroORM separado e constraints no PostgreSQL. O lock
 wallet já protege INSERT de ledger; sua aquisição antes da leitura pelo caso de uso
 será implementada e validada na T04. TTL, tentativas e mapeamento HTTP seguem propostos.
 
+Atualização T04: o [ADR 0006](0006-transactional-processing.md) aceitou e testou
+READ COMMITTED com lock pessimista antes da leitura da wallet. HTTP, TTL e
+tentativas permanecem propostas para suas etapas.
+
 ## Contexto
 
 O README fixa parte da stack e deixa escolhas ao candidato. O plano inicial

@@ -76,6 +76,7 @@ com dados que precisa preservar. A limpeza de volumes na CI ocorre apenas no run
 ## Limites
 
 Liveness não certifica disponibilidade do banco/broker. Domínio puro e schema já
-existem; consulte [migrations e testes](persistence.md). Ainda faltam casos de uso,
-endpoints financeiros, readiness, autenticação, workers e métricas.
+existem; a T04 acrescenta casos de uso transacionais internos. Consulte
+[migrations e testes](persistence.md). Ainda faltam endpoints financeiros, readiness,
+autenticação, workers e métricas.
 O smoke atual comprova instalação e comunicação, não correção financeira distribuída.

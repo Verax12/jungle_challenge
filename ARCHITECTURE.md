@@ -8,8 +8,9 @@ Existe apenas o endpoint `/health/live`, sem dependência de banco ou broker.
 O provisionamento cria filas vazias. A T02 implementa modelos de domínio de Money,
 wallet, transações, ledger, inbox/outbox e eventos, com testes de unidade.
 A T03 acrescenta EntitySchema, mapeadores, migrations e constraints no PostgreSQL.
-Ainda não existem casos de uso financeiros ligados ao servidor, consumidores ou
-garantias financeiras distribuídas completas implementadas.
+A T04 acrescenta criação de wallet e processamento transacional com outbox e lock
+por wallet. Esses casos de uso ainda não estão ligados ao servidor HTTP ou à fila;
+consumidores e garantias financeiras distribuídas completas continuam pendentes.
 
 O [README](README.md) define o produto. O [catálogo](docs/requirements.json) liga
 os requisitos às tarefas e às evidências esperadas.
@@ -28,7 +29,7 @@ implementações internas, mas os casos de uso não podem depender delas. O pont
 entrada fica em `src/composition/`, sem arquivos de aplicação soltos em `src/`.
 
 Domain contém o modelo puro da T02; adapters e composition contêm a base da T01.
-Application receberá casos de uso e portas nas próximas etapas.
+Application contém FinancialProcessing e portas de unidade transacional/relógio/identidade.
 
 O domínio não importa pacotes externos. Money usa centavos `bigint` e saída decimal
 com duas casas; a exceção antiga do verificador para `decimal.js` foi removida.
@@ -51,14 +52,13 @@ e não comprova regras de negócio, ausência de dinheiro em `number` ou seguran
 ## Fronteiras financeiras previstas
 
 O mesmo caso de uso atenderá HTTP e SQS. A unidade de concorrência será a wallet.
-Saldo, ledger, transação, inbox quando aplicável e outbox deverão confirmar juntos.
-Publicação e ack ocorrerão depois do commit. Essas são obrigações futuras, ainda
-sem implementação ou evidências de funcionamento.
+Saldo, ledger, transação e outbox confirmam juntos pela unidade transacional da T04.
+A integração da inbox, publicação e ack após commit continuam para T07.
 
 O [ADR 0003](docs/decisions/0003-backend-foundation.md) registra NestJS, MikroORM e
 LocalStack, build e limites da stack local. A [ADR 0005](docs/decisions/0005-schema-persistence.md)
-define representação SQL e protocolo transacional previsto; casos de uso e protocolos
-HTTP/SQS continuam pendentes das etapas correspondentes.
+define representação SQL; o [ADR 0006](docs/decisions/0006-transactional-processing.md)
+detalha a execução transacional implementada. Protocolos HTTP/SQS continuam pendentes.
 Consulte [execução local](docs/runbooks/backend.md) para setup e smoke tests.
 
 ## Modelo implementado na T02
@@ -69,12 +69,12 @@ rehydrate reconstrói estado persistido confiável sem executar movimentações.
 
 Wallet.open devolve a wallet e, se houver saldo inicial, OPENING e ledger. Wallet.apply
 valida uma transação e seus fatos de referência antes de mudar estado, devolvendo o
-ledger correspondente. LOSS só muda o estado da transação. Esses objetos precisam
-ser persistidos em uma mesma transação SQL futura; nenhuma memória local garante
-unicidade, ausência de lost updates ou replay persistente.
+ledger correspondente. LOSS só muda o estado da transação. A aplicação T04 persiste
+esses objetos na mesma transação SQL; a unidade transacional garante a serialização
+por wallet. Replay do resultado original pertence à T05.
 
-Os quatro tipos de evento têm factories e envelopes imutáveis; ainda não há
-coordenador que os grave automaticamente em outbox a cada operação. Inbox e Outbox
+Os quatro tipos de evento têm factories e envelopes imutáveis; FinancialProcessing
+os grava na outbox de acordo com o resultado de cada operação. Inbox e Outbox
 modelam transições e retry parametrizado, sem consumidores ou publishers. IDs e
 instantes ISO UTC entram como argumentos; o domínio não lê relógio nem cria UUIDs.
 
@@ -102,12 +102,37 @@ conferir referências, versão, cadeia de saldos e consistência no commit.
 
 Constraints diferidas permitem persistir o conjunto em um Unit of Work. Uma falha
 no commit exige rollback de tudo, mesmo se flush já retornou. INSERT de ledger
-bloqueia somente a wallet relacionada. O caso de uso T04 deverá usar
-EntityManager.transactional e SELECT FOR UPDATE/LockMode.PESSIMISTIC_WRITE antes de
-reidratar o saldo; não há lock global. Esse protocolo está definido, mas ainda não
-implementado como processamento de apostas concorrentes.
+bloqueia somente a wallet relacionada. O caso de uso T04 usa
+EntityManager.transactional e LockMode.PESSIMISTIC_WRITE antes de reidratar o saldo.
+READ COMMITTED permite que a leitura após a espera observe a operação anterior.
+Cada execução usa um EntityManager separado; não há lock global.
 
 O evento é armazenado como envelope JSONB completo, protegido contra alteração;
-publicação e vínculo obrigatório com cada operação financeira pertencem a T04/T07.
-Testes de schema e rollback manual não substituem esses fluxos. O schema não impede
+a T04 grava os eventos na mesma unidade transacional dos efeitos financeiros.
+Publicação e inbox permanecem na T07. O schema não impede
 um administrador de remover/desativar suas proteções. Veja [operação da persistência](docs/runbooks/persistence.md).
+
+## Processamento implementado na T04
+
+FinancialProcessing oferece createWallet e process, ligados ao MikroORM por
+createFinancialProcessing na composição. A porta FinancialUnitOfWork só resolve
+após o commit; falhas de flush/commit revertem todos os registros. O domínio continua
+sem ORM, relógio ou geração de IDs. Clock/UUID/SHA-256 da abertura são adaptadores.
+
+Abertura positiva cria OPENING, ledger CREDIT e eventos Processed/BalanceChanged;
+abertura zero cria apenas wallet com versão 1. BET/WIN/REFUND/ROLLBACK aplicados
+mudam saldo, ledger e versão. LOSS produz Processed sem movimento. Rejeições de
+negócio geram transação REJECTED com código e evento, preservando saldo/versão.
+Referências são buscadas por provider/ID externo; ausência fica PENDING_REFERENCE,
+com evento. Resolver essas pendências e definir TTL/backoff pertencem à T06.
+
+Uma nova migration permite guardar os dados recebidos quando player/moeda divergem
+da wallet, somente em REJECTED com o código correspondente. As demais transações
+continuam sujeitas ao escopo, e rejeição nunca pode ter ledger. A migration anterior
+não foi reescrita; down recusa dados incompatíveis sem apagar a auditoria.
+
+A entrada atual é interna e exige payloadHash pronto. Duplicatas falham com conflito
+sem repetir efeitos; não há ainda replay de resposta original, hash canônico externo,
+contrato HTTP ou consumidor. Infraestrutura/programação provocam rollback, sem
+inventar rejeição de negócio. Testes reais cobrem duas apostas concorrentes e progresso
+de wallets independentes; três processos, recuperação e mensageria continuam no roadmap.

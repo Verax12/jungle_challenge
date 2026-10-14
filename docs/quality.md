@@ -4,7 +4,8 @@
 
 A T01 implementa a base executável, a T02 acrescenta modelos financeiros puros e
 a T03 implementa schema/mapeamento com testes de PostgreSQL real.
-Ainda não há caso de uso financeiro persistente ou endpoint de negócio. O catálogo
+A T04 executa abertura e operações com lock, ledger e eventos atômicos. Ainda não
+há endpoint de negócio ou consumidor. O catálogo
 registra o estado individual de cada requisito. Testes de unidade comprovam regras
 locais; harness e smoke tests não significam correção financeira distribuída.
 
@@ -53,6 +54,12 @@ T03 acrescenta `test:persistence`/`stack:persistence`, fora do check sem Docker 
 incluído no job stack da CI. Testa migrations, mapeamento e SQL direto, com disputas
 de unicidade sincronizadas entre duas conexões PostgreSQL. Esses resultados não
 substituem a disputa de apostas no caso de uso ou os cenários com três instâncias.
+T04 usa a mesma suíte de persistência para testar os casos de uso reais, rollback
+após flush/no commit e concorrência. Uma transação de controle segura a wallet;
+pg_blocking_pids demonstra duas sessões esperando na cadeia de locks antes de liberá-las.
+Outra wallet deve confirmar antes da liberação. Polling tem prazo; esperar um tempo
+fixo não é usado como prova de concorrência. Falha inicial de observação mostrou que
+o segundo waiter pode esperar pelo primeiro, exigindo percorrer a cadeia completa.
 T07 acrescentará mensageria; T09 completará a validação distribuída. Não usar testes vazios,
 skips ou stubs como aceitação dos requisitos futuros. Não enfraquecer um gate para
 ocultar uma falha financeira ou um teste instável.
