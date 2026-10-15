@@ -9,7 +9,7 @@ checkout, o enunciado e o histórico Git; não utiliza worktrees nem coautoria.
 Todos os 78 requisitos obrigatórios foram conferidos e os gates locais passaram:
 **477 testes distintos aprovados, zero falhas e zero skips**, além de quatro probes
 reais de recuperação. Nenhum defeito conhecido de negócio/lógica permanece aberto
-no escopo exercitado. Publicação e CI remota ainda estão em execução.
+no escopo exercitado. Main publicada e os dois jobs da CI remota aprovados.
 
 ## Correção encontrada nesta rodada
 
@@ -32,7 +32,8 @@ Foram acrescentados 31 casos às suítes existentes:
 - Quatro de SQS/PostgreSQL: três identidades inválidas seguem para DLQ sem inbox,
   recibo ou efeito financeiro; Unicode válido mantém identidade e replay.
 
-O teste de overflow respeita o limite NUMERIC existente: crédito fora da capacidade
+O teste de overflow respeita o limite de persistência do projeto (money_amount,
+abaixo de 10^36), aplicado também pelo ExactAmountType: crédito fora desse limite
 retorna erro interno e reverte tudo. Após débito de 0.01, o mesmo crédito pode ser
 repetido e aplicado uma vez. Não foi inventado um novo código de rejeição de negócio.
 
@@ -225,10 +226,22 @@ Não é possível provar ausência universal de bugs com uma suíte finita.
 
 O origin aponta para Verax12/jungle_challenge. Seu main inicial c712906 contém
 somente um README com o título do repositório e não compartilha ancestral com o
-histórico do challenge. A integração preservará esse commit como ancestral de
-merge e conservará o enunciado completo. Não será usado force push.
+histórico do challenge. A integração preservou esse commit como ancestral de
+merge e conservou o enunciado completo. Não foi usado force push.
+
+Correção/testes em cd44d83; merge em 939690e. Main local e origin/main foram
+conferidas no mesmo commit após o push. O prefixo original do README continua com
+SHA-256 47795fce2fc38cae5f1b91368ebaf80b7a2ed1fe147f36704b665faf0613812e,
+idêntico ao commit c7143e6d041585d6913f56eb7415105e074f83dc.
 
 Stack e volume exclusivos T13 removidos. Nenhum banco temporário restante e
 nenhuma divergência de reconciliação antes da limpeza. Volume anterior, SQL Server
 e Colima preservados. API/workers responderam health e métricas com 200.
-Execução remota será registrada depois de realizada.
+A [execução remota do GitHub Actions](https://github.com/Verax12/jungle_challenge/actions/runs/38791985589) aprovou os jobs harness e stack
+em 939690e. O runner Ubuntu repetiu os gates e os quatro probes, incluindo PostgreSQL
+parado e SIGTERM antes do commit. O registro final de documentação não altera
+código, testes, dependências ou workflow. A página da execução identifica o SHA
+exato validado; execuções posteriores ficam no histórico de Actions do repositório.
+
+Nenhuma validação obrigatória ficou pendente para o usuário. Main foi publicada com
+push normal, sem force push, PR ou trailer de coautoria.

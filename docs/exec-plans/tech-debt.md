@@ -3,14 +3,14 @@
 As entregas T00–T10 foram auditadas novamente na T11. A [T12](../audits/T12-corrections.md)
 corrigiu os três achados e integrou regressões aos gates. Não há achado F1/F2/F3
 pendente. A [T13](../audits/T13-release-validation.md) corrigiu identidade Unicode
-malformada e validou 477 testes mais quatro probes reais. CI remota em andamento;
+malformada e validou 477 testes mais quatro probes reais. CI remota aprovada;
 homologação externa continua fora do escopo.
 
-| Item                           | Situação                                                             | Tratamento                                              |
-| ------------------------------ | -------------------------------------------------------------------- | ------------------------------------------------------- |
-| Docker e Compose locais        | Preparados na T01 com Colima e Buildx                                | Usar o contexto dedicado conforme runbook da stack      |
-| Conferência final do enunciado | Concluída na T10: auditoria, instalação limpa e 414 testes aprovados | Manter evidências atualizadas quando o código mudar     |
-| CI remota                      | Workflow a validar em execução remota                                | Conferir a primeira execução após publicação autorizada |
+| Item                           | Situação                                                             | Tratamento                                                                               |
+| ------------------------------ | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Docker e Compose locais        | Preparados na T01 com Colima e Buildx                                | Usar o contexto dedicado conforme runbook da stack                                       |
+| Conferência final do enunciado | Concluída na T10: auditoria, instalação limpa e 414 testes aprovados | Manter evidências atualizadas quando o código mudar                                      |
+| CI remota                      | Jobs harness e stack aprovados na T13                                | [Execução em main](https://github.com/Verax12/jungle_challenge/actions/runs/38791985589) |
 
 Para uma dívida nova, registre impacto, tarefa responsável, critério de resolução e
 evidência. Falhas eliminatórias não podem ser adiadas como dívida para declarar entrega completa.

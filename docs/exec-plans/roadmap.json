@@ -213,7 +213,7 @@
       "id": "T13",
       "title": "Validação integral e publicação em main",
       "dependsOn": ["T12"],
-      "status": "active",
+      "status": "completed",
       "scope": "Revalidar README, ampliar testes de fluxos de produção e falhas reais, corrigir defeitos comprovados e publicar main após aceite local.",
       "acceptanceCriteria": [
         "Requisitos obrigatórios revisados independentemente e ligados a evidências atuais.",

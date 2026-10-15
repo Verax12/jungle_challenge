@@ -34,7 +34,7 @@
 - [Plano T10 — documentação final e conferência](exec-plans/completed/T10-delivery-review.md).
 - [Plano T11 — auditoria ponto a ponto](exec-plans/completed/T11-readme-audit.md).
 - [Plano T12 — correções da auditoria](exec-plans/completed/T12-audit-fixes.md).
-- [Plano T13 — validação e publicação](exec-plans/active/T13-release-validation.md).
+- [Plano T13 — validação e publicação](exec-plans/completed/T13-release-validation.md).
 - [Dívida técnica](exec-plans/tech-debt.md).
 
 ## Decisões
@@ -80,8 +80,9 @@ enunciado, e as restrições desta entrega prevalecem sobre exemplos das referê
 
 Estado atual: T13 validou os 78 requisitos no escopo local e aprovou 477 testes
 mais quatro probes de recuperação. Corrigiu identidade Unicode malformada e manteve
-as regressões de ledger, parser e métricas da T12. Publicação main autorizada e CI
-remota em andamento; consultar o relatório T13 para o resultado final.
+as regressões de ledger, parser e métricas da T12. Main publicada e CI remota
+aprovada; consultar o relatório T13 e o link da execução. Não há plano ativo;
+aguardar seleção explícita de uma nova tarefa.
 
 Para banco existente, siga o procedimento de upgrade da quinta migration no runbook
 de persistência. Resultados T10/T11/T12 são históricos; AWS não foi homologada.

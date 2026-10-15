@@ -147,3 +147,7 @@ A CI inclui parada real do PostgreSQL, pausa do SQS e SIGTERM antes do commit.
 Asserções observam logs de retry/ack, locks, visibilidade SQL, efeitos financeiros,
 IDs dos eventos, DLQ e reconciliação; processo apenas vivo não comprova recuperação.
 Detalhes e limites no [runbook de produção](runbooks/production-validation.md).
+
+T13 publicou main e conferiu aprovação remota dos jobs harness/stack. O
+[relatório T13](audits/T13-release-validation.md) identifica execução e commit;
+isso não amplia os limites de homologação externa acima.

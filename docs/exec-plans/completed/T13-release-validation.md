@@ -3,7 +3,7 @@
 ```json
 {
   "id": "T13",
-  "status": "active",
+  "status": "completed",
   "requirements": [
     "REQ-SYSTEM",
     "REQ-SCHEMA-INVARIANTS",
@@ -22,7 +22,7 @@ Conferir todos os requisitos obrigatórios, testar o fluxo completo e corrigir d
 
 ## Requisitos atendidos
 
-Todos os 78 itens do catálogo serão revisados; prioridade para invariantes financeiras, transações, idempotência, concorrência e recuperação.
+Todos os 78 itens do catálogo foram revisados, com prioridade para invariantes financeiras, transações, idempotência, concorrência e recuperação.
 
 ## Dependências
 
@@ -39,8 +39,8 @@ Preservar enunciado, dados/volumes anteriores, SQL Server e alterações alheias
 - [x] Ampliar verificações dos entrypoints de produção e repetir falhas reais.
 - [x] Corrigir defeitos confirmados, incorporar regressões e executar gates completos.
 - [x] Atualizar evidências, revisar diff e limpar recursos descartáveis.
-- [ ] Commitar, preservando as evidências aprovadas.
-- [ ] Integrar main, fazer push autorizado e conferir CI remota.
+- [x] Commitar, preservando as evidências aprovadas.
+- [x] Integrar main, fazer push autorizado e conferir CI remota.
 
 ## Critérios de aceite
 
@@ -48,7 +48,7 @@ Nenhum achado de negócio/lógica conhecido pendente. Suítes obrigatórias pass
 
 ## Comandos de validação
 
-Planejados: doctor, install congelado, build Docker sem cache, check host/Linux, stack:migrate repetido, persistência, mensageria, distribuídos, smoke, workers, novos fluxos de produção e probes de indisponibilidade. Git fetch antes de integrar; push normal de main e consulta ao workflow.
+Executados: doctor, install congelado, build Docker sem cache, check host/Linux, stack:migrate repetido, persistência, mensageria, distribuídos, smoke, workers, novos fluxos de produção e probes de indisponibilidade. Git fetch antes de integrar; push normal de main e consulta ao workflow.
 
 ## Decisões
 
@@ -59,9 +59,12 @@ Três revisões focadas em negócio/HTTP, schema/persistência e mensageria/recu
 Validação local: 477 testes distintos aprovados, zero falhas/skips, quatro probes
 reais de recuperação aprovados. Unicode malformado corrigido com regressões.
 [Relatório completo](../../audits/T13-release-validation.md) e
-[resultados nominais](../../audits/T13-test-results.json). Publicação/CI em execução.
+[resultados nominais](../../audits/T13-test-results.json). Main publicada em 939690e após cd44d83. CI remota aprovou os dois jobs:
+[execução em main](https://github.com/Verax12/jungle_challenge/actions/runs/38791985589). Histórico inicial remoto preservado por merge; sem force push/coautor.
 Nenhuma garantia de homologação AWS, múltiplos hosts, carga ilimitada ou perda de disco. O README exige emulação SQS local; infraestrutura externa não será criada desnecessariamente.
 
 ## Próximo passo
 
-Concluir validação, corrigir achados e publicar main autorizada somente após os gates locais; acompanhar CI e corrigir eventual falha real.
+Entrega encerrada; aguardar seleção explícita de uma nova tarefa. Opcionais e
+homologação externa não são etapas iniciadas automaticamente. O registro final
+de evidências é publicado junto da entrega, preservando o código validado.

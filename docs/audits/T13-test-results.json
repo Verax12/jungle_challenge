@@ -7,7 +7,7 @@
   "passed": 477,
   "failed": 0,
   "skipped": 0,
-  "note": "477 casos distintos. Check, persistência, mensageria e distribuídos repetidos no host; repetições não duplicam a contagem. Quatro probes reais separados. T11/T12 preservam seus resultados históricos.",
+  "note": "477 casos distintos. Check, persistência, mensageria e distribuídos repetidos no host; repetições não duplicam a contagem. Quatro probes reais separados. T11/T12 preservam seus resultados históricos. Parâmetros dos cinco casos cujo nome Bun preservou %s foram conferidos na ordem das respectivas tabelas test.each.",
   "suites": [
     {
       "name": "harness-app-domain",
@@ -380,17 +380,26 @@
         {
           "file": "tests/app/financial-processing.test.ts",
           "name": "unexpected errors are propagated instead of fabricated business rejections: %s",
-          "result": "pass"
+          "result": "pass",
+          "parameters": {
+            "error": "Error(database unavailable)"
+          }
         },
         {
           "file": "tests/app/financial-processing.test.ts",
           "name": "unexpected errors are propagated instead of fabricated business rejections: %s",
-          "result": "pass"
+          "result": "pass",
+          "parameters": {
+            "error": "InvalidTransactionStateError"
+          }
         },
         {
           "file": "tests/app/financial-processing.test.ts",
           "name": "unexpected errors are propagated instead of fabricated business rejections: %s",
-          "result": "pass"
+          "result": "pass",
+          "parameters": {
+            "error": "DomainError(INVALID_INPUT)"
+          }
         },
         {
           "file": "tests/app/financial-processing.test.ts",
@@ -1356,7 +1365,7 @@
     },
     {
       "name": "persistence",
-      "command": "bun run stack:persistence",
+      "command": "docker compose run --rm persistence",
       "environment": "Linux Docker; Bun 1.4.3",
       "exitCode": 0,
       "passed": 148,
@@ -1850,12 +1859,18 @@
         {
           "file": "tests/persistence/references.test.ts",
           "name": "expiry is terminal and auditable (late reference: %s)",
-          "result": "pass"
+          "result": "pass",
+          "parameters": {
+            "late": false
+          }
         },
         {
           "file": "tests/persistence/references.test.ts",
           "name": "expiry is terminal and auditable (late reference: %s)",
-          "result": "pass"
+          "result": "pass",
+          "parameters": {
+            "late": true
+          }
         },
         {
           "file": "tests/persistence/references.test.ts",
@@ -2106,7 +2121,7 @@
     },
     {
       "name": "messaging",
-      "command": "bun run stack:messaging",
+      "command": "docker compose run --rm messaging",
       "environment": "Linux Docker; Bun 1.4.3",
       "exitCode": 0,
       "passed": 42,
@@ -2326,7 +2341,7 @@
     },
     {
       "name": "distributed",
-      "command": "bun run stack:distributed",
+      "command": "docker compose run --rm distributed",
       "environment": "Linux Docker; Bun 1.4.3",
       "exitCode": 0,
       "passed": 8,
@@ -2376,7 +2391,7 @@
     },
     {
       "name": "smoke",
-      "command": "bun run stack:smoke",
+      "command": "docker compose run --rm smoke",
       "environment": "Linux Docker; Bun 1.4.3",
       "exitCode": 0,
       "passed": 6,
@@ -2416,7 +2431,7 @@
     },
     {
       "name": "production",
-      "command": "bun run stack:production",
+      "command": "docker compose --profile workers run --rm production",
       "environment": "Linux Docker; Bun 1.4.3",
       "exitCode": 0,
       "passed": 6,
@@ -2521,6 +2536,90 @@
     }
   ],
   "publication": {
-    "status": "pending"
+    "status": "published",
+    "commit": "939690efa11d4e7c9abb30d02f816f6af50a9054",
+    "branch": "main",
+    "remote": "https://github.com/Verax12/jungle_challenge.git",
+    "ciRun": "https://github.com/Verax12/jungle_challenge/actions/runs/38791985589",
+    "ciConclusion": "success",
+    "ciJobs": [
+      {
+        "name": "harness",
+        "conclusion": "success",
+        "url": "https://github.com/Verax12/jungle_challenge/actions/runs/38791985589/job/116618593890"
+      },
+      {
+        "name": "stack",
+        "conclusion": "success",
+        "url": "https://github.com/Verax12/jungle_challenge/actions/runs/38791985589/job/116618594352"
+      }
+    ],
+    "passed": 477,
+    "failed": 0,
+    "probes": [
+      {
+        "scenario": "sqs-outage-recovery",
+        "readinessDuringOutage": 503,
+        "livenessDuringOutage": 200,
+        "financialCommit": 201,
+        "balance": "75.00",
+        "eventsPreservedAndPublished": 4,
+        "retryObserved": true
+      },
+      {
+        "scenario": "postgres-outage-recovery",
+        "readinessDuringOutage": 503,
+        "livenessDuringOutage": 200,
+        "inbox": 2,
+        "receipts": 2,
+        "ledger": 3,
+        "balance": "85.00",
+        "reconciled": true,
+        "eventIdsReceived": 6,
+        "dlq": 0,
+        "sameProductionProcesses": true,
+        "postgresMode": "stop",
+        "deliveryReceivedDuringPostgresPause": false,
+        "postgresRetryObserved": true,
+        "elapsedSeconds": 33.056
+      },
+      {
+        "scenario": "sigterm-before-commit",
+        "walletId": "078ec4db-8693-42de-bf8a-5a58900d0021",
+        "holderPid": 95,
+        "consumerBackendPid": 36,
+        "signalObservedWhileBlocked": true,
+        "waitMillisecondsAtSignal": "98.979000",
+        "visibleBeforeUnlock": {
+          "transactions": "0",
+          "receipts": "0",
+          "inbox": "0"
+        },
+        "exitCode": 0,
+        "stoppedAt": "2026-10-15T19:16:10.15497758Z",
+        "balance": "75.00",
+        "committedAndAcknowledgedBeforeExit": true
+      },
+      {
+        "scenario": "sigterm-restart-replay",
+        "walletId": "078ec4db-8693-42de-bf8a-5a58900d0021",
+        "transactionId": "c7cb7683-d37c-478b-a2d9-123acf3b4ae2",
+        "transactions": "1",
+        "receipts": "1",
+        "inbox": "1",
+        "ledger": "2",
+        "processed_inbox": true,
+        "balance": "75.00",
+        "reconciled": true,
+        "duplicateAcknowledged": true,
+        "outboxPublishedIds": [
+          "46d6316c-e0fe-42bd-91b7-1d0ac156ed33",
+          "7e59d837-c718-4c22-9721-641db590d6c0",
+          "841d63f3-71eb-4105-8f58-6cbef94acf5b",
+          "e4b09150-2884-47df-b7bd-3f015058dc6e"
+        ],
+        "elapsedSeconds": 6.701
+      }
+    ]
   }
 }
