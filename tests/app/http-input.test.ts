@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, expect, test } from 'bun:test';
+import { afterAll, beforeAll, beforeEach, expect, test } from 'bun:test';
 import { createApplication } from '../../src/composition/bootstrap.js';
 
 let app: Awaited<ReturnType<typeof createApplication>>;
@@ -25,6 +25,9 @@ beforeAll(async () => {
 afterAll(async () => {
   await app?.close();
 });
+beforeEach(() => {
+  calls = 0;
+});
 
 test.each([
   {
@@ -32,31 +35,45 @@ test.each([
     contentType: 'application/json',
     body: JSON.stringify({ value: 'x'.repeat(110_000) }),
     status: 413,
+    code: 'PAYLOAD_TOO_LARGE',
   },
   {
     label: 'unsupported charset',
     contentType: 'application/json; charset=koi8-r',
     body: '{}',
     status: 415,
+    code: 'INVALID_REQUEST',
+  },
+  {
+    label: 'unsupported content encoding',
+    contentType: 'application/json',
+    contentEncoding: 'unsupported-encoding',
+    body: '{}',
+    status: 415,
+    code: 'INVALID_REQUEST',
+  },
+  {
+    label: 'malformed JSON',
+    contentType: 'application/json',
+    body: '{"secret":"financial-payload",invalid}',
+    status: 400,
+    code: 'INVALID_REQUEST',
   },
 ])(
   'HTTP classifies $label as client input instead of an internal failure',
-  async ({ label, contentType, body, status }) => {
+  async ({ contentType, contentEncoding, body, status, code }) => {
     const response = await fetch(`${url}/wallets`, {
       method: 'POST',
-      headers: { 'Content-Type': contentType },
+      headers: {
+        'Content-Type': contentType,
+        ...(contentEncoding ? { 'Content-Encoding': contentEncoding } : {}),
+      },
       body,
     });
     const result: unknown = await response.json();
-    console.log(
-      JSON.stringify({
-        scenario: label,
-        actualStatus: response.status,
-        expectedStatus: status,
-        result,
-      }),
-    );
     expect(calls).toBe(0);
     expect(response.status).toBe(status);
+    expect(result).toEqual({ code });
+    expect(response.headers.get('retry-after')).toBeNull();
   },
 );

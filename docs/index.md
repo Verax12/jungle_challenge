@@ -8,8 +8,10 @@
 - [Catálogo de requisitos](requirements.json): requisitos, tarefas e evidências.
 - [Qualidade e rastreabilidade](quality.md): como interpretar os estados e validar entregas.
 - [Matriz de testes obrigatórios](test-matrix.md): cenários do enunciado e evidências executáveis.
-- [Auditoria atual T11 — ponto a ponto e pendências](audits/T11-readme-audit.md).
-- [Resultados nominais dos 420 testes](audits/T11-test-results.json).
+- [Auditoria histórica T11 — ponto a ponto e achados](audits/T11-readme-audit.md).
+- [Resultados históricos dos 420 testes T11](audits/T11-test-results.json).
+- [Correções e revalidação T12](audits/T12-corrections.md).
+- [Resultados atuais dos 440 testes](audits/T12-test-results.json).
 - [Auditoria da entrega](delivery-review.md): conferência do enunciado e critérios eliminatórios.
 - [Setup no README](../README.md#executar-o-projeto): instalação e comandos da implementação.
 
@@ -29,6 +31,7 @@
 - [Plano T09 — testes distribuídos e evidências](exec-plans/completed/T09-distributed-recovery.md).
 - [Plano T10 — documentação final e conferência](exec-plans/completed/T10-delivery-review.md).
 - [Plano T11 — auditoria ponto a ponto](exec-plans/completed/T11-readme-audit.md).
+- [Plano T12 — correções da auditoria](exec-plans/completed/T12-audit-fixes.md).
 - [Dívida técnica](exec-plans/tech-debt.md).
 
 ## Decisões
@@ -46,6 +49,8 @@
 - [ADR 0008 — referências fora de ordem](decisions/0008-pending-references.md).
 - [ADR 0010 — reconciliação e observabilidade](decisions/0010-reconciliation-observability.md).
 - [ADR 0009 — SQS, inbox e outbox](decisions/0009-sqs-inbox-outbox.md).
+
+- [ADR 0011 — correções da auditoria](decisions/0011-audit-corrections.md).
 
 ## Operação
 
@@ -69,12 +74,12 @@
 As referências orientam o processo. Requisitos do produto continuam definidos pelo
 enunciado, e as restrições desta entrega prevalecem sobre exemplos das referências.
 
-Estado atual: auditoria T11 concluída na branch codex/t11-readme-audit. As entregas
-T00–T10 permanecem no histórico, mas foram reproduzidos três defeitos: encadeamento
-SQL com OPENING retroativa, status HTTP de erros do parser e métrica FAILED omitida.
-São 71 requisitos verificados e sete reabertos por impacto desses achados.
+Estado atual: T12 corrige os três defeitos reproduzidos na auditoria T11: cadeia do
+ledger, parser HTTP e métricas FAILED. As regressões agora integram os gates
+regulares. São 440 testes distintos aprovados e 78 requisitos verificados no escopo
+local documentado. Os resultados T10/T11 permanecem históricos.
 
-Os 414 testes anteriores passaram; seis adicionais tiveram dois passes e quatro
-falhas. Dois probes de indisponibilidade/retomada passaram. Leia a auditoria T11
-antes de publicar: check verde isolado não significa aprovação para main.
-Não há plano ativo; aguardar seleção da etapa de correção. CI remota não executada.
+Leia o relatório T12 e o procedimento de upgrade antes de aplicar a quinta migration
+em banco existente. CI remota/AWS não executadas; nenhuma publicação em main.
+
+Não há plano ativo. Aguardar seleção de publicação ou de uma nova etapa.

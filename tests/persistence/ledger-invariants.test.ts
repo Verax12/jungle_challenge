@@ -7,7 +7,7 @@ import {
   expectSqlFailure,
   sql,
   transaction,
-} from '../persistence/helpers.js';
+} from './helpers.js';
 
 test('SQL rejects a retroactive OPENING that breaks an existing ledger chain', async () => {
   const db = await disposableDatabase();

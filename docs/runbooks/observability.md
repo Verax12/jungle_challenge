@@ -79,6 +79,11 @@ Todos os nomes começam com wagering_. Labels não contêm identidades financeir
 | processing_duration_seconds             | Histograma das tentativas, incluindo rollback; polling vazio excluído                  |
 | reconciliations_total{consistent}       | Reconciliações concluídas, separando divergências                                      |
 
+Os estados são derivados do enum do domínio: PENDING, PENDING_REFERENCE, PROCESSED,
+REJECTED e FAILED. Gauges incluem zero para estados ausentes; FAILED persistido é
+contabilizado. Isso não significa que adapters passem a gravar FAILED durante uma
+falha de infraestrutura: rollback/retry/DLQ permanecem como documentado.
+
 Contadores e histogramas são locais e reiniciam junto com o processo. Agregue rates
 por instância para volume; não some gauges globais repetidos por API/workers.
 Use max para lag/backlog entre targets equivalentes. Status atual não é histórico de

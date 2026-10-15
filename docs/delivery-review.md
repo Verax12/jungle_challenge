@@ -1,8 +1,9 @@
 # Auditoria da entrega
 
-**Resultado histórico da T10.** A [auditoria posterior T11](audits/T11-readme-audit.md)
-reproduziu três defeitos fora da cobertura anterior. A contagem de 78/78 abaixo
-registra a avaliação de então; o estado atual é 71 verificados e sete reabertos.
+**Resultado histórico da T10.** A [auditoria T11](audits/T11-readme-audit.md)
+reabriu sete requisitos por três defeitos. A [T12](audits/T12-corrections.md) corrigiu
+os achados e aprovou 440 testes; o estado atual é 78 verificados no escopo local.
+Este documento preserva a avaliação e os resultados da T10.
 Não interpretar esta página como aprovação atual para main.
 
 ## Escopo e método

@@ -737,7 +737,7 @@ test('schema upgrade preserves data and down never discards incompatible rejecti
       () => migrator.down({ to: 'Migration202610140001' }),
       '23503',
     );
-    expect(await migrator.getExecutedMigrations()).toHaveLength(4);
+    expect(await migrator.getExecutedMigrations()).toHaveLength(5);
     const em = isolated.orm.em.fork();
     expect(
       (

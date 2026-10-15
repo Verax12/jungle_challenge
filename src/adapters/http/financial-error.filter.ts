@@ -46,6 +46,31 @@ export function errorResponse(error: unknown): {
                   : 'INTERNAL_ERROR',
     };
   }
+  if (error instanceof Error) {
+    const parser = error as Error & {
+      type?: unknown;
+      status?: unknown;
+      statusCode?: unknown;
+    };
+    const status =
+      parser.type === 'entity.too.large'
+        ? 413
+        : parser.type === 'charset.unsupported' ||
+            parser.type === 'encoding.unsupported'
+          ? 415
+          : parser.type === 'entity.parse.failed'
+            ? 400
+            : undefined;
+    if (
+      status !== undefined &&
+      parser.status === status &&
+      parser.statusCode === status
+    )
+      return {
+        status,
+        code: status === 413 ? 'PAYLOAD_TOO_LARGE' : 'INVALID_REQUEST',
+      };
+  }
   const driver = error as {
     code?: string;
     name?: string;

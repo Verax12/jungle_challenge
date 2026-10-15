@@ -2,10 +2,10 @@
 
 ## Sistema entregue
 
-**Ressalvas atuais:** a [auditoria T11](docs/audits/T11-readme-audit.md) reproduziu
-uma lacuna de encadeamento SQL (OPENING retroativa), classificação incorreta de
-erros do parser HTTP e omissão de FAILED na métrica por status. O desenho abaixo
-descreve a implementação; não representa aprovação dessas garantias pendentes.
+A [T12](docs/audits/T12-corrections.md) corrigiu os três achados da auditoria T11.
+Uma migration incremental audita o histórico e valida o sucessor do ledger; erros
+conhecidos do parser retornam 4xx; métricas incluem todos os estados do domínio.
+[ADR 0011](docs/decisions/0011-audit-corrections.md) detalha escolhas e upgrade.
 
 O serviço processa BET, WIN, LOSS, REFUND e ROLLBACK por HTTP ou SQS, com Money
 exato, ledger imutável, recibos idempotentes, inbox, outbox e referências fora de

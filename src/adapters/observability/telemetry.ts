@@ -1,4 +1,5 @@
 import { Counter, Gauge, Histogram, Registry } from '@prometheus-io/client';
+import { WagerTransactionStatus } from '../../domain/wager-transaction.js';
 
 export type Source = 'http' | 'sqs' | 'reference' | 'outbox';
 const fields = [
@@ -17,12 +18,7 @@ const fields = [
   'consistent',
   'durationSeconds',
 ] as const;
-const statuses = [
-  'PENDING',
-  'PENDING_REFERENCE',
-  'PROCESSED',
-  'REJECTED',
-] as const;
+const statuses = Object.values(WagerTransactionStatus);
 export class Telemetry {
   readonly registry = new Registry();
   private counter(name: string, help: string, labelNames: string[] = []) {

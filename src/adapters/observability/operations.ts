@@ -1,4 +1,5 @@
 import { GetQueueAttributesCommand } from '@aws-sdk/client-sqs';
+import { WagerTransactionStatus } from '../../domain/wager-transaction.js';
 import type { AppConfig } from '../config/environment.js';
 import { connectDatabase } from '../persistence/database.js';
 import {
@@ -86,12 +87,7 @@ export class Operations {
     if (!snapshot) throw new Error('Metrics snapshot unavailable');
     this.telemetry.outboxPending.set(Number(snapshot.pending));
     this.telemetry.outboxLag.set(Number(snapshot.lag));
-    for (const status of [
-      'PENDING',
-      'PENDING_REFERENCE',
-      'PROCESSED',
-      'REJECTED',
-    ])
+    for (const status of Object.values(WagerTransactionStatus))
       this.telemetry.transactions.set(
         { status },
         Number(snapshot.statuses[status] ?? 0),

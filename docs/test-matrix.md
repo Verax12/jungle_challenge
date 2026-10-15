@@ -3,8 +3,9 @@
 O [README, seção 13](../README.md) define os critérios. Esta tabela liga cada cenário
 a testes executáveis; o [plano T09](exec-plans/completed/T09-distributed-recovery.md)
 registra comandos, ambiente e resultados históricos. A [T11](audits/T11-readme-audit.md)
-reexecutou toda a matriz e encontrou três defeitos em casos adicionais; consulte o
-relatório atual antes de interpretar os testes anteriores como aprovação. Comandos de execução estão no
+reexecutou toda a matriz e encontrou três defeitos em casos adicionais. A
+[T12](audits/T12-corrections.md) corrigiu os três achados e repetiu a validação com
+440 testes distintos aprovados. Comandos de execução estão no
 [runbook distribuído](runbooks/distributed.md).
 
 ## Unidade
@@ -61,17 +62,24 @@ inclusive dados inválidos e transações revertidas; não substituem cenários 
 através dos casos de uso. Reconciliação usa soma assinada NUMERIC no banco e Money,
 sem converter dinheiro para number.
 
-## Casos adicionais T11
+## Regressões da T11 integradas na T12
 
-- [Ledger e controles de reversão](../tests/audit/ledger-invariants.test.ts):
-  OPENING retroativa falha; valor/tipo de reversão com aritmética coerente passam.
-- [Parser HTTP](../tests/audit/http-input.test.ts): corpo excessivo e charset
-  não suportado retornam 500; esperados 413/415. Duas regressões vermelhas.
-- [Métrica FAILED](../tests/audit/observability.test.ts): estado persistido omitido
-  do gauge; regressão vermelha.
-- [Probes operacionais](../tests/audit/runtime-outage.ts): SQS com retry persistido,
-  PostgreSQL com recepção durante pausa e conclusão após retomada, mesmos processos,
-  replay observado por métrica, seis IDs recebidos e reconciliação 85.00.
+- [Ledger e controles de reversão](../tests/persistence/ledger-invariants.test.ts):
+  OPENING retroativa rejeitada; controles isolam valor/tipo da referência.
+- [Upgrade](../tests/persistence/ledger-upgrade.test.ts): histórico válido preservado,
+  inválido recusado, down/up, ordem inversa e concorrência com locks automáticos.
+- [Parser HTTP](../tests/app/http-input.test.ts): 413 para corpo excessivo,
+  415 para charset/encoding, 400 para JSON malformado, sem invocar finanças.
+- [Classificação HTTP](../tests/app/http-error-classification.test.ts): respostas
+  seguras e classificações desconhecidas/incoerentes mantidas como erro interno.
+- [Métrica FAILED](../tests/messaging/transaction-status-metrics.test.ts): gauge
+  zero/um conforme estado persistido; [contadores](../tests/app/telemetry.test.ts)
+  incluem FAILED e preservam deduplicação.
+- [Probes operacionais históricos T11](../tests/audit/runtime-outage.ts): SQS com
+  retry persistido, PostgreSQL recebido durante pausa e concluído na retomada,
+  mesmos processos, replay, seis IDs recebidos e reconciliação 85.00. Não repetidos
+  na T12; testes distribuídos de crash/restart foram reexecutados.
 
-As regressões adicionais têm comando próprio no relatório e não entram no check
-original. Não aprovar main apenas porque os 414 casos anteriores passaram.
+As regressões executam nos gates regulares e não exigem um comando tests/audit.
+O relatório T11 e seu JSON preservam resultados históricos; o resultado corrente
+está na T12.

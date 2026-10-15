@@ -13,6 +13,8 @@
 | [0009](0009-sqs-inbox-outbox.md)             | Aceito                    | Inbox, ack, retry/DLQ e publicação                  |
 | [0010](0010-reconciliation-observability.md) | Aceito                    | Reconciliação, logs, métricas e probes              |
 
+| [0011](0011-audit-corrections.md) | Aceito | Ledger, parser HTTP e métricas FAILED |
+
 ADRs registram o contexto da etapa em que foram aceitos; menções a funcionalidades
 então futuras permanecem como histórico. A [arquitetura atual](../../ARCHITECTURE.md)
 e os runbooks descrevem o funcionamento entregue. T10 consolida a documentação sem

@@ -1,0 +1,2341 @@
+{
+  "date": "2026-10-15",
+  "baseCommit": "1d9d63a",
+  "branch": "codex/t12-audit-fixes",
+  "composeProject": "backend-challenge-t12-20261015",
+  "total": 440,
+  "passed": 440,
+  "failed": 0,
+  "note": "440 casos distintos nos gates regulares; repetições host/Linux e probes de produção não duplicam a contagem. T11 permanece como resultado histórico independente.",
+  "suites": [
+    {
+      "name": "harness-app-domain",
+      "command": "docker compose run --rm --build --no-deps distributed bun run check",
+      "environment": "Linux Docker; Bun 1.4.3",
+      "exitCode": 0,
+      "passed": 254,
+      "failed": 0,
+      "cases": [
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > accepts the actual documentation and current requirement states",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > checks local Markdown reference links but ignores fenced examples",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > rejects broken links, fragments, unindexed files and paths outside repository",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > accepts valid anchors with accents and repeated headings",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > rejects duplicate requirement IDs",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > rejects requirements referencing unknown tasks and README sections",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > detects changes to original README",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > allows operational appendix edits while checking its links and keeping source sections immutable",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > rejects duplicate original-source delimiter",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > rejects early original-source delimiter",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > rejects missing original-source delimiter",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > verified status requires an actual evidence artifact",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > verified evidence cannot escape the repository",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > accepts a verified requirement with a recorded evidence file",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > rejects malformed JSON, requirements and evidence",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > rejects dependency cycles and unknown dependencies",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > rejects malformed execution plans and divergent status",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > requires plans for active/completed tasks and completed dependencies",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/docs.test.ts",
+          "name": "documentation > CLI exits nonzero for malformed metadata rather than claiming success",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/runner.test.ts",
+          "name": "runner executes all checks and preserves any failure",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/runner.test.ts",
+          "name": "runner succeeds only when every check succeeds",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/runner.test.ts",
+          "name": "doctor requires the pinned runtime version",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/runner.test.ts",
+          "name": "Docker runtime cannot drift from the pinned Bun version or omit its digest",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/runner.test.ts",
+          "name": "doctor reports missing and failed commands without crashing",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/runner.test.ts",
+          "name": "toolchain metadata and runtime must match the same Bun 1.x version",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > reports an application that does not exist without asserting backend correctness",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > accepts dependencies toward inner layers and external libraries in adapters",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects outward dependency: import '../adapters/db';",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects outward dependency: import '@/adapters/db';",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects outward dependency: import '@adapters/db';",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects outward dependency: export * from '../adapters/db';",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects outward dependency: export { Db } from '@/adapters/db';",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects outward dependency: import type { Db } from '../adapters/db';",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects outward dependency: type Db = import('../adapters/db').Db;",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects outward dependency: const db = import('../adapters/db');",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects outward dependency: const db = require('../adapters/db');",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects outward dependency: import db = require('../adapters/db');",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects external dependency @nestjs/common in domain",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects external dependency @mikro-orm/core in domain",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects external dependency @aws-sdk/client-sqs in domain",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects external dependency node:fs in domain",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects the obsolete decimal dependency in domain and application",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects application depending on adapters and adapters depending on composition",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects computed dynamic imports and require calls",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > rejects unknown layers, broken paths, aliases and escaping imports",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > detects cycles, including same-layer barrels",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > a barrel cannot hide an adapter import",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > CLI fails with actionable file/line diagnostics",
+          "result": "pass"
+        },
+        {
+          "file": "tests/harness/architecture.test.ts",
+          "name": "architecture > invalid tsconfig is not silently ignored",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/idempotency.test.ts",
+          "name": "idempotency replay preserves stored response and rejects the same key with a different payload hash",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/observability.test.ts",
+          "name": "reconciliation preserves exact large decimals and signed differences",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/observability.test.ts",
+          "name": "structured logs whitelist fields, serialize controls and tolerate a failed log sink",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/observability.test.ts",
+          "name": "metrics use bounded labels and failure observations exclude exception content",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/reference-worker.test.ts",
+          "name": "reference policy doubles delays, caps at one minute and never passes expiry",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/reference-worker.test.ts",
+          "name": "shutdown waits for in-flight work and schedules no next attempt",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/reference-worker.test.ts",
+          "name": "one-shot failures exit with an error and logs do not expose the underlying exception",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/messaging.test.ts",
+          "name": "consumer backoff is capped and error classes separate permanent input from transient infrastructure",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/messaging.test.ts",
+          "name": "envelope validates timestamps, metadata and key, and canonical hash ignores object key order",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/messaging.test.ts",
+          "name": "worker shutdown waits for the current operation and stops selecting work",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/financial-processing.test.ts",
+          "name": "unexpected errors are propagated instead of fabricated business rejections: %s",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/financial-processing.test.ts",
+          "name": "unexpected errors are propagated instead of fabricated business rejections: %s",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/financial-processing.test.ts",
+          "name": "unexpected errors are propagated instead of fabricated business rejections: %s",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/financial-processing.test.ts",
+          "name": "invalid context is rejected before opening any transaction",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/financial-processing.test.ts",
+          "name": "processing timestamp is sampled after the wallet lock is acquired",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/financial-processing.test.ts",
+          "name": "errors raised by domain transition do not become terminal business outcomes",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/amount-type.test.ts",
+          "name": "exact SQL type preserves 0.00",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/amount-type.test.ts",
+          "name": "exact SQL type preserves 0.01",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/amount-type.test.ts",
+          "name": "exact SQL type preserves 999999999999999999999999999999999999.99",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/amount-type.test.ts",
+          "name": "SQL boundary rejects -1.00",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/amount-type.test.ts",
+          "name": "SQL boundary rejects 1.001",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/amount-type.test.ts",
+          "name": "SQL boundary rejects 1e2",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/amount-type.test.ts",
+          "name": "SQL boundary rejects 1",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/amount-type.test.ts",
+          "name": "SQL boundary rejects NaN",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/amount-type.test.ts",
+          "name": "SQL boundary rejects Infinity",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/amount-type.test.ts",
+          "name": "SQL boundary rejects 1000000000000000000000000000000000000.00",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/amount-type.test.ts",
+          "name": "database hydration normalizes scale without parsing money as number",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-errors.test.ts",
+          "name": "transient 40001 maps to 503 without exposing driver details",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-errors.test.ts",
+          "name": "transient 40P01 maps to 503 without exposing driver details",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-errors.test.ts",
+          "name": "transient 55P03 maps to 503 without exposing driver details",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-errors.test.ts",
+          "name": "transient 57014 maps to 503 without exposing driver details",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-errors.test.ts",
+          "name": "transient 08006 maps to 503 without exposing driver details",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-errors.test.ts",
+          "name": "transient ECONNREFUSED maps to 503 without exposing driver details",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-errors.test.ts",
+          "name": "transient ECONNRESET maps to 503 without exposing driver details",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-errors.test.ts",
+          "name": "transient ETIMEDOUT maps to 503 without exposing driver details",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-errors.test.ts",
+          "name": "unexpected failures return a distinct generic 500 while liveness remains public",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-errors.test.ts",
+          "name": "pool exhaustion and wrapped connection errors are transient; SQL bugs are not",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-errors.test.ts",
+          "name": "canonical JSON sorts objects recursively and preserves arrays and exact string values",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > loads local defaults with an explicit database password",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > rejects invalid ports: 0",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > rejects invalid ports: -1",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > rejects invalid ports: 65536",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > rejects invalid ports: 3000.5",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > rejects invalid ports: 3e3",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > rejects invalid ports: ",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > rejects invalid ports: 3000x",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > accepts Docker addresses and explicit port boundaries",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > rejects non-local or malformed SQS endpoint: not-url",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > rejects non-local or malformed SQS endpoint: https://sqs.us-east-1.amazonaws.com",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > rejects non-local or malformed SQS endpoint: http://user:password@localhost:4566",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > rejects non-local or malformed SQS endpoint: http://localhost:4566?token=value",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > rejects non-local or malformed SQS endpoint: http://localhost:4566/path",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > rejects non-local or malformed SQS endpoint: http://localhost:4566#fragment",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/config.test.ts",
+          "name": "environment configuration > rejects missing and blank password without printing the supplied configuration",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http.test.ts",
+          "name": "NestJS serves public liveness without database or broker",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http.test.ts",
+          "name": "business endpoints are not installed by the foundation",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http.test.ts",
+          "name": "compiled entrypoint refuses invalid configuration and exits without leaking values",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/telemetry.test.ts",
+          "name": "http outcomes expose FAILED before processing and count it without replay inflation",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/telemetry.test.ts",
+          "name": "sqs outcomes expose FAILED before processing and count it without replay inflation",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-input.test.ts",
+          "name": "HTTP classifies oversized JSON as client input instead of an internal failure",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-input.test.ts",
+          "name": "HTTP classifies unsupported charset as client input instead of an internal failure",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-input.test.ts",
+          "name": "HTTP classifies unsupported content encoding as client input instead of an internal failure",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-input.test.ts",
+          "name": "HTTP classifies malformed JSON as client input instead of an internal failure",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-error-classification.test.ts",
+          "name": "known parser error entity.too.large has a safe response",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-error-classification.test.ts",
+          "name": "known parser error charset.unsupported has a safe response",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-error-classification.test.ts",
+          "name": "known parser error encoding.unsupported has a safe response",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-error-classification.test.ts",
+          "name": "known parser error entity.parse.failed has a safe response",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-error-classification.test.ts",
+          "name": "plain object with parser fields remains an internal failure",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-error-classification.test.ts",
+          "name": "status without parser type remains an internal failure",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-error-classification.test.ts",
+          "name": "unknown parser type remains an internal failure",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-error-classification.test.ts",
+          "name": "known type with unexpected status remains an internal failure",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-error-classification.test.ts",
+          "name": "disagreeing status fields remains an internal failure",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-error-classification.test.ts",
+          "name": "missing status field remains an internal failure",
+          "result": "pass"
+        },
+        {
+          "file": "tests/app/http-error-classification.test.ts",
+          "name": "string status fields remains an internal failure",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "processed event includes LOSS, typed envelope and decimal strings",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "rejected and pending events preserve failure and external reference",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "transaction events cannot be created from an incompatible state",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "balance event follows a real movement and refuses zero or mismatched entries",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "event identities and timestamps are validated; absent causation is omitted",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "event payload and object are deeply immutable",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "JSON snapshot copies nested arrays and objects without aliases",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "rejects non-JSON payload Infinity",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "rejects non-JSON payload NaN",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "rejects non-JSON payload 1n",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "rejects non-JSON payload 2026-10-14T12:00:00.000Z",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "rejects non-JSON payload undefined",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "inbox records processing once and rejects conflicting payload",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "inbox rejects invalid receipt and backwards timestamps without mutating",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "outbox stores the complete immutable envelope and copies rehydrated payload",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "outbox uses caller policy with exponential backoff and cap, restored between attempts",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "invalid backoff leaves outbox state untouched: {\"baseDelayMs\":0,\"maxDelayMs\":1}",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "invalid backoff leaves outbox state untouched: {\"baseDelayMs\":2,\"maxDelayMs\":1}",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "invalid backoff leaves outbox state untouched: {\"baseDelayMs\":0.5,\"maxDelayMs\":1}",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "invalid backoff leaves outbox state untouched: {\"baseDelayMs\":1,\"maxDelayMs\":null}",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "retry limits remain exact at large counts and timestamp overflow fails before mutation",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "factories reject noncanonical timestamp not-a-date",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "factories reject noncanonical timestamp 2026-02-30T12:00:00.000Z",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "factories reject noncanonical timestamp 2026-10-14",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/events-messages.test.ts",
+          "name": "factories reject noncanonical timestamp 2026-10-14T12:00:00-03:00",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "exact cents beyond Number safe precision and no cumulative fractional drift",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "arithmetic preserves immutable operands and canonical JSON",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "signs, equality, comparison and negative rehydration are exact",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \" \" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"NaN\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"Infinity\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"-Infinity\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"1e2\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"1E+2\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"1\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"1.0\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"1.001\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"1.005\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \".25\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"00.00\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"01.00\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"+1.00\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"-0.00\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"-1.00\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \" 1.00\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"1.00 \" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"1,00\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"0x10\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects invalid contract amount \"1.00\\n\" without rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "runtime monetary numbers and malformed props are rejected",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "supports explicit currency BRL",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "supports explicit currency USD",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "supports explicit currency EUR",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects unsupported currency \"brl\"",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects unsupported currency \"ABC\"",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects unsupported currency \"\"",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "rejects unsupported currency \"JPY\"",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "add rejects mixed currencies",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "subtract rejects mixed currencies",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "equals rejects mixed currencies",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "isLessThan rejects mixed currencies",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/money.test.ts",
+          "name": "signed rehydration still enforces exact representation",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "REFUND requires a reference",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "ROLLBACK requires a reference",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "BET rejects an unexpected reference",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "LOSS rejects an unexpected reference",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "BET rejects zero monetary effect",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "WIN rejects zero monetary effect",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "REFUND rejects zero monetary effect",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "ROLLBACK rejects zero monetary effect",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "LOSS requires zero and OPENING is unavailable to the external factory",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "rejects blank id",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "rejects blank providerId",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "rejects blank playerId",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "rejects blank walletId",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "rejects blank roundId",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "rejects blank gameId",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "rejects blank externalTransactionId",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "rejects blank idempotencyKey",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "rejects blank payloadHash",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "self-reference is rejected and an optional WIN reference must be resolved",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "REFUND uses a full processed reference and explicit reversal history",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "ROLLBACK uses a full processed reference and explicit reversal history",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "reference scope mismatch: providerId",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "reference scope mismatch: playerId",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "reference scope mismatch: walletId",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "reference scope mismatch: roundId",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "reference scope mismatch: externalTransactionId",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "reference currency must match but gameId is not an additional README constraint",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "reference status PENDING cannot be reversed",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "reference status PENDING_REFERENCE cannot be reversed",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "reference status REJECTED cannot be reversed",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "reference status FAILED cannot be reversed",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "REFUND rejects reference kind WIN",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "REFUND rejects reference kind REFUND",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "REFUND rejects reference kind ROLLBACK",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "REFUND rejects reference kind LOSS",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "REFUND rejects reference kind OPENING",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "ROLLBACK rejects reference kind ROLLBACK",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "ROLLBACK rejects reference kind LOSS",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "ROLLBACK rejects reference kind OPENING",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "ROLLBACK inverts a WIN credit",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "ROLLBACK inverts a REFUND credit",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "WIN references only BET, can have a different payout and can omit reference",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "states progress explicitly and preserve an internal resolved reference",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "PENDING can reach every terminal state",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "PENDING_REFERENCE can reach every terminal state",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "PROCESSED blocks all further transitions",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "REJECTED blocks all further transitions",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "FAILED blocks all further transitions",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "payload divergence is conflict rather than replay",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "transition validation rejects impossible reference links and invalid failure categories",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/transactions.test.ts",
+          "name": "rehydration preserves terminal data without rerunning create or transition validation",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "positive opening returns a matching internal transaction and immutable ledger, version 1",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "zero opening has no transaction or ledger; negative opening is rejected",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "BET debits and WIN credits with matching ledger and version changes",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "LOSS processes without ledger, balance, version or balance timestamp changes",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "REFUND of BET credits the full amount",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "ROLLBACK of BET credits the full amount",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "ROLLBACK of WIN debits the wallet",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "ROLLBACK of REFUND debits the wallet",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "BET and credit reversal have distinct insufficient balance failures and leave state intact",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "rejects walletId mismatch before mutation",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "rejects playerId mismatch before mutation",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "rejects currency mismatch and malformed ledger identity before mutation",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "processing timestamp failure and version overflow do not partially apply a movement",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "a processed transaction cannot be applied again to the same in-memory aggregate",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "sequential movements reconstruct the wallet from ledger without asserting concurrency",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "ledger validates direction, arithmetic, currency and nonnegative balances",
+          "result": "pass"
+        },
+        {
+          "file": "tests/domain/wallet-ledger.test.ts",
+          "name": "rehydration preserves versions and ledger facts without producing new opening effects",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "name": "persistence",
+      "command": "bun run stack:persistence",
+      "environment": "Linux Docker; Bun 1.4.3",
+      "exitCode": 0,
+      "passed": 134,
+      "failed": 0,
+      "cases": [
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "migration up is repeatable, down removes its objects, and up restores the schema",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "SQL monetary domain rejects -0.01 without silent rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "SQL monetary domain rejects 0.001 without silent rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "SQL monetary domain rejects 1.005 without silent rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "SQL monetary domain rejects 1.000 without silent rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "SQL monetary domain rejects NaN without silent rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "SQL monetary domain rejects Infinity without silent rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "SQL monetary domain rejects -Infinity without silent rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "SQL monetary domain rejects 1000000000000000000000000000000000000.00 without silent rounding",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "numeric upper boundary and fractional values stay exact strings",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "wallet uniqueness is enforced under two independent concurrent connections",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "wallet cannot have a negative balance, invalid currency or initial version",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "balance, version, identity and ledger consistency are enforced at commit",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "ledger rejects direct mutation: update wallet_ledger_entries set amount = amount where id = ?",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "ledger rejects direct mutation: delete from wallet_ledger_entries where id = ?",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "TRUNCATE is forbidden even when all related audit tables are targeted",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "ledger uniqueness rejects duplicate entries under concurrent insertion",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "external identity and global idempotency key have independent constraints",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "ledger cannot represent PENDING",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "ledger cannot represent REJECTED",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "ledger cannot represent LOSS",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "processed financial transaction requires ledger while LOSS needs none",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "rejects inconsistent ledger amount",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "rejects inconsistent ledger direction",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "rejects inconsistent ledger chain",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "SQL cannot rewrite terminal transaction, payload, or wallet scope",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "reversal uniqueness survives two concurrent SQL transactions",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "reference scope is checked by PostgreSQL",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "reference amount is checked by PostgreSQL",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "reference kind is checked by PostgreSQL",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "reference missing is checked by PostgreSQL",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/schema.test.ts",
+          "name": "inbox dedup and immutable identity persist in the database",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/ledger-upgrade.test.ts",
+          "name": "ledger migration upgrades valid history, preserves all rows and supports down/up",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/ledger-upgrade.test.ts",
+          "name": "ledger migration aborts on the old retroactive opening defect without rewriting history",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/ledger-upgrade.test.ts",
+          "name": "ledger migration refuses a previously corrupted wallet head without repairing it",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/ledger-upgrade.test.ts",
+          "name": "deferred successor guard accepts a valid batch inserted in reverse version order",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/ledger-upgrade.test.ts",
+          "name": "concurrent valid credit and retroactive opening preserve the ledger chain",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/roundtrip.test.ts",
+          "name": "five models round trip through MikroORM and rehydrate without monetary loss: BRL",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/roundtrip.test.ts",
+          "name": "five models round trip through MikroORM and rehydrate without monetary loss: USD",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/roundtrip.test.ts",
+          "name": "five models round trip through MikroORM and rehydrate without monetary loss: EUR",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/roundtrip.test.ts",
+          "name": "zero SQL scale is normalized on hydration and nullable fields survive",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/roundtrip.test.ts",
+          "name": "Unit of Work updates wallet with its transaction and ledger, retaining the balance chain",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/roundtrip.test.ts",
+          "name": "exception after flush rolls back all five models together",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/roundtrip.test.ts",
+          "name": "resolved reference and refund survive ORM persistence and rehydration",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/roundtrip.test.ts",
+          "name": "deferred inconsistency fails on commit even when the ORM flush itself succeeds",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/roundtrip.test.ts",
+          "name": "outbox payload cannot be rewritten, attempts cannot regress and published state is terminal",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/roundtrip.test.ts",
+          "name": "invalid outbox envelope and invalid retry counters fail in SQL",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/roundtrip.test.ts",
+          "name": "database lifecycle commands work from the compiled entrypoint on an isolated database",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "wallet creation and all query routes expose decimal strings without internal hash/key",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "duplicate wallet is 409 and unknown wallets/transactions are 404",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "replay of PROCESSED preserves original balance after unrelated movements",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "replay of REJECTED preserves original balance after unrelated movements",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "replay of PENDING_REFERENCE preserves original balance after unrelated movements",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "replay of LOSS preserves original balance after unrelated movements",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "canonical hash sorts nested keys and excludes key/correlation metadata",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "payload conflict, changed key and crossed identities preserve both original receipts",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "invalid submission missing-header fails as 400 without side effects",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "invalid submission key-in-body fails as 400 without side effects",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "invalid submission opening fails as 400 without side effects",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "invalid submission numeric-money fails as 400 without side effects",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "invalid submission extra-field fails as 400 without side effects",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "invalid submission three-decimals fails as 400 without side effects",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "invalid submission too-large fails as 400 without side effects",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "invalid submission missing-reference fails as 400 without side effects",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "invalid submission null-body fails as 400 without side effects",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "invalid submission array-body fails as 400 without side effects",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "duplicate Idempotency-Key headers are rejected rather than combined",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "business rejection, missing reference and malformed JSON have distinct HTTP outcomes",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "ledger cursor freezes an upper bound and cannot be reused for another wallet",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "receipt is immutable and rejects a fabricated snapshot via SQL",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "fresh process after HTTP server termination replays the committed original response",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "identical simultaneous HTTP submissions produce one debit and one durable replay",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "divergent simultaneous payloads on the same wallet commit one outcome and return conflict",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "same key racing across different wallets rolls back the loser before inspecting the committed receipt",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "legacy transaction without a receipt conflicts without fabricating an original balance",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/http.test.ts",
+          "name": "real refused PostgreSQL connection returns 503 while liveness remains available",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/ledger-invariants.test.ts",
+          "name": "SQL rejects a retroactive OPENING that breaks an existing ledger chain",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/ledger-invariants.test.ts",
+          "name": "SQL rejects reversal amount mismatch with otherwise consistent ledger arithmetic",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/ledger-invariants.test.ts",
+          "name": "SQL rejects reversal kind mismatch with otherwise consistent ledger arithmetic",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "late reference resolves REFUND exactly once and preserves original receipt",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "late reference resolves ROLLBACK exactly once and preserves original receipt",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "late reference resolves WIN exactly once and preserves original receipt",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "missing reference backs off durably without repeating pending events or touching receipt",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "expiry is terminal and auditable (late reference: %s)",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "expiry is terminal and auditable (late reference: %s)",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "late reference enforces provider scope and validity",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "late reference enforces wallet scope and validity",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "late reference enforces round scope and validity",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "late reference enforces kind scope and validity",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "late reference enforces amount scope and validity",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "late reference enforces rejected scope and validity",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "late reference enforces currency scope and validity",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "late reference enforces player scope and validity",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "rollback of a late credit refuses negative balance",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "two pending refunds cannot reverse the same reference twice",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "claim skips an occupied wallet and allows a second worker to progress on another",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "a second worker cannot claim the same wallet while the first attempt is in flight",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "failure after flush rolls back attempt, balance, ledger, terminal event and transaction",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "job constraints protect context, progress and completion",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "migration backfills legacy pending work, preserves context and reverts without deleting finance",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "scheduled process survives SIGTERM and a fresh process resumes its persistent schedule",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "SIGKILL after flush releases claims and rolls back all effects before another worker resumes",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/references.test.ts",
+          "name": "initial pending transaction, schedule, receipt and event roll back together",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "wallet opening 0.00 persists the exact atomic set",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "wallet opening 100.00 persists the exact atomic set",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "duplicate wallet conflicts without another opening or event",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "BET, standalone WIN and LOSS preserve exact balance and events in BRL",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "BET, standalone WIN and LOSS preserve exact balance and events in USD",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "BET, standalone WIN and LOSS preserve exact balance and events in EUR",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "insufficient BET is an auditable rejection with no movement",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "incompatible player is rejected and original submitted fields are retained",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "incompatible currency is rejected and original submitted fields are retained",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "resolved WIN and full REFUND use provider/external identity and duplicate reversal is rejected",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "ROLLBACK inverts a processed BET exactly once",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "ROLLBACK inverts a processed WIN exactly once",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "ROLLBACK inverts a processed REFUND exactly once",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "rollback of spent credit is rejected with its own stable code",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "invalid reference amount is auditable and does not change the wallet",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "invalid reference round is auditable and does not change the wallet",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "invalid reference kind is auditable and does not change the wallet",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "invalid reference status is auditable and does not change the wallet",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "missing reference and same external ID from a different provider remain pending",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "reference in another wallet is rejected without touching either balance",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "matching identity replays; changed key or external identity conflicts without another effect",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "failure after flush rolls back opening including outbox",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "failure after flush rolls back movement including outbox",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "deferred failure at commit returns no success and rolls back all effects",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "missing wallet and structural invalid input cannot create financial rows",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "two real sessions betting 80 on 100 yield one debit and one rejection, with retry unable to duplicate",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "a separate wallet commits while another operation waits for its wallet lock",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "concurrent REFUND operations on one reference apply exactly once",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "concurrent ROLLBACK operations on one reference apply exactly once",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "clock behind the stored wallet cannot move persisted time backwards",
+          "result": "pass"
+        },
+        {
+          "file": "tests/persistence/processing.test.ts",
+          "name": "schema upgrade preserves data and down never discards incompatible rejection audit",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "name": "messaging",
+      "command": "bun run stack:messaging",
+      "environment": "Linux Docker; Bun 1.4.3",
+      "exitCode": 0,
+      "passed": 38,
+      "failed": 0,
+      "cases": [
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "consume persists inbox and financial effects before ack, replay survives new SQS delivery",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "same operation via HTTP use case then SQS commits a new inbox without another debit",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "business REJECTED commits inbox and acknowledges without DLQ",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "business PENDING_REFERENCE commits inbox and acknowledges without DLQ",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "permanent invalid-json is moved to DLQ before source ack",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "permanent OPENING is moved to DLQ before source ack",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "permanent money-number is moved to DLQ before source ack",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "permanent missing-key is moved to DLQ before source ack",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "permanent unknown-type is moved to DLQ before source ack",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "reused logical message ID with a changed payload goes to DLQ and preserves original inbox",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "two consumers on different FIFO groups race on the same inbox with a single effect",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "failure after SQL flush rolls back inbox, receipt, ledger and events, and source is not acked",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "five transient receives use exponential visibility then DLQ; broker redrive is configured",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "failure to send DLQ does not delete the source message",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "shutdown after receive returns visibility without starting financial work",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "broker redrive moves an unacknowledged message after five receives even without consumer DLQ code",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/consumer.test.ts",
+          "name": "in-flight processing renews visibility and then commits before ack",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/observability.test.ts",
+          "name": "reconciliation HTTP covers empty ledger, precise large balances, missing wallet and signed divergences without repair",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/observability.test.ts",
+          "name": "one SQL reconciliation snapshot never observes half of a concurrent financial commit",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/observability.test.ts",
+          "name": "HTTP outcome, replay, latency and persisted status metrics carry safe correlation and no financial payload",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/observability.test.ts",
+          "name": "SQS replay, retry, DLQ, publisher lag and reference retries are observable with real dependencies",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/observability.test.ts",
+          "name": "readiness detects refused postgres while public liveness works and failed metrics do not claim zero",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/observability.test.ts",
+          "name": "readiness detects refused sqs while public liveness works and failed metrics do not claim zero",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/observability.test.ts",
+          "name": "public readiness succeeds and worker exposes metrics on its own HTTP listener",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/observability.test.ts",
+          "name": "a reachable but stalled sqs endpoint fails within the configured request deadline",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/observability.test.ts",
+          "name": "a reachable but stalled postgres endpoint fails within the configured request deadline",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/observability.test.ts",
+          "name": "a real PostgreSQL lock timeout increments conflicts and failed latency without exposing SQL",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/publisher.test.ts",
+          "name": "publisher emits stored envelopes after financial commit and marks them published",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/publisher.test.ts",
+          "name": "uncommitted financial outbox is invisible to publishers, then published after commit",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/publisher.test.ts",
+          "name": "two publishers hold different outbox row locks concurrently and drain without duplicate IDs",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/publisher.test.ts",
+          "name": "publisher failure persists backoff and another instance resumes the same event",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/publisher.test.ts",
+          "name": "send success followed by failed SQL commit is recoverable with stable event ID",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/publisher.test.ts",
+          "name": "reference expiry event from T06 reaches the broker",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/recovery.test.ts",
+          "name": "SIGKILL after financial commit before ack redelivers to another consumer without duplicate debit",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/recovery.test.ts",
+          "name": "SIGTERM during in-flight processing completes committed message and ack before exiting",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/recovery.test.ts",
+          "name": "publisher process killed after broker acceptance releases row and another publisher completes",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/recovery.test.ts",
+          "name": "downstream inbox contract deduplicates repeated eventId even when broker dedup is bypassed",
+          "result": "pass"
+        },
+        {
+          "file": "tests/messaging/transaction-status-metrics.test.ts",
+          "name": "persisted transaction metrics expose FAILED as zero and count committed failures",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "name": "distributed",
+      "command": "bun run stack:distributed",
+      "environment": "Linux Docker; Bun 1.4.3",
+      "exitCode": 0,
+      "passed": 8,
+      "failed": 0,
+      "cases": [
+        {
+          "file": "tests/distributed/concurrency.test.ts",
+          "name": "50 parallel HTTP bets across three live processes debit once and survive API restart",
+          "result": "pass"
+        },
+        {
+          "file": "tests/distributed/concurrency.test.ts",
+          "name": "two independent processes race for 80 of 100 while a third wallet operation progresses",
+          "result": "pass"
+        },
+        {
+          "file": "tests/distributed/concurrency.test.ts",
+          "name": "50 parallel SQS copies across three consumer processes bypass FIFO dedup and debit once",
+          "result": "pass"
+        },
+        {
+          "file": "tests/distributed/recovery.test.ts",
+          "name": "SIGKILL before commit rolls back flushed effects and a fresh consumer completes after lease expiry",
+          "result": "pass"
+        },
+        {
+          "file": "tests/distributed/recovery.test.ts",
+          "name": "SIGKILL after commit before ack recovers with another consumer and two concurrent publisher processes",
+          "result": "pass"
+        },
+        {
+          "file": "tests/distributed/recovery.test.ts",
+          "name": "publisher SIGKILL after SQS send before SQL confirmation retries stable event IDs after restart",
+          "result": "pass"
+        },
+        {
+          "file": "tests/distributed/recovery.test.ts",
+          "name": "REFUND before reference survives service restart and resolves once with a late BET",
+          "result": "pass"
+        },
+        {
+          "file": "tests/distributed/recovery.test.ts",
+          "name": "ROLLBACK before reference survives service restart and resolves once with a late BET",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "name": "smoke",
+      "command": "bun run stack:smoke",
+      "environment": "Linux Docker; Bun 1.4.3",
+      "exitCode": 0,
+      "passed": 6,
+      "failed": 0,
+      "cases": [
+        {
+          "file": "tests/smoke/stack.test.ts",
+          "name": "built application responds over HTTP",
+          "result": "pass"
+        },
+        {
+          "file": "tests/smoke/stack.test.ts",
+          "name": "MikroORM executes a query against real PostgreSQL",
+          "result": "pass"
+        },
+        {
+          "file": "tests/smoke/stack.test.ts",
+          "name": "queue provisioning is idempotent and all three queues are FIFO with a redrive policy",
+          "result": "pass"
+        },
+        {
+          "file": "tests/smoke/stack.test.ts",
+          "name": "SQS sends, receives and acknowledges a probe on an isolated temporary FIFO",
+          "result": "pass"
+        },
+        {
+          "file": "tests/smoke/stack.test.ts",
+          "name": "production image exposes financial queries through its database connection",
+          "result": "pass"
+        },
+        {
+          "file": "tests/smoke/stack.test.ts",
+          "name": "production API exposes public readiness and Prometheus metrics",
+          "result": "pass"
+        }
+      ]
+    }
+  ],
+  "productionProbes": [
+    {
+      "case": "oversized",
+      "status": 413,
+      "body": {
+        "code": "PAYLOAD_TOO_LARGE"
+      }
+    },
+    {
+      "case": "charset",
+      "status": 415,
+      "body": {
+        "code": "INVALID_REQUEST"
+      }
+    },
+    {
+      "case": "encoding",
+      "status": 415,
+      "body": {
+        "code": "INVALID_REQUEST"
+      }
+    },
+    {
+      "case": "malformed",
+      "status": 400,
+      "body": {
+        "code": "INVALID_REQUEST"
+      }
+    },
+    {
+      "endpoint": "health/live",
+      "status": 200
+    },
+    {
+      "endpoint": "health/ready",
+      "status": 200
+    },
+    {
+      "endpoint": "metrics",
+      "status": 200,
+      "failedGauge": 0
+    }
+  ],
+  "repeatedOnHost": [
+    "harness-app-domain",
+    "persistence",
+    "messaging",
+    "distributed"
+  ],
+  "workers": [
+    {
+      "name": "consumer",
+      "readiness": 200,
+      "metrics": 200,
+      "failedGauge": 0
+    },
+    {
+      "name": "publisher",
+      "readiness": 200,
+      "metrics": 200,
+      "failedGauge": 0
+    },
+    {
+      "name": "reference-worker",
+      "readiness": 200,
+      "metrics": 200,
+      "failedGauge": 0
+    }
+  ],
+  "migrations": {
+    "applied": 5,
+    "secondUpApplied": 0,
+    "businessWalletsAfterProbes": 0
+  },
+  "cleanup": {
+    "remainingTestDatabases": 0,
+    "exclusiveComposeResourcesRemoved": true,
+    "previousVolumeAndSqlServerPreserved": true
+  }
+}

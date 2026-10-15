@@ -7,6 +7,7 @@ import { Migration202610140002 } from './migrations/Migration202610140002.js';
 import { Migration202610140003 } from './migrations/Migration202610140003.js';
 
 import { Migration202610140004 } from './migrations/Migration202610140004.js';
+import { Migration202610150001 } from './migrations/Migration202610150001.js';
 
 export function connectDatabase(
   config: AppConfig['database'],
@@ -26,6 +27,7 @@ export function connectDatabase(
         Migration202610140002,
         Migration202610140003,
         Migration202610140004,
+        Migration202610150001,
       ],
       transactional: true,
       allOrNothing: true,

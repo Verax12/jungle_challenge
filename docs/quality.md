@@ -10,8 +10,9 @@ de referências, com agenda e recuperação testadas em PostgreSQL. A T07 acresc
 consumidor/publisher com PostgreSQL e SQS reais, a T08 instrumenta observabilidade e
 a T09 valida concorrência/recuperação entre processos independentes. A T10 registrou
 78 requisitos com evidências revisadas e 414 testes aprovados. A [T11](audits/T11-readme-audit.md)
-reabriu sete requisitos após reproduzir três defeitos adicionais; 71 permanecem
-verificados. A revisão atual prevalece sobre a conclusão histórica da T10. O catálogo
+reabriu sete requisitos após reproduzir três defeitos adicionais. A [T12](audits/T12-corrections.md)
+corrigiu os três achados, integrou as regressões e aprovou 440 testes distintos. Os
+78 requisitos estão verificados no escopo local descrito, com limites preservados. O catálogo
 registra o estado individual de cada requisito. Testes de unidade comprovam regras
 locais; harness e smoke tests não significam correção financeira distribuída.
 
@@ -131,9 +132,10 @@ delimitador ambíguo produz erro. Todas as suítes foram reproduzidas com depend
 instaladas pelo lockfile congelado e volume PostgreSQL novo. Detalhes no
 [plano concluído](exec-plans/completed/T10-delivery-review.md).
 
-A T11 executa regressões em tests/audit com comando próprio documentado no relatório.
-Seis testes: dois controles SQL aprovados e quatro falhas esperadas até corrigir os
-três defeitos. Essas falhas são pendências reais; não são skips nem critérios de
-aceite invertidos. Integrar regressões aos gates regulares faz parte da correção.
+A T11 registrou dois controles SQL aprovados e quatro falhas nos testes adicionais.
+Na T12, todos passaram; foram movidos para tests/app, tests/persistence e
+tests/messaging, executados pelos gates existentes da CI. Acrescentados upgrade
+válido/inválido, down/up sem perda, lote em ordem inversa e corrida dependente dos
+locks automáticos do schema, além de parser e contadores.
 Dois probes adicionais pausam/retomam dependências preservando estado; não equivalem
 a perda de disco nem a homologação AWS.

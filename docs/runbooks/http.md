@@ -72,9 +72,15 @@ página é nextCursor null. Cursor opaco não é mecanismo de autenticação/ass
 | 400  | Contrato, header, cursor ou valor inválido            | code estável                              |
 | 404  | Wallet/transação inexistente                          | WALLET_NOT_FOUND ou TRANSACTION_NOT_FOUND |
 | 409  | Identidade/chave conflitante ou wallet duplicada      | code estável                              |
+| 413  | Corpo JSON acima do limite do parser (100 KiB)        | PAYLOAD_TOO_LARGE                         |
+| 415  | Charset ou content encoding não suportado             | INVALID_REQUEST                           |
 | 422  | Rejeição de negócio, inclusive replay                 | REJECTED e failureCode                    |
 | 503  | Falha transitória de infraestrutura                   | INFRASTRUCTURE_TRANSIENT e Retry-After    |
 | 500  | Falha inesperada                                      | INTERNAL_ERROR, sem SQL/stack/payload     |
+
+JSON malformado retorna 400/INVALID_REQUEST. Esses erros do parser ocorrem antes
+do processamento financeiro; o corpo da resposta contém somente o código público.
+O limite de entrada não foi ampliado na T12.
 
 Replay de uma pendência mantém a resposta inicial 202; GET da transação é a fonte do
 estado atual. O [worker de referências](references.md) resolve essas pendências sem alterar

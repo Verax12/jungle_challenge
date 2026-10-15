@@ -191,6 +191,23 @@
         "Check host/Linux, suites reais e probes direcionados em stack exclusiva.",
         "Revisão por seção e relatório com evidências e pendências."
       ]
+    },
+    {
+      "id": "T12",
+      "title": "Correções da auditoria e regressões permanentes",
+      "dependsOn": ["T11"],
+      "status": "completed",
+      "scope": "Corrigir encadeamento retroativo no ledger, classificação HTTP do parser e métricas FAILED; integrar regressões e revalidar.",
+      "acceptanceCriteria": [
+        "Migration nova recusa cadeias existentes inválidas e impede inserções retroativas inconsistentes.",
+        "Erros conhecidos do parser retornam 4xx sem expor payload ou afetar finanças.",
+        "Todas as métricas contemplam FAILED; regressões integram gates regulares.",
+        "Suítes completas passam e evidências/documentação são atualizadas."
+      ],
+      "verification": [
+        "Check host/Linux e suites reais de persistência, mensageria, distribuição e smoke.",
+        "Upgrade limpo e inválido, rollback/reaplicação da migration e HTTP na imagem de produção."
+      ]
     }
   ]
 }

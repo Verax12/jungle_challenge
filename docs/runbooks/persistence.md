@@ -53,6 +53,10 @@ A migration 0003 cria recibos idempotentes; seu down remove os recibos, preserva
 as transações financeiras, que deixam de ter replay original disponível.
 A migration 0004 cria e preenche agenda de referências pendentes; down perde
 agenda/contadores, preservando transações e recibos. Pare os workers antes de migrations.
+A migration 202610150001 acrescenta a validação do sucessor do ledger e audita o
+histórico existente antes de ativá-la. Seu down preserva os dados, mas remove essa
+proteção e volta a permitir o defeito corrigido; não é recomendado como solução para
+um upgrade recusado.
 Os testes cobrem tanto reversão completa num banco vazio quanto upgrade/reversão
 com dados existentes e falha segura diante dessas rejeições.
 
@@ -105,3 +109,60 @@ A T05 acrescenta [endpoints financeiros e replay original](http.md). O [worker d
 após SIGTERM e SIGKILL testada. A T07 usa o mesmo schema para inbox e publicação; não acrescenta migration.
 Readiness está no [guia operacional](observability.md); concorrência com três processos,
 50 duplicatas e recuperação está nos [testes distribuídos](distributed.md).
+
+## Atualizar um banco existente para T12
+
+Pare todos os escritores antes do upgrade. Na stack local:
+
+```sh
+docker compose --profile workers stop app consumer publisher reference-worker
+bun run stack:migrate
+```
+
+A quinta migration é transacional. Ela bloqueia escritas nas tabelas financeiras,
+verifica encadeamento, soma assinada, saldo e versão e instala um constraint trigger
+que confere o sucessor de cada lançamento. Histórico válido é preservado. O custo
+da auditoria depende do tamanho do ledger; reserve janela de manutenção.
+
+Se ocorrer `existing ledger chain is inconsistent` ou `existing wallet and ledger
+diverge`, a migration não será registrada nem mudará registros financeiros. O erro
+identifica a wallet. Preserve um backup e os logs; mantenha os escritores parados e
+investigue a origem. Não edite/exclua ledger nem desligue constraints para forçar o
+upgrade. A reconciliação global pode ser inspecionada em modo somente leitura:
+
+```sh
+docker compose exec -T postgres psql -U wagering -d wagering <<'SQL'
+SELECT w.id, w.balance AS stored, w.version,
+       COALESCE(SUM(CASE e.direction WHEN 'CREDIT' THEN e.amount ELSE -e.amount END), 0) AS calculated
+FROM wallets w LEFT JOIN wallet_ledger_entries e ON e.wallet_id = w.id
+GROUP BY w.id
+HAVING w.balance <> COALESCE(SUM(CASE e.direction WHEN 'CREDIT' THEN e.amount ELSE -e.amount END), 0);
+WITH chain AS (
+  SELECT wallet_id, wallet_version, balance_before, balance_after,
+         LAG(wallet_version) OVER history AS previous_version,
+         LAG(balance_after) OVER history AS previous_balance
+  FROM wallet_ledger_entries
+  WINDOW history AS (PARTITION BY wallet_id ORDER BY wallet_version)
+)
+SELECT * FROM chain
+WHERE (previous_version IS NULL AND (wallet_version NOT IN (1,2) OR balance_before <> 0))
+   OR (previous_version IS NOT NULL AND
+       (wallet_version::bigint <> previous_version::bigint + 1 OR balance_before <> previous_balance));
+SQL
+```
+
+Use o usuário/banco configurado se diferente do padrão. Os comandos acima diagnosticam;
+não reparam dados. Um banco recusado exige investigação e estratégia de correção de
+dados específica, fora da aplicação automática desta migration.
+
+Somente após `stack:migrate` bem-sucedido, recrie os processos com a imagem atual:
+
+```sh
+bun run stack:up
+bun run stack:workers
+bun run stack:smoke
+```
+
+[ADR 0011](../decisions/0011-audit-corrections.md) registra as escolhas. Os testes
+[de upgrade](../../tests/persistence/ledger-upgrade.test.ts) comprovam preservação
+integral e falha segura, inclusive a inconsistência produzida pelo schema anterior.
