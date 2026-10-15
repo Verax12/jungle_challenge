@@ -2,7 +2,7 @@
 
 ## Comece aqui
 
-1. Leia o [índice](docs/index.md), o [enunciado](README.md) e a [arquitetura](ARCHITECTURE.md).
+1. Leia o [índice](docs/index.md), o [README](README.md), o [enunciado arquivado](docs/challenge.md) e a [arquitetura](ARCHITECTURE.md).
 2. Consulte o [roadmap](docs/exec-plans/roadmap.json) e o plano ativo em `docs/exec-plans/active/`.
 3. Confira `git status --short` antes de editar; preserve alterações existentes.
 
@@ -10,7 +10,7 @@ Se não houver plano ativo, identifique a próxima tarefa no roadmap e aguarde s
 
 ## Regras do projeto
 
-- O enunciado no README é a fonte dos requisitos; preserve seu conteúdo original. Instruções de execução ficam no apêndice após o delimitador project-documentation.
+- O README documenta a implementação. A fonte histórica dos requisitos está em docs/challenge.md; preserve o conteúdo arquivado e mantenha sua rastreabilidade.
 - Trabalhe no checkout atual, sem worktrees, uma tarefa por vez.
 - Abra sempre uma branch nova `codex/tNN-descricao` para cada etapa, partindo da entrega anterior; não reutilize a branch da etapa concluída.
 - Priorize requisitos obrigatórios. Não implemente opcionais ou etapas futuras por iniciativa própria.
@@ -40,7 +40,7 @@ Se não houver plano ativo, identifique a próxima tarefa no roadmap e aguarde s
 - `bun run check:docs` e `bun run check:architecture`: verificações direcionadas.
 - `bun run lint`, `bun run typecheck`, `bun run format:check`: qualidade estática.
 - `bun run test:harness`: testes dos verificadores.
-- `bun run format`: formatação; o README original é excluído.
+- `bun run format`: formatação; o enunciado arquivado é excluído.
 
 Use a versão de Bun em `.bun-version`. Veja [preparação e execução](docs/runbooks/environment.md).
 Para a aplicação e Docker, consulte [stack local](docs/runbooks/backend.md).

@@ -1,6 +1,6 @@
 # Matriz de testes obrigatórios
 
-O [README, seção 13](../README.md) define os critérios. Esta tabela liga cada cenário
+O [enunciado arquivado, seção 13](challenge.md) define os critérios. Esta tabela liga cada cenário
 a testes executáveis; o [plano T09](exec-plans/completed/T09-distributed-recovery.md)
 registra comandos, ambiente e resultados históricos. A [T11](audits/T11-readme-audit.md)
 reexecutou toda a matriz e encontrou três defeitos em casos adicionais. A

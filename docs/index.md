@@ -2,7 +2,8 @@
 
 ## Ponto de partida
 
-- [Enunciado original](../README.md): fonte dos requisitos; preservado integralmente.
+- [Apresentação e execução](../README.md): documentação da implementação.
+- [Enunciado arquivado](challenge.md): fonte histórica dos requisitos; preservado integralmente.
 - [Guia de trabalho](../AGENTS.md): orientação operacional.
 - [Arquitetura](../ARCHITECTURE.md): camadas, funcionamento atual, decisões e limites.
 - [Catálogo de requisitos](requirements.json): requisitos, tarefas e evidências.
@@ -35,6 +36,7 @@
 - [Plano T11 — auditoria ponto a ponto](exec-plans/completed/T11-readme-audit.md).
 - [Plano T12 — correções da auditoria](exec-plans/completed/T12-audit-fixes.md).
 - [Plano T13 — validação e publicação](exec-plans/completed/T13-release-validation.md).
+- [Plano T14 — README do projeto](exec-plans/completed/T14-project-readme.md).
 - [Dívida técnica](exec-plans/tech-debt.md).
 
 ## Decisões
@@ -81,7 +83,8 @@ enunciado, e as restrições desta entrega prevalecem sobre exemplos das referê
 Estado atual: T13 validou os 78 requisitos no escopo local e aprovou 477 testes
 mais quatro probes de recuperação. Corrigiu identidade Unicode malformada e manteve
 as regressões de ledger, parser e métricas da T12. Main publicada e CI remota
-aprovada; consultar o relatório T13 e o link da execução. Não há plano ativo;
+aprovada; consultar o relatório T13 e o link da execução. T14 separou o README da fonte histórica dos requisitos,
+com regressões do harness atualizadas e check aprovado. Não há plano ativo;
 aguardar seleção explícita de uma nova tarefa.
 
 Para banco existente, siga o procedimento de upgrade da quinta migration no runbook

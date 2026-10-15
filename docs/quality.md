@@ -20,13 +20,14 @@ locais; harness e smoke tests não significam correção financeira distribuída
 
 ## Catálogo
 
-[requirements.json](requirements.json) usa `schemaVersion: 1` e o SHA-256 do README
-original. A T10 acrescenta um apêndice operacional ao README após o delimitador
-project-documentation; o hash continua sendo do prefixo original, sem alteração.
-Links do documento inteiro são verificados. Delimitador duplicado ou mudança do
-enunciado falha; seções do apêndice não viram requisitos. Cada requisito tem
-`id`, `summary`, `readmeSections`, `taskId`, `status` e
-`evidence`. O resumo serve para navegação; a seção citada continua sendo a especificação.
+[requirements.json](requirements.json) usa `schemaVersion: 1`,
+`sourcePath: docs/challenge.md` e o SHA-256 do enunciado original. Na T14, a pedido
+do usuário, esse texto saiu do README e foi arquivado integralmente. O README
+passou a documentar somente a implementação, sem delimitador nem proteção por hash.
+Seus links continuam verificados. O arquivo arquivado mantém o mesmo hash e fornece
+as seções dos requisitos. `readmeSections` conserva o nome histórico do campo.
+Cada requisito tem `id`, `summary`, `readmeSections`, `taskId`, `status` e `evidence`.
+O resumo serve para navegação; a seção citada continua sendo a especificação.
 
 Estados: `planned` (não implementado), `implemented` (implementado, validação ainda
 incompleta) e `verified` (evidência revisada). Evidências têm `kind`, `description`
@@ -84,7 +85,7 @@ ocultar uma falha financeira ou um teste instável.
 
 ## Checklist de revisão
 
-- A mudança respeita o escopo da tarefa e as regras do README?
+- A mudança respeita o escopo da tarefa e as regras do enunciado arquivado?
 - Dependências, planos, requisitos e ADRs continuam coerentes?
 - Os testes exercitam falhas e invariantes relevantes, além do caminho feliz?
 - Logs e relatórios evitam segredos e payloads financeiros completos?
@@ -128,7 +129,7 @@ A matriz T11 também referencia scripts, tsconfig, Dockerfile e Compose; a fixtu
 documental copia esses arquivos. Ao adicionar links para outras áreas do checkout,
 mantenha a cópia da fixture alinhada, sem ignorar links ou relaxar suas assertions.
 
-T10 acrescenta quatro casos do verificador documental para o apêndice operacional:
+Na T10, os testes do verificador protegiam o apêndice operacional:
 editar comandos é permitido, mas alterar o enunciado, quebrar links ou tornar o
 delimitador ambíguo produz erro. Todas as suítes foram reproduzidas com dependências
 instaladas pelo lockfile congelado e volume PostgreSQL novo. Detalhes no
@@ -151,3 +152,7 @@ Detalhes e limites no [runbook de produção](runbooks/production-validation.md)
 T13 publicou main e conferiu aprovação remota dos jobs harness/stack. O
 [relatório T13](audits/T13-release-validation.md) identifica execução e commit;
 isso não amplia os limites de homologação externa acima.
+
+A T14 adapta essas regressões à separação dos arquivos: edição do README é aceita,
+links quebrados continuam falhando, mudança do enunciado arquivado é recusada e
+sourcePath inválido não redireciona a verificação para outra fonte.

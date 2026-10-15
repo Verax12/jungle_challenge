@@ -225,6 +225,20 @@
         "Build limpo com lockfile congelado, checks host/Linux, integração, distribuição e produção.",
         "Revisão adversarial, probes operacionais, conferência de commit remoto e GitHub Actions."
       ]
+    },
+    {
+      "id": "T14",
+      "title": "README de apresentação do projeto",
+      "dependsOn": ["T13"],
+      "status": "completed",
+      "scope": "Separar enunciado arquivado e documentação do projeto, adequar harness e preparar entrega para avaliação.",
+      "acceptanceCriteria": [
+        "README contém somente apresentação, execução e documentação da implementação.",
+        "Rastreabilidade preservada com fonte arquivada intacta e verificações aprovadas."
+      ],
+      "verification": [
+        "Check completo, comparação do enunciado e revisão dos links."
+      ]
     }
   ]
 }

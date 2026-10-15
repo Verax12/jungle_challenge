@@ -8,7 +8,7 @@ Não interpretar esta página como aprovação atual para main.
 
 ## Escopo e método
 
-T10 revisa as seções obrigatórias do [enunciado](../README.md) contra implementação,
+T10 revisa as seções obrigatórias do [enunciado](challenge.md) contra implementação,
 [catálogo](requirements.json), [matriz de testes](test-matrix.md) e decisões aceitas.
 O [plano T10](exec-plans/completed/T10-delivery-review.md) registra execução e resultados.
 Esta revisão não atribui nota nem promete avaliação externa.

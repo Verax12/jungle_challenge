@@ -22,7 +22,7 @@
 ## Objetivo
 
 Persistir os modelos da T02 com MikroORM e migrations reversíveis, protegendo
-invariantes financeiras no PostgreSQL conforme seções 4–7 do [README](../../../README.md).
+invariantes financeiras no PostgreSQL conforme seções 4–7 do [enunciado arquivado](../../challenge.md).
 
 ## Requisitos atendidos
 

@@ -17,7 +17,7 @@ e SQS locais em Docker Compose, antes de implementar o domínio financeiro.
 
 ## Requisitos atendidos
 
-REQ-STACK, seção 4 do [README](../../../README.md). A escolha de MikroORM começa nesta
+REQ-STACK, seção 4 do [enunciado arquivado](../../challenge.md). A escolha de MikroORM começa nesta
 etapa, mas REQ-ORM permanece pendente dos mapeamentos e estratégia transacional da T03.
 
 ## Dependências

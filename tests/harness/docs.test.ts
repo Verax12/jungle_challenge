@@ -1,10 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
-import {
-  checkDocs,
-  projectDocumentationMarker,
-} from '../../scripts/check-docs';
+import { checkDocs } from '../../scripts/check-docs';
 import { cli, documentationFixture, editJson, put, remove } from './helpers';
 
 let root: string;
@@ -74,11 +71,11 @@ describe('documentation', () => {
     expect(errors).toContain('sem requisito rastreado');
   });
 
-  test('detects changes to original README', () => {
+  test('detects changes to the archived requirement source', () => {
     put(
       root,
-      'README.md',
-      readFileSync(join(root, 'README.md'), 'utf8').replace(
+      'docs/challenge.md',
+      readFileSync(join(root, 'docs/challenge.md'), 'utf8').replace(
         'Distributed Wagering Processor',
         'Changed processor',
       ),
@@ -86,7 +83,7 @@ describe('documentation', () => {
     expect(checkDocs(root).join('\n')).toContain('diverge de sourceSha256');
   });
 
-  test('allows operational appendix edits while checking its links and keeping source sections immutable', () => {
+  test('allows project README edits while checking its links and using only archived source sections', () => {
     const original = readFileSync(join(root, 'README.md'), 'utf8');
     put(
       root,
@@ -98,22 +95,13 @@ describe('documentation', () => {
     expect(checkDocs(root).join('\n')).toContain('link local quebrado');
   });
 
-  test.each(['duplicate', 'early', 'missing'] as const)(
-    'rejects %s original-source delimiter',
-    (mode) => {
-      const original = readFileSync(join(root, 'README.md'), 'utf8');
-      const changed =
-        mode === 'duplicate'
-          ? original + projectDocumentationMarker
-          : mode === 'early'
-            ? projectDocumentationMarker + original
-            : original.replace(projectDocumentationMarker, '\n');
-      put(root, 'README.md', changed);
-      expect(checkDocs(root).join('\n')).toContain(
-        mode === 'duplicate'
-          ? 'delimitador project-documentation duplicado'
-          : 'diverge de sourceSha256',
-      );
+  test.each(['README.md', '../outside.md', undefined])(
+    'rejects an invalid requirement source path: %s',
+    (sourcePath) => {
+      editJson(root, 'docs/requirements.json', (value) => {
+        value.sourcePath = sourcePath;
+      });
+      expect(checkDocs(root).join('\n')).toContain('sourcePath deve ser');
     },
   );
 

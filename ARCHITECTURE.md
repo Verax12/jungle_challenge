@@ -12,7 +12,7 @@ exato, ledger imutável, recibos idempotentes, inbox, outbox e referências fora
 ordem. Há quatro processos: API, consumidor, publisher e worker de referências.
 Todos compartilham PostgreSQL; a mensageria local usa LocalStack.
 
-O [enunciado no README](README.md) define os requisitos. O
+O [enunciado arquivado](docs/challenge.md) define os requisitos. O
 [catálogo](docs/requirements.json) liga os requisitos às evidências e a
 [matriz de testes](docs/test-matrix.md) distingue unidade, integração e concorrência.
 O histórico de implementação permanece nos [planos](docs/index.md) e
@@ -206,7 +206,7 @@ e [operação](docs/runbooks/observability.md).
 
 ## Autenticação e autorização
 
-Autenticação foi omitida conforme seção 2 do README. OpenBusinessAccessGuard é o
+Autenticação foi omitida conforme seção 2 do enunciado arquivado. OpenBusinessAccessGuard é o
 ponto de extensão explícito; endpoints financeiros estão abertos e não há isolamento
 entre usuários. Health permanece público. Não há tabela de credenciais artesanais.
 

@@ -16,10 +16,11 @@ Evidências `verified` exigem arquivo existente e revisão dos resultados reais.
 implementação não existe, mantenha `planned`. O check não executa testes citados no
 catálogo e não verifica páginas externas na internet.
 
-Se o hash do enunciado mudou, confira `git diff -- README.md` e restaure seu texto.
-O apêndice de execução fica depois do delimitador project-documentation; somente o
-prefixo original entra no hash. Não mova/duplique esse delimitador nem atualize o
-hash para aceitar alterações acidentais. Links do apêndice também são verificados.
+Se o hash do enunciado mudou, confira `git diff -- docs/challenge.md` e restaure
+seu texto. O arquivo arquivado inteiro entra no hash; não atualize o hash para
+ocultar alterações. O catálogo deve apontar sourcePath para docs/challenge.md.
+O README pode ser editado livremente para documentar a implementação; seus links
+locais e âncoras continuam verificados.
 
 ## Falha arquitetural
 

@@ -28,7 +28,7 @@
 ## Objetivo
 
 Implementar o modelo financeiro puro e testes determinísticos, seguindo as seções
-5, 6, 7 e 11 do [README](../../../README.md), sem integrar processamento ao servidor.
+5, 6, 7 e 11 do [enunciado arquivado](../../challenge.md), sem integrar processamento ao servidor.
 
 ## Requisitos atendidos
 

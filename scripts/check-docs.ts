@@ -25,7 +25,7 @@ const evidenceKinds = [
   'review',
   'documentation',
 ];
-export const projectDocumentationMarker = '\n<!-- project-documentation -->\n';
+const requirementSource = 'docs/challenge.md';
 type RecordValue = Record<string, unknown>;
 
 function record(value: unknown): value is RecordValue {
@@ -165,6 +165,7 @@ export function checkDocs(root: string): string[] {
   const errors: string[] = [];
   const required = [
     'README.md',
+    requirementSource,
     'AGENTS.md',
     'ARCHITECTURE.md',
     'docs/index.md',
@@ -246,6 +247,8 @@ export function checkDocs(root: string): string[] {
     errors,
   );
   if (!roadmap || !catalog) return errors;
+  if (catalog.sourcePath !== requirementSource)
+    errors.push(`requirements: sourcePath deve ser ${requirementSource}.`);
   if (
     roadmap.schemaVersion !== 1 ||
     !Array.isArray(roadmap.tasks) ||
@@ -324,15 +327,11 @@ export function checkDocs(root: string): string[] {
   }
   for (const id of tasks.keys()) visitTask(id);
 
-  const readme = readFileSync(join(root, 'README.md'), 'utf8');
-  const parts = readme.split(projectDocumentationMarker);
-  if (parts.length > 2)
-    errors.push('README.md: delimitador project-documentation duplicado.');
-  const original = parts[0]!;
+  const original = readFileSync(join(root, requirementSource), 'utf8');
   const sourceHash = createHash('sha256').update(original).digest('hex');
   if (catalog.sourceSha256 !== sourceHash)
     errors.push(
-      'requirements: enunciado original em README.md diverge de sourceSha256; restaure o texto original, sem atualizar o hash para ocultar alterações.',
+      `requirements: enunciado original em ${requirementSource} diverge de sourceSha256; restaure o texto original, sem atualizar o hash para ocultar alterações.`,
     );
   const sections = new Set(
     headingTexts(original).flatMap((heading) => {
@@ -370,7 +369,7 @@ export function checkDocs(root: string): string[] {
       errors.push(`${id}: tarefa inexistente ${requirement.taskId}.`);
     for (const section of requirement.readmeSections) {
       if (!sections.has(section))
-        errors.push(`${id}: seção inexistente no README: ${section}.`);
+        errors.push(`${id}: seção inexistente no enunciado: ${section}.`);
       covered.add(section);
     }
     let verified = false;
@@ -409,7 +408,7 @@ export function checkDocs(root: string): string[] {
   for (const section of sections) {
     if (!covered.has(section))
       errors.push(
-        `requirements: seção ${section} do README sem requisito rastreado.`,
+        `requirements: seção ${section} do enunciado sem requisito rastreado.`,
       );
   }
 

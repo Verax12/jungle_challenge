@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "sourcePath": "docs/challenge.md",
   "sourceSha256": "47795fce2fc38cae5f1b91368ebaf80b7a2ed1fe147f36704b665faf0613812e",
   "requirements": [
     {
@@ -2168,6 +2169,12 @@
           "status": "verified",
           "path": "docs/audits/T13-release-validation.md",
           "description": "T13: revisão ponto a ponto e reexecução dos gates. Matriz associa este item à implementação e método; 477 casos distintos e quatro probes reais aprovados no escopo local. Unicode malformado corrigido; limites externos explicitados."
+        },
+        {
+          "kind": "documentation",
+          "status": "verified",
+          "path": "docs/exec-plans/completed/T14-project-readme.md",
+          "description": "T14: README dedicado à implementação, execução e testes; enunciado arquivado com hash preservado; links e regressões do harness aprovados."
         }
       ]
     },
