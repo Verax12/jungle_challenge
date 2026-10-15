@@ -807,6 +807,10 @@ A fila de saída é wager-events.fifo; assinantes precisam deduplicar eventId du
 
 ### Executar todas as verificações
 
+A [auditoria T11](docs/audits/T11-readme-audit.md) identificou três pendências.
+Os testes adicionais abaixo devem ser executados além dos gates anteriores;
+quatro casos falham até as correções, conforme o relatório.
+
 Após subir a stack:
 
 ```sh
@@ -815,6 +819,7 @@ bun run stack:persistence
 bun run stack:messaging
 bun run stack:distributed
 bun run stack:smoke
+docker compose run --rm --build --no-deps distributed bun test tests/audit --timeout 30000
 ```
 
 `check` executa documentação, arquitetura, lint, formato, tipos, build e testes de

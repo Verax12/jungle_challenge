@@ -33,9 +33,13 @@ export function documentationFixture(): string {
     'docs',
     'tests',
     'src',
+    'scripts',
     '.github',
     '.bun-version',
     'package.json',
+    'tsconfig.json',
+    'Dockerfile',
+    'compose.yaml',
   ]) {
     cpSync(join(projectRoot, path), join(root, path), { recursive: true });
   }

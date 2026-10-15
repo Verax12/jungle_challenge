@@ -7,13 +7,24 @@
       "summary": "Processar operações distribuídas corretamente sob duplicação, desordem, simultaneidade e indisponibilidade.",
       "readmeSections": ["1", "3"],
       "taskId": "T09",
-      "status": "verified",
+      "status": "implemented",
       "evidence": [
         {
           "kind": "concurrency",
           "description": "Matriz local com três processos, 50 duplicatas HTTP/SQS, disputa de saldo, crashes transacionais, referências fora de ordem e reinícios; suítes anteriores cobrem falhas operacionais. Limites explícitos na matriz.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: Parcial — F1 impede afirmar correção global do schema. Contraexemplo reproduzido; esta evidência registra a falha, não a satisfação do requisito.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
+        },
+        {
+          "kind": "integration",
+          "description": "Corrigir os achados aplicáveis da T11 e aprovar as regressões adicionais antes de voltar a declarar este requisito verificado.",
+          "status": "planned"
         }
       ]
     },
@@ -29,6 +40,12 @@
           "description": "Ausência de autenticação documentada em ARCHITECTURE e ADR 0007; OpenBusinessAccessGuard delimita integração IdP/OIDC e autorização futura. Health permanece público; nenhuma credencial artesanal.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T05-idempotency-http.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -44,6 +61,12 @@
           "description": "Stack iniciada com imagens construídas do lockfile; build, testes HTTP, PostgreSQL via MikroORM e SQS real passaram no host e em containers, inclusive após reinício.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T01-backend-foundation.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -59,6 +82,12 @@
           "description": "MikroORM, EntitySchema e conversores dos cinco modelos revisados; round trips reais preservam Money e rehydrate. ADR 0005 define o protocolo transacional para T04.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T03-schema-persistence.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -74,6 +103,12 @@
           "description": "Migration versionada aplicada, revertida e reaplicada em PostgreSQL real, também pela CLI compilada; execução repetida de up é idempotente.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T03-schema-persistence.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -89,6 +124,12 @@
           "description": "Operações exatas de valor elevado e frações, mais revisão dos tipos e conversões.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T02-financial-domain.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -104,6 +145,12 @@
           "description": "Recibo PostgreSQL imutável na mesma transação dos efeitos. Submissões HTTP simultâneas produzem um efeito e replay; processo novo recupera resposta persistida sem memória compartilhada.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T05-idempotency-http.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -119,6 +166,12 @@
           "description": "Publisher não observa outbox de transação SQL ainda aberta; após commit, publica envelopes armazenados.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -134,6 +187,12 @@
           "description": "UPDATE, DELETE e TRUNCATE diretos do ledger são rejeitados pelo PostgreSQL.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T03-schema-persistence.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -155,6 +214,12 @@
           "description": "T09 reproduzida na T10 com três processos API e sessões PostgreSQL distintas, cadeia de locks comprovada, wallet independente e recuperação após morte/reinício. Persistência e oito cenários distribuídos passaram em volume novo.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T10-delivery-review.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -163,13 +228,24 @@
       "summary": "Unicidade, imutabilidade e não-negatividade do modelo aplicadas no schema.",
       "readmeSections": ["5"],
       "taskId": "T03",
-      "status": "verified",
+      "status": "implemented",
       "evidence": [
         {
           "kind": "integration",
           "description": "SQL direto rejeita violações de unicidade, imutabilidade, escala e não-negatividade; constraints diferidas rejeitam inconsistências no commit.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T03-schema-persistence.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: Falhou — F1, inserção retroativa aceita. Contraexemplo reproduzido; esta evidência registra a falha, não a satisfação do requisito.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
+        },
+        {
+          "kind": "integration",
+          "description": "Corrigir os achados aplicáveis da T11 e aprovar as regressões adicionais antes de voltar a declarar este requisito verificado.",
+          "status": "planned"
         }
       ]
     },
@@ -185,6 +261,12 @@
           "description": "Reconstruir estados persistidos e testar apenas transições explícitas.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T02-financial-domain.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -200,6 +282,12 @@
           "description": "Cobrir add/subtract/negate, zero, sinais, igualdade e comparações.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T02-financial-domain.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -215,6 +303,12 @@
           "description": "Validar e serializar MoneyProps, escala e conflitos de moeda.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T02-financial-domain.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -230,6 +324,12 @@
           "description": "Tabela de entradas inválidas e política sem arredondamento silencioso.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T02-financial-domain.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -245,6 +345,12 @@
           "description": "Conflitos de moeda em Money e Wallet.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T02-financial-domain.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -260,6 +366,12 @@
           "description": "Verificador de imports e inspeção do modelo de domínio.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T02-financial-domain.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -275,6 +387,12 @@
           "description": "Criação concorrente em duas conexões PostgreSQL com PIDs distintos e barreira aceita uma única wallet por player/moeda.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T03-schema-persistence.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -302,6 +420,12 @@
           "description": "T10 reproduziu constraints, disputa de 80.00 + 80.00 sobre 100.00, três processos, duplicatas e recuperação: saldo 20.00 na disputa, efeito único e reconciliação consistente nos cenários financeiros.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T10-delivery-review.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -310,13 +434,24 @@
       "summary": "Toda mudança de saldo tem ledger correspondente e vice-versa.",
       "readmeSections": ["6.2"],
       "taskId": "T04",
-      "status": "verified",
+      "status": "implemented",
       "evidence": [
         {
           "kind": "integration",
           "description": "Abertura e operações reais reconciliam saldo com soma do ledger; falha após flush e falha diferida no commit revertem saldo, transação, ledger e outbox.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: Falhou — F1, saldo 10.00 / soma 15.00. Contraexemplo reproduzido; esta evidência registra a falha, não a satisfação do requisito.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
+        },
+        {
+          "kind": "integration",
+          "description": "Corrigir os achados aplicáveis da T11 e aprovar as regressões adicionais antes de voltar a declarar este requisito verificado.",
+          "status": "planned"
         }
       ]
     },
@@ -332,6 +467,12 @@
           "description": "Abertura zero/positiva começa em 1; operações com efeito incrementam uma vez; LOSS, rejeições e tentativas duplicadas preservam versão.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -347,6 +488,12 @@
           "description": "Matriz de estados, incluindo erro de programação ao transicionar terminal.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T02-financial-domain.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -368,6 +515,12 @@
           "description": "Consumidor real SQS recusa OPENING e envia mensagem inválida à DLQ sem efeitos.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -383,6 +536,12 @@
           "description": "Payload diferente na mesma chave, chave diferente na identidade externa e identidades cruzadas retornam 409; casos sequenciais e concorrentes preservam o resultado anterior e saldo.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T05-idempotency-http.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -398,6 +557,12 @@
           "description": "Criação válida e aritmética inválida, direção e moeda.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T02-financial-domain.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -413,6 +578,12 @@
           "description": "Duas conexões PostgreSQL disputam o primeiro lançamento da mesma transação/wallet; apenas uma confirma e o saldo final reflete um único efeito.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T03-schema-persistence.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -428,6 +599,12 @@
           "description": "LOSS, saldo insuficiente, moeda/player incompatível e referências inválidas mantêm saldo/versão e não geram ledger; eventos de resultado são persistidos.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -449,6 +626,12 @@
           "description": "Persistência e mensageria reproduzidas na T10: inbox/efeitos atômicos, claims concorrentes, retry agendado, publicação e recuperação com PostgreSQL/SQS reais. Jornada adicional entregou duas cópias com uma inbox e seis eventos publicados.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T10-delivery-review.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -464,6 +647,12 @@
           "description": "Inbox, recibo e efeitos participam da unidade financeira; falha após flush reverte inbox, saldo, ledger e outbox em PostgreSQL real.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -479,6 +668,12 @@
           "description": "BET aplicada debita uma vez; disputa simultânea de duas apostas de 80.00 em saldo 100.00 gera uma PROCESSED, uma REJECTED/INSUFFICIENT_FUNDS e saldo 20.00. Tentativas duplicadas falham sem novo efeito.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -494,6 +689,12 @@
           "description": "WIN com e sem referência credita valor exato; referências de outro provider não são usadas e escopo/tipo incompatíveis são rejeitados.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -509,6 +710,12 @@
           "description": "LOSS é PROCESSED com evento correspondente, sem ledger, WalletBalanceChanged ou mudança de saldo/versão.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -524,6 +731,12 @@
           "description": "REFUND integral de BET processada credita; duplicação sequencial e concorrente produz rejeição auditável sem novo efeito.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -539,6 +752,12 @@
           "description": "ROLLBACK de BET, WIN e REFUND inverte a direção corretamente; nova reversão do mesmo tipo é rejeitada, inclusive com duas sessões concorrentes.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -554,6 +773,12 @@
           "description": "Factories rejeitam ausência de referência para reversões.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T02-financial-domain.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -569,6 +794,12 @@
           "description": "PostgreSQL real: referências atrasadas consultadas por provider/ID externo, com rejeição por escopo, estado, tipo e valor incompatíveis, sem movimento indevido.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T06-pending-references.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -584,6 +815,12 @@
           "description": "Duas conexões PostgreSQL disputam reversões processadas do mesmo tipo sobre a mesma referência; índice parcial permite apenas uma, preservando rejeições auditáveis.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T03-schema-persistence.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -599,6 +836,12 @@
           "description": "Reversões integrais passam; referência de valor divergente gera REFERENCE_AMOUNT_MISMATCH sem movimento.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -614,6 +857,12 @@
           "description": "Replay de aplicação, LOSS, rejeição e pendência mantém status/saldo/versão originais após outros movimentos; teste encerra um processo HTTP e confirma replay em outro processo.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T05-idempotency-http.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -629,6 +878,12 @@
           "description": "REFUND/ROLLBACK/WIN antes da referência são aplicados uma vez; contexto, saldo, ledger e recibo original preservados, com agenda atômica.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T06-pending-references.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -644,6 +899,12 @@
           "description": "ROLLBACK de crédito já consumido gera REJECTED/REVERSAL_INSUFFICIENT_FUNDS com evento e sem débito.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -659,6 +920,12 @@
           "description": "Agenda persistida com backoff exponencial e TTL de 24 h; claims concorrentes, SIGTERM/reinício e SIGKILL antes do commit testados com processos e PostgreSQL reais.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T06-pending-references.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -680,6 +947,12 @@
           "description": "Após TTL T06, publisher envia WagerTransactionRejected com REFERENCE_NOT_FOUND, observado na fila de eventos real.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -701,6 +974,12 @@
           "description": "Suítes de domínio, HTTP/PostgreSQL e SQS reproduzidas na T10 verificam códigos estáveis de rejeição, separação de infraestrutura e conflitos. Taxonomia/contratos revisados na arquitetura, ADRs e runbooks.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T10-delivery-review.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -716,6 +995,12 @@
           "description": "Três APIs reais: duas apostas de 80.00 sobre 100.00 observadas na cadeia de locks; um PROCESSED, um REJECTED/INSUFFICIENT_FUNDS, saldo 20.00 e um débito. Outra wallet progride durante o bloqueio.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -731,6 +1016,12 @@
           "description": "HTTP cria wallet com saldo zero/positivo, contrato monetário em string e versão 1; duplicação retorna 409. A abertura e suas garantias continuam cobertas pela suíte de processamento.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T05-idempotency-http.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -746,6 +1037,12 @@
           "description": "Abertura positiva grava wallet, OPENING, ledger CREDIT e dois eventos; abertura zero não cria movimento. Exceção após flush reverte o conjunto.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -761,6 +1058,12 @@
           "description": "GETs de wallet, transação interna e identidade provider/externa retornam recursos corretos, sem hash/chave interna; ausência retorna 404.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T05-idempotency-http.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -776,6 +1079,12 @@
           "description": "Paginação por versão com teto fixado retorna páginas sem repetição durante inserção; cursor vinculado à wallet, limite e parâmetros inválidos são rejeitados.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T05-idempotency-http.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -791,6 +1100,12 @@
           "description": "HTTP real retorna transactionId, status, balance, walletVersion e idempotentReplay em sucesso, pendência, rejeição e replay; entrada inválida é recusada antes de qualquer efeito.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T05-idempotency-http.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -806,6 +1121,12 @@
           "description": "Header único obrigatório; ausência, duplicação e chave no corpo são recusadas. Chave fornecida é persistida no recibo.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T05-idempotency-http.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -821,6 +1142,12 @@
           "description": "SHA-256 de JSON ordenado recursivamente; permutar campos e correlationId não altera hash, enquanto mudar campo de negócio conflita. Algoritmo e subconjunto documentados no ADR 0007.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T05-idempotency-http.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -829,13 +1156,24 @@
       "summary": "Distinguir consistentemente payload inválido, conflito, rejeição, pendência e infraestrutura transitória.",
       "readmeSections": ["9"],
       "taskId": "T05",
-      "status": "verified",
+      "status": "implemented",
       "evidence": [
         {
           "kind": "integration",
           "description": "Matriz 201/200/202/400/404/409/422/503/500 verificada por HTTP. Conexão PostgreSQL realmente recusada retorna 503/Retry-After; falhas inesperadas retornam 500 genérico sem detalhes internos.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T05-idempotency-http.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: Parcial — F2, erros do parser retornam 500. Contraexemplo reproduzido; esta evidência registra a falha, não a satisfação do requisito.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
+        },
+        {
+          "kind": "integration",
+          "description": "Corrigir os achados aplicáveis da T11 e aprovar as regressões adicionais antes de voltar a declarar este requisito verificado.",
+          "status": "planned"
         }
       ]
     },
@@ -851,6 +1189,12 @@
           "description": "HTTP com zero, 36 dígitos, diferença assinada, wallet inexistente e snapshot coerente antes/depois de commit concorrente em PostgreSQL real.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T08-reconciliation-observability.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -866,6 +1210,12 @@
           "description": "Divergência induzida no banco descartável retorna consistent=false, log contextual e contador; dados permanecem inalterados pelo endpoint.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T08-reconciliation-observability.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -881,6 +1231,12 @@
           "description": "Probes HTTP com PostgreSQL/SQS saudáveis, conexões recusadas e sockets sem resposta; live continua público. API e três workers respondem na imagem de produção.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T08-reconciliation-observability.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -896,6 +1252,12 @@
           "description": "Filas FIFO exigidas provisionadas com redrive nativo, DLQ e envelope validado; fila adicional de eventos separada.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -911,6 +1273,12 @@
           "description": "SQS chama FinancialProcessing.process, usado pelo HTTP; replay entre canais, domínio e recusa de OPENING validados.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -926,6 +1294,12 @@
           "description": "Duas conexões/PIDs disputam consumerName/messageId recebido por grupos FIFO distintos, produzindo uma inbox e um efeito. Hash divergente vai à DLQ.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -941,6 +1315,12 @@
           "description": "Teste consulta dados confirmados no momento do DeleteMessage; SIGKILL após commit antes de ack seguido de redelivery preserva débito único.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -956,6 +1336,12 @@
           "description": "Negócio/replay recebe ack; entrada permanente vai à DLQ; backoff 1/2/4/8 s e quinta falha transitória/DLQ nativa testados. Falha no envio à DLQ preserva origem.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -971,6 +1357,12 @@
           "description": "Processo recebe SIGTERM durante trabalho e conclui ack; cancelamento após receive devolve visibilidade. Renovação real a cada 10 s testada.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -986,6 +1378,12 @@
           "description": "Dois publishers em conexões/PIDs distintos selecionam linhas diferentes; SIGKILL após envio antes da marcação é recuperado. EventId estável e deduplicação SQL do assinante testados.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T07-sqs-inbox-outbox.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -1001,6 +1399,12 @@
           "description": "SIGKILL do consumidor após commit deixa quatro eventos pendentes; dois publishers independentes publicam todos. Crash após send preserva IDs; teste de assinante da suíte messaging confirma efeito SQL único com duplicatas reais.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -1022,6 +1426,12 @@
           "description": "T04: caso de uso grava Processed, Rejected, PendingReference e BalanceChanged na mesma transação SQL; LOSS/rejeição não produzem BalanceChanged. Falhas revertem outbox e efeitos.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T04-transactional-processing.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -1037,6 +1447,12 @@
           "description": "Serialização estável do envelope com eventId, aggregateId, correlationId e causationId opcional.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T02-financial-domain.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -1052,6 +1468,12 @@
           "description": "Captura de logs HTTP/SQS verifica contexto de correlação e ausência de dinheiro, body, chave, hash e SQL; serialização e falha do sink testadas.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T08-reconciliation-observability.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -1060,13 +1482,24 @@
       "summary": "Métricas de status, duplicatas, retries, DLQ, conflitos de lock, outbox lag e latência.",
       "readmeSections": ["12"],
       "taskId": "T08",
-      "status": "verified",
+      "status": "implemented",
       "evidence": [
         {
           "kind": "integration",
           "description": "Scrapes após processamento, replay, retries, DLQ, publicação e timeout real de lock verificam gauges, contadores e histograma sem IDs como labels.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T08-reconciliation-observability.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: Parcial — F3, gauge ignora FAILED. Contraexemplo reproduzido; esta evidência registra a falha, não a satisfação do requisito.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
+        },
+        {
+          "kind": "integration",
+          "description": "Corrigir os achados aplicáveis da T11 e aprovar as regressões adicionais antes de voltar a declarar este requisito verificado.",
+          "status": "planned"
         }
       ]
     },
@@ -1082,6 +1515,12 @@
           "description": "Matriz revisada: Money/escala/entradas, Wallet, cinco operações, moeda e estados nas suítes de domínio; novo teste unitário de replay rejeita a mesma chave com payloadHash divergente.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -1097,6 +1536,12 @@
           "description": "126 testes de persistência, 37 de mensageria, oito distribuídos e seis smoke passaram usando PostgreSQL/LocalStack reais. Migrations, constraints, atomicidade, inbox, publishers, retry/DLQ e reinícios ligados aos testes na matriz.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -1112,6 +1557,12 @@
           "description": "50 requisições HTTP paralelas em três APIs e 50 envios SQS para três consumidores: um débito e 49 replays por cenário; IDs e grupos de transporte distintos impedem que FIFO esconda duplicatas.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -1127,6 +1578,12 @@
           "description": "Uma terceira API confirma operação em outra wallet enquanto duas APIs continuam na cadeia de locks da wallet disputada. Saldo e ledger de ambas reconciliados.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -1142,6 +1599,12 @@
           "description": "PIDs de sistema e SQL distintos registrados em macOS e Linux; três APIs simultâneas observadas no grafo de locks e três consumidores simultâneos na barreira após receive.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -1157,6 +1620,12 @@
           "description": "SIGKILL após commit antes de DeleteMessage; inbox/ledger/outbox já visíveis. Novo consumidor após expiração real da visibilidade faz replay e ack sem novo débito.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -1172,6 +1641,12 @@
           "description": "Dois testes: REFUND e ROLLBACK pendentes antes do BET. Após restart, novos consumidor, worker de referências e API resolvem uma vez; GET processado e recibo original preservado.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -1180,13 +1655,24 @@
       "summary": "Em todos os testes obrigatórios, saldo corresponde ao reconstruído pelo ledger.",
       "readmeSections": ["13"],
       "taskId": "T09",
-      "status": "verified",
+      "status": "implemented",
       "evidence": [
         {
           "kind": "integration",
           "description": "Todos os cenários distribuídos reconciliam saldo esperado e ledger. Fixtures de mensageria/referências verificam todas as wallets; afterEach de processamento/HTTP também consulta soma assinada NUMERIC.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T09-distributed-recovery.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: Falhou no contraexemplo F1; cenários normais reconciliam. Contraexemplo reproduzido; esta evidência registra a falha, não a satisfação do requisito.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
+        },
+        {
+          "kind": "integration",
+          "description": "Corrigir os achados aplicáveis da T11 e aprovar as regressões adicionais antes de voltar a declarar este requisito verificado.",
+          "status": "planned"
         }
       ]
     },
@@ -1202,6 +1688,12 @@
           "description": "README ganhou setup/comandos após o enunciado original, preservado byte a byte e pelo mesmo hash. Arquitetura e runbooks revisados; build sem cache com lockfile congelado, quatro migrations em volume novo e todas as suítes passaram.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T10-delivery-review.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: implementação e evidências reavaliadas contra o README; verificações locais executadas novamente. Matriz por requisito e resultados nominais no relatório, com limites explícitos.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
         }
       ]
     },
@@ -1210,13 +1702,24 @@
       "summary": "Auditar falhas eliminatórias: dinheiro inexato, race, duplicação, idempotência em memória, instância única, evento pré-commit, ledger ausente e mocks totais.",
       "readmeSections": ["14"],
       "taskId": "T10",
-      "status": "verified",
+      "status": "implemented",
       "evidence": [
         {
           "kind": "review",
           "description": "Auditoria liga os oito critérios eliminatórios a código e testes na matriz. T10 reproduziu 414 testes, incluindo PostgreSQL/SQS reais, três processos, falhas e recuperação; limites locais e CI remota não executada estão explícitos.",
           "status": "verified",
           "path": "docs/exec-plans/completed/T10-delivery-review.md"
+        },
+        {
+          "kind": "review",
+          "description": "T11: Não aprovado para main enquanto F1 persistir. Contraexemplo reproduzido; esta evidência registra a falha, não a satisfação do requisito.",
+          "status": "verified",
+          "path": "docs/audits/T11-readme-audit.md"
+        },
+        {
+          "kind": "integration",
+          "description": "Corrigir os achados aplicáveis da T11 e aprovar as regressões adicionais antes de voltar a declarar este requisito verificado.",
+          "status": "planned"
         }
       ]
     }

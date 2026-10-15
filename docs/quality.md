@@ -8,9 +8,10 @@ A T04 executa abertura e operações com lock, ledger e eventos atômicos. A T05
 acrescenta endpoints HTTP, recibos idempotentes e replay. A T06 acrescenta worker
 de referências, com agenda e recuperação testadas em PostgreSQL. A T07 acrescenta
 consumidor/publisher com PostgreSQL e SQS reais, a T08 instrumenta observabilidade e
-a T09 valida concorrência/recuperação entre processos independentes. A T10 conclui
-a auditoria e reprodução limpa: 78 requisitos com evidências revisadas e 414 testes
-aprovados, nos limites da [auditoria](delivery-review.md). O catálogo
+a T09 valida concorrência/recuperação entre processos independentes. A T10 registrou
+78 requisitos com evidências revisadas e 414 testes aprovados. A [T11](audits/T11-readme-audit.md)
+reabriu sete requisitos após reproduzir três defeitos adicionais; 71 permanecem
+verificados. A revisão atual prevalece sobre a conclusão histórica da T10. O catálogo
 registra o estado individual de cada requisito. Testes de unidade comprovam regras
 locais; harness e smoke tests não significam correção financeira distribuída.
 
@@ -120,8 +121,19 @@ ignorar links para código nem afrouxar o check quando a documentação passa a 
 Casos negativos do catálogo devem definir explicitamente o estado inválido, sem
 presumir que um requisito específico continuará planejado conforme o projeto avança.
 
+A matriz T11 também referencia scripts, tsconfig, Dockerfile e Compose; a fixture
+documental copia esses arquivos. Ao adicionar links para outras áreas do checkout,
+mantenha a cópia da fixture alinhada, sem ignorar links ou relaxar suas assertions.
+
 T10 acrescenta quatro casos do verificador documental para o apêndice operacional:
 editar comandos é permitido, mas alterar o enunciado, quebrar links ou tornar o
 delimitador ambíguo produz erro. Todas as suítes foram reproduzidas com dependências
 instaladas pelo lockfile congelado e volume PostgreSQL novo. Detalhes no
 [plano concluído](exec-plans/completed/T10-delivery-review.md).
+
+A T11 executa regressões em tests/audit com comando próprio documentado no relatório.
+Seis testes: dois controles SQL aprovados e quatro falhas esperadas até corrigir os
+três defeitos. Essas falhas são pendências reais; não são skips nem critérios de
+aceite invertidos. Integrar regressões aos gates regulares faz parte da correção.
+Dois probes adicionais pausam/retomam dependências preservando estado; não equivalem
+a perda de disco nem a homologação AWS.

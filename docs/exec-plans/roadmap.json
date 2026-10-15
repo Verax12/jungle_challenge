@@ -175,6 +175,22 @@
         "Auditoria do catálogo contra README e evidências.",
         "Execução limpa de setup, migrations e todas as suítes."
       ]
+    },
+    {
+      "id": "T11",
+      "title": "Auditoria ponto a ponto do README",
+      "dependsOn": ["T10"],
+      "status": "completed",
+      "scope": "Revisão independente, repetição das suítes e probes adicionais; relatório de conformidade e falhas, sem publicação.",
+      "acceptanceCriteria": [
+        "Cada requisito associado a implementação, teste e resultado atual.",
+        "Falha anterior do ledger reproduzida em PostgreSQL real.",
+        "Limitações e roteiro exato de reprodução documentados, sem aprovar garantias contraditas."
+      ],
+      "verification": [
+        "Check host/Linux, suites reais e probes direcionados em stack exclusiva.",
+        "Revisão por seção e relatório com evidências e pendências."
+      ]
     }
   ]
 }

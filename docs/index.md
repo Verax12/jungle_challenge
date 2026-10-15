@@ -8,6 +8,8 @@
 - [Catálogo de requisitos](requirements.json): requisitos, tarefas e evidências.
 - [Qualidade e rastreabilidade](quality.md): como interpretar os estados e validar entregas.
 - [Matriz de testes obrigatórios](test-matrix.md): cenários do enunciado e evidências executáveis.
+- [Auditoria atual T11 — ponto a ponto e pendências](audits/T11-readme-audit.md).
+- [Resultados nominais dos 420 testes](audits/T11-test-results.json).
 - [Auditoria da entrega](delivery-review.md): conferência do enunciado e critérios eliminatórios.
 - [Setup no README](../README.md#executar-o-projeto): instalação e comandos da implementação.
 
@@ -26,6 +28,7 @@
 - [Plano T08 — reconciliação e observabilidade](exec-plans/completed/T08-reconciliation-observability.md).
 - [Plano T09 — testes distribuídos e evidências](exec-plans/completed/T09-distributed-recovery.md).
 - [Plano T10 — documentação final e conferência](exec-plans/completed/T10-delivery-review.md).
+- [Plano T11 — auditoria ponto a ponto](exec-plans/completed/T11-readme-audit.md).
 - [Dívida técnica](exec-plans/tech-debt.md).
 
 ## Decisões
@@ -66,12 +69,12 @@
 As referências orientam o processo. Requisitos do produto continuam definidos pelo
 enunciado, e as restrições desta entrega prevalecem sobre exemplos das referências.
 
-Estado atual: T00 a T10 concluídas; 78 requisitos obrigatórios com evidências revisadas.
-Não há plano ativo nem próxima etapa obrigatória. Aguardar nova solicitação antes de
-abrir outra etapa; criar nova branch para o escopo selecionado.
-HTTP, referências, consumidor SQS, inbox e publicação da outbox estão disponíveis;
-reconciliação, readiness, logs e métricas também estão disponíveis. A matriz
-distribuída local foi validada com processos independentes e infraestrutura real.
+Estado atual: auditoria T11 concluída na branch codex/t11-readme-audit. As entregas
+T00–T10 permanecem no histórico, mas foram reproduzidos três defeitos: encadeamento
+SQL com OPENING retroativa, status HTTP de erros do parser e métrica FAILED omitida.
+São 71 requisitos verificados e sete reabertos por impacto desses achados.
 
-A T10 reproduziu a instalação e todas as suítes em volume novo: 414 testes passaram.
-Limites e resultados estão na [auditoria](delivery-review.md); CI remota ainda não executada.
+Os 414 testes anteriores passaram; seis adicionais tiveram dois passes e quatro
+falhas. Dois probes de indisponibilidade/retomada passaram. Leia a auditoria T11
+antes de publicar: check verde isolado não significa aprovação para main.
+Não há plano ativo; aguardar seleção da etapa de correção. CI remota não executada.

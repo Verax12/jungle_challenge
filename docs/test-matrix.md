@@ -2,7 +2,9 @@
 
 O [README, seção 13](../README.md) define os critérios. Esta tabela liga cada cenário
 a testes executáveis; o [plano T09](exec-plans/completed/T09-distributed-recovery.md)
-registra comandos, ambiente e resultados. Comandos de execução estão no
+registra comandos, ambiente e resultados históricos. A [T11](audits/T11-readme-audit.md)
+reexecutou toda a matriz e encontrou três defeitos em casos adicionais; consulte o
+relatório atual antes de interpretar os testes anteriores como aprovação. Comandos de execução estão no
 [runbook distribuído](runbooks/distributed.md).
 
 ## Unidade
@@ -58,3 +60,18 @@ Asserções de unidade cobrem apenas modelos em memória. Fixtures de schema tes
 inclusive dados inválidos e transações revertidas; não substituem cenários financeiros
 através dos casos de uso. Reconciliação usa soma assinada NUMERIC no banco e Money,
 sem converter dinheiro para number.
+
+## Casos adicionais T11
+
+- [Ledger e controles de reversão](../tests/audit/ledger-invariants.test.ts):
+  OPENING retroativa falha; valor/tipo de reversão com aritmética coerente passam.
+- [Parser HTTP](../tests/audit/http-input.test.ts): corpo excessivo e charset
+  não suportado retornam 500; esperados 413/415. Duas regressões vermelhas.
+- [Métrica FAILED](../tests/audit/observability.test.ts): estado persistido omitido
+  do gauge; regressão vermelha.
+- [Probes operacionais](../tests/audit/runtime-outage.ts): SQS com retry persistido,
+  PostgreSQL com recepção durante pausa e conclusão após retomada, mesmos processos,
+  replay observado por métrica, seis IDs recebidos e reconciliação 85.00.
+
+As regressões adicionais têm comando próprio no relatório e não entram no check
+original. Não aprovar main apenas porque os 414 casos anteriores passaram.
