@@ -108,6 +108,15 @@ async function reconcile(w: WalletView, amount: string) {
   expect(row.consistent).toBe(true);
 }
 
+async function walletOutboxCount(walletId: string) {
+  const [row] = (await sql(
+    fixture.orm.em.fork(),
+    "select count(*)::int as total from outbox_messages where payload->'data'->>'walletId' = ?",
+    [walletId],
+  )) as [{ total: number }];
+  return row.total;
+}
+
 test('wallet creation and all query routes expose decimal strings without internal hash/key', async () => {
   const w = await wallet();
   expect(w.balance).toEqual({ amount: '100.00', currency: 'BRL' });
@@ -149,6 +158,172 @@ test('duplicate wallet is 409 and unknown wallets/transactions are 404', async (
   const missing = await submit(wager(w, { walletId: unique() }));
   expect(missing.status).toBe(404);
   await reconcile(w, '100.00');
+});
+
+test.each([
+  ['0.00', '\ud800'],
+  ['0.00', '\udfff'],
+  ['100.00', '\ud800'],
+  ['100.00', '\udfff'],
+])(
+  'wallet creation rejects malformed Unicode at balance %s: %j',
+  async (amount, suffix) => {
+    const playerId = `${unique()}-${suffix}`;
+    const before = await fixture.orm.em.fork().count(WalletEntity, {});
+    const result = await call('/wallets', {
+      playerId,
+      initialBalance: { amount, currency: 'BRL' },
+    });
+    expect(result.status).toBe(400);
+    expect(result.body).toEqual({ code: 'INVALID_INPUT' });
+    expect(await fixture.orm.em.fork().count(WalletEntity, {})).toBe(before);
+  },
+);
+
+test.each([
+  'providerId',
+  'externalTransactionId',
+  'playerId',
+  'walletId',
+  'roundId',
+  'gameId',
+  'referenceExternalTransactionId',
+])(
+  'wager rejects malformed Unicode in %s without financial effects',
+  async (field) => {
+    const w = await wallet();
+    const key = unique();
+    const result = await submit(wager(w, { [field]: 'invalid-\ud800' }), key);
+    expect(result.status).toBe(400);
+    expect(result.body).toEqual({ code: 'INVALID_INPUT' });
+    const em = fixture.orm.em.fork();
+    expect(await em.count(TransactionEntity, { walletId: w.id })).toBe(1);
+    expect(await em.count(LedgerEntity, { walletId: w.id })).toBe(1);
+    expect(await walletOutboxCount(w.id)).toBe(2);
+    expect(await em.count(ReceiptEntity, { idempotencyKey: key })).toBe(0);
+    await reconcile(w, '100.00');
+  },
+);
+
+test('valid Unicode identities survive wallet, wager, reference, queries and replay', async () => {
+  const playerId = `${unique()}-José-😀-�`;
+  const created = await call('/wallets', {
+    playerId,
+    initialBalance: { amount: '100.00', currency: 'BRL' },
+  });
+  expect(created.status).toBe(201);
+  const w = created.body as unknown as WalletView;
+  expect((await call(`/wallets/${w.id}`)).body.playerId).toBe(playerId);
+  const input = wager(w, {
+    providerId: 'provider-😀',
+    externalTransactionId: `${unique()}-🎲`,
+    roundId: 'rodada-游戏',
+    gameId: 'jogo-�',
+  });
+  const key = unique();
+  const first = await submit(input, key);
+  expect(first.status).toBe(201);
+  const byExternal = await call(
+    `/providers/${encodeURIComponent(input.providerId)}/wagering/transactions/${encodeURIComponent(input.externalTransactionId)}`,
+  );
+  expect(byExternal.status).toBe(200);
+  for (const field of [
+    'providerId',
+    'externalTransactionId',
+    'playerId',
+    'roundId',
+    'gameId',
+  ] as const)
+    expect(byExternal.body[field]).toBe(input[field]);
+  const refund = await submit({
+    ...input,
+    externalTransactionId: `${unique()}-💰`,
+    kind: 'REFUND',
+    referenceExternalTransactionId: input.externalTransactionId,
+  });
+  expect(refund.status).toBe(201);
+  expect((await submit(input, key)).body).toEqual({
+    ...first.body,
+    idempotentReplay: true,
+  });
+  await reconcile(w, '100.00');
+});
+
+test('credit above the persisted monetary limit rolls back entirely and retries after a debit', async () => {
+  const maximum = `${'9'.repeat(36)}.99`;
+  const w = await wallet(maximum);
+  const input = wager(w, {
+    kind: 'WIN',
+    money: { amount: '0.01', currency: 'BRL' },
+  });
+  const key = unique();
+  const failed = await submit(input, key);
+  expect(failed.status).toBe(500);
+  expect(failed.body).toEqual({ code: 'INTERNAL_ERROR' });
+  expect((await call(`/wallets/${w.id}`)).body).toEqual({ ...w });
+  const em = fixture.orm.em.fork();
+  expect(await em.count(TransactionEntity, { walletId: w.id })).toBe(1);
+  expect(await em.count(LedgerEntity, { walletId: w.id })).toBe(1);
+  expect(await walletOutboxCount(w.id)).toBe(2);
+  expect(await em.count(ReceiptEntity, { idempotencyKey: key })).toBe(0);
+  expect(
+    (
+      await call(
+        `/providers/provider/wagering/transactions/${input.externalTransactionId}`,
+      )
+    ).status,
+  ).toBe(404);
+  await reconcile(w, maximum);
+
+  expect(
+    (await submit(wager(w, { money: { amount: '0.01', currency: 'BRL' } })))
+      .status,
+  ).toBe(201);
+  const retried = await submit(input, key);
+  expect(retried.status).toBe(201);
+  expect(retried.body).toMatchObject({
+    balance: { amount: maximum, currency: 'BRL' },
+    walletVersion: 3,
+    idempotentReplay: false,
+  });
+  expect((await submit(input, key)).body).toEqual({
+    ...retried.body,
+    idempotentReplay: true,
+  });
+  expect(await em.count(TransactionEntity, { walletId: w.id })).toBe(3);
+  expect(await em.count(LedgerEntity, { walletId: w.id })).toBe(3);
+  expect(await walletOutboxCount(w.id)).toBe(6);
+  expect(await em.count(ReceiptEntity, { idempotencyKey: key })).toBe(1);
+  await reconcile(w, maximum);
+});
+
+test('a BET permits one REFUND and one ROLLBACK with independent reversal uniqueness', async () => {
+  const w = await wallet();
+  const bet = wager(w);
+  expect((await submit(bet)).status).toBe(201);
+  for (const kind of ['REFUND', 'ROLLBACK']) {
+    const input = wager(w, {
+      kind,
+      referenceExternalTransactionId: bet.externalTransactionId,
+    });
+    const key = unique();
+    const first = await submit(input, key);
+    expect(first.status).toBe(201);
+    expect((await submit(input, key)).body).toEqual({
+      ...first.body,
+      idempotentReplay: true,
+    });
+    const duplicate = await submit({
+      ...input,
+      externalTransactionId: unique(),
+    });
+    expect(duplicate.status).toBe(422);
+    expect(duplicate.body.failureCode).toBe('REFERENCE_ALREADY_REVERSED');
+  }
+  const em = fixture.orm.em.fork();
+  expect(await em.count(LedgerEntity, { walletId: w.id })).toBe(4);
+  expect((await call(`/wallets/${w.id}`)).body.version).toBe(4);
+  await reconcile(w, '125.00');
 });
 
 test.each(['PROCESSED', 'REJECTED', 'PENDING_REFERENCE', 'LOSS'])(

@@ -4,8 +4,8 @@ import { randomUUID } from 'node:crypto';
 const project = process.env.COMPOSE_PROJECT_NAME ?? '';
 const base = process.env.AUDIT_APP_URL ?? '';
 assert(
-  /^backend-challenge-t11-[a-z0-9-]+$/.test(project),
-  'Use an exclusive T11 Compose project',
+  /^backend-challenge-t(?:11|13)-[a-z0-9-]+$/.test(project),
+  'Use an exclusive T11 or T13 Compose project',
 );
 assert(
   /^http:\/\/127\.0\.0\.1:\d+$/.test(base),
@@ -13,6 +13,9 @@ assert(
 );
 const started = Date.now();
 const paused = new Set<string>();
+const postgresMode = process.env.AUDIT_POSTGRES_MODE ?? 'pause';
+assert(['pause', 'stop'].includes(postgresMode));
+let postgresStopped = false;
 const report = (scenario: string, facts: Record<string, unknown>) =>
   console.log(JSON.stringify({ scenario, ...facts }));
 
@@ -20,6 +23,7 @@ async function command(args: string[]) {
   const child = Bun.spawn(['docker', ...args], {
     stdout: 'pipe',
     stderr: 'pipe',
+    timeout: 60000,
   });
   const [output, errors, code] = await Promise.all([
     new Response(child.stdout).text(),
@@ -123,6 +127,29 @@ type Outcome = {
 };
 type Readiness = { checks: { postgres: string; sqs: string } };
 try {
+  const appId = await compose('ps', '-q', 'app');
+  assert(/^[a-f0-9]{12,64}$/.test(appId), 'Expected one running application');
+  const app = JSON.parse(
+    await command([
+      'inspect',
+      '--format',
+      '{"labels":{{json .Config.Labels}},"ports":{{json .NetworkSettings.Ports}}}',
+      appId,
+    ]),
+  ) as {
+    labels: Record<string, string>;
+    ports: Record<string, { HostIp: string; HostPort: string }[]>;
+  };
+  assert.equal(app.labels['com.docker.compose.project'], project);
+  assert.equal(app.labels['com.docker.compose.service'], 'app');
+  assert(
+    app.ports['3000/tcp']?.some(
+      (mapping) =>
+        mapping.HostIp === '127.0.0.1' &&
+        mapping.HostPort === new URL(base).port,
+    ),
+    'AUDIT_APP_URL must match the exclusive project application port',
+  );
   assert.equal(
     await sql('select count(*) from wallets'),
     '0',
@@ -204,6 +231,33 @@ try {
       'wager-transactions.fifo',
     )
   ).QueueUrl;
+  if (postgresMode === 'stop') {
+    const barrier = {
+      messageId: randomUUID(),
+      type: 'WagerTransactionRequested',
+      occurredAt: new Date().toISOString(),
+      data: { ...request, idempotencyKey: request.externalTransactionId },
+    };
+    await sqs(
+      'send-message',
+      '--queue-url',
+      queue,
+      '--message-body',
+      JSON.stringify(barrier),
+      '--message-group-id',
+      w.id,
+      '--message-deduplication-id',
+      randomUUID(),
+    );
+    await until(
+      () =>
+        sql(
+          'select count(*) from inbox_messages where processed_at is not null',
+        ),
+      (value) => value === '1',
+      'consumer resumed polling after the SQS outage',
+    );
+  }
   const envelope = {
     messageId: randomUUID(),
     type: 'WagerTransactionRequested',
@@ -217,7 +271,12 @@ try {
       referenceExternalTransactionId: request.externalTransactionId,
     },
   };
-  await pause('postgres');
+  if (postgresMode === 'stop') {
+    await compose('stop', 'postgres');
+    postgresStopped = true;
+  } else {
+    await pause('postgres');
+  }
   const pgDown = await http<Readiness>('/health/ready');
   assert.equal(pgDown.status, 503);
   assert.equal(pgDown.body.checks.postgres, 'down');
@@ -233,20 +292,38 @@ try {
     '--message-deduplication-id',
     randomUUID(),
   );
-  await until(
-    () =>
-      sqs<{ Attributes: Record<string, string> }>(
-        'get-queue-attributes',
-        '--queue-url',
-        queue,
-        '--attribute-names',
-        'ApproximateNumberOfMessagesNotVisible',
-      ),
-    (value) => value.Attributes.ApproximateNumberOfMessagesNotVisible === '1',
-    'consumer received while PostgreSQL paused',
-    10000,
-  );
-  await resume('postgres');
+  if (postgresMode === 'stop') {
+    await until(
+      () => compose('logs', '--no-color', '--tail', '100', 'consumer'),
+      (value) =>
+        value
+          .split('\n')
+          .some(
+            (line) =>
+              line.includes('"event":"message_retry"') &&
+              line.includes(`"messageId":"${envelope.messageId}"`),
+          ),
+      'consumer retries while PostgreSQL is stopped',
+      10000,
+    );
+    await compose('up', '-d', '--wait', '--no-build', 'postgres');
+    postgresStopped = false;
+  } else {
+    await until(
+      () =>
+        sqs<{ Attributes: Record<string, string> }>(
+          'get-queue-attributes',
+          '--queue-url',
+          queue,
+          '--attribute-names',
+          'ApproximateNumberOfMessagesNotVisible',
+        ),
+      (value) => value.Attributes.ApproximateNumberOfMessagesNotVisible === '1',
+      'consumer received while PostgreSQL paused',
+      10000,
+    );
+    await resume('postgres');
+  }
   await until(
     () => http<Wallet>(`/wallets/${w.id}`),
     (value) => value.status === 200 && value.body.balance.amount === '85.00',
@@ -286,8 +363,12 @@ try {
         '-e',
         "const r=await fetch('http://127.0.0.1:9464/metrics');if(!r.ok)process.exit(1);console.log(await r.text())",
       ),
-    (value) =>
-      /^wagering_duplicates_total\{source="sqs"\} [1-9]\d*$/m.test(value),
+    (value) => {
+      const count = value.match(
+        /^wagering_duplicates_total\{source="sqs"\} (\d+)$/m,
+      )?.[1];
+      return Number(count ?? 0) >= (postgresMode === 'stop' ? 2 : 1);
+    },
     'duplicate replay observed by production consumer',
   );
   await until(
@@ -296,7 +377,11 @@ try {
     (value) => value === '0',
     'all outbox published',
   );
-  assert.equal(await sql('select count(*) from inbox_messages'), '1');
+  const expectedInbox = postgresMode === 'stop' ? 2 : 1;
+  assert.equal(
+    await sql('select count(*) from inbox_messages'),
+    String(expectedInbox),
+  );
   assert.equal(await sql('select count(*) from processing_receipts'), '2');
   assert.equal(await sql('select count(*) from wallet_ledger_entries'), '3');
   const reconciliation = await http<{
@@ -381,7 +466,7 @@ try {
   report('postgres-outage-recovery', {
     readinessDuringOutage: 503,
     livenessDuringOutage: 200,
-    inbox: 1,
+    inbox: expectedInbox,
     receipts: 2,
     ledger: 3,
     balance: '85.00',
@@ -389,10 +474,13 @@ try {
     eventIdsReceived: seen.size,
     dlq: 0,
     sameProductionProcesses: true,
-    deliveryReceivedDuringPostgresPause: true,
-    postgresRetryNotAsserted: true,
+    postgresMode,
+    deliveryReceivedDuringPostgresPause: postgresMode === 'pause',
+    postgresRetryObserved: postgresMode === 'stop',
     elapsedSeconds: (Date.now() - started) / 1000,
   });
 } finally {
   for (const service of paused) await resume(service);
+  if (postgresStopped)
+    await compose('up', '-d', '--wait', '--no-build', 'postgres');
 }

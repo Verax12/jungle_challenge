@@ -807,9 +807,9 @@ A fila de saída é wager-events.fifo; assinantes precisam deduplicar eventId du
 
 ### Executar todas as verificações
 
-A [T12](docs/audits/T12-corrections.md) corrigiu os três achados da auditoria T11
-e integrou as regressões aos gates abaixo. São 440 testes distintos aprovados no
-escopo local. Para bancos existentes, siga o [upgrade da quinta migration](docs/runbooks/persistence.md#atualizar-um-banco-existente-para-t12).
+A [T13](docs/audits/T13-release-validation.md) aprovou 477 testes distintos e quatro
+probes de recuperação, corrigindo também identidades Unicode malformadas. As
+regressões da T12 continuam nos gates. Para bancos existentes, siga o [upgrade da quinta migration](docs/runbooks/persistence.md#atualizar-um-banco-existente-para-t12).
 
 Após subir a stack:
 
@@ -826,6 +826,10 @@ harness/aplicação/domínio. Os outros comandos usam PostgreSQL/SQS reais e inc
 bancos/filas descartáveis, três processos, 50 duplicatas, concorrência e mortes nos
 limites de commit/ack/publicação. Não use check/build simultaneamente com testes no
 mesmo checkout, pois recriam dist. A [matriz](docs/test-matrix.md) detalha as evidências.
+
+Em stack descartável exclusiva, execute também test:recovery e stack:production,
+na ordem e com as variáveis do [runbook de produção](docs/runbooks/production-validation.md).
+Esses comandos criam dados de teste e interrompem dependências deliberadamente.
 
 A [CI](.github/workflows/harness.yml) executa esses gates em pushes e pull requests.
 Configuração de workflow não comprova execução remota: veja os resultados registrados

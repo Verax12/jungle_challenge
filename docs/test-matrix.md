@@ -5,7 +5,9 @@ a testes executáveis; o [plano T09](exec-plans/completed/T09-distributed-recove
 registra comandos, ambiente e resultados históricos. A [T11](audits/T11-readme-audit.md)
 reexecutou toda a matriz e encontrou três defeitos em casos adicionais. A
 [T12](audits/T12-corrections.md) corrigiu os três achados e repetiu a validação com
-440 testes distintos aprovados. Comandos de execução estão no
+440 testes distintos aprovados. A [T13](audits/T13-release-validation.md) revalidou
+tudo, corrigiu Unicode malformado e aprovou 477 casos mais quatro probes reais.
+Comandos de execução estão no
 [runbook distribuído](runbooks/distributed.md).
 
 ## Unidade
@@ -82,4 +84,16 @@ sem converter dinheiro para number.
 
 As regressões executam nos gates regulares e não exigem um comando tests/audit.
 O relatório T11 e seu JSON preservam resultados históricos; o resultado corrente
-está na T12.
+está na T13.
+
+## Fluxo de produção e entradas extremas T13
+
+- [Processos de produção](../tests/production/runtime.test.ts): seis fluxos HTTP/SQS
+  com todos os workers reais, eventos conferidos contra SQL e reconciliação.
+- [Identidades](../tests/app/identities.test.ts), [HTTP/PostgreSQL](../tests/persistence/http.test.ts)
+  e [SQS/PostgreSQL](../tests/messaging/identities.test.ts): Unicode malformado
+  rejeitado, Unicode válido preservado, sem identidade alterada ou efeito financeiro.
+- A suíte HTTP também confirma rollback ao exceder o limite NUMERIC, retry após
+  débito e uma REFUND mais uma ROLLBACK da mesma BET conforme regra por tipo.
+- [Indisponibilidade](../tests/audit/runtime-outage.ts) e [SIGTERM pré-commit](../tests/audit/runtime-shutdown.ts)
+  exercitam os processos reais. Executar conforme [runbook](runbooks/production-validation.md).

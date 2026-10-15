@@ -78,6 +78,11 @@ página é nextCursor null. Cursor opaco não é mecanismo de autenticação/ass
 | 503  | Falha transitória de infraestrutura                   | INFRASTRUCTURE_TRANSIENT e Retry-After    |
 | 500  | Falha inesperada                                      | INTERNAL_ERROR, sem SQL/stack/payload     |
 
+Identificadores devem ser texto Unicode válido: surrogates isolados são rejeitados
+com 400/INVALID_INPUT antes da persistência. Emojis, acentos e outros caracteres
+Unicode válidos são preservados sem normalização ou substituição silenciosa. A
+mesma validação é compartilhada com SQS; entrada inválida segue para DLQ sem efeito.
+
 JSON malformado retorna 400/INVALID_REQUEST. Esses erros do parser ocorrem antes
 do processamento financeiro; o corpo da resposta contém somente o código público.
 O limite de entrada não foi ampliado na T12.

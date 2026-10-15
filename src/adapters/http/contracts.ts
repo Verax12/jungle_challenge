@@ -10,6 +10,7 @@ export function textId(value: unknown): string {
       value.length >= 1 &&
       value.length <= 256 &&
       value.trim() === value &&
+      !/[\uD800-\uDFFF]/u.test(value) &&
       [...value].every(
         (character) =>
           character.charCodeAt(0) >= 32 && character.charCodeAt(0) !== 127,

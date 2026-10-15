@@ -42,7 +42,10 @@
     "test:distributed": "bun run build && bun test tests/distributed --timeout 45000",
     "stack:messaging": "docker compose run --rm --build messaging",
     "stack:distributed": "docker compose run --rm --build distributed",
-    "stack:workers": "docker compose --profile workers up --build -d --wait consumer publisher reference-worker"
+    "stack:workers": "docker compose --profile workers up --build -d --wait consumer publisher reference-worker",
+    "test:production": "bun test tests/production --timeout 60000",
+    "stack:production": "docker compose --profile workers run --rm --build production",
+    "test:recovery": "bun tests/audit/runtime-outage.ts && bun tests/audit/runtime-shutdown.ts"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",

@@ -208,6 +208,23 @@
         "Check host/Linux e suites reais de persistência, mensageria, distribuição e smoke.",
         "Upgrade limpo e inválido, rollback/reaplicação da migration e HTTP na imagem de produção."
       ]
+    },
+    {
+      "id": "T13",
+      "title": "Validação integral e publicação em main",
+      "dependsOn": ["T12"],
+      "status": "active",
+      "scope": "Revalidar README, ampliar testes de fluxos de produção e falhas reais, corrigir defeitos comprovados e publicar main após aceite local.",
+      "acceptanceCriteria": [
+        "Requisitos obrigatórios revisados independentemente e ligados a evidências atuais.",
+        "Gates completos e fluxos reais HTTP/SQS aprovados; achados corrigidos com regressões.",
+        "Interrupções e retorno das dependências preservam finanças e eventos.",
+        "Main atualizada sem sobrescrever histórico remoto; push e resultado de CI conferidos."
+      ],
+      "verification": [
+        "Build limpo com lockfile congelado, checks host/Linux, integração, distribuição e produção.",
+        "Revisão adversarial, probes operacionais, conferência de commit remoto e GitHub Actions."
+      ]
     }
   ]
 }

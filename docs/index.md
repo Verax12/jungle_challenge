@@ -11,7 +11,9 @@
 - [Auditoria histórica T11 — ponto a ponto e achados](audits/T11-readme-audit.md).
 - [Resultados históricos dos 420 testes T11](audits/T11-test-results.json).
 - [Correções e revalidação T12](audits/T12-corrections.md).
-- [Resultados atuais dos 440 testes](audits/T12-test-results.json).
+- [Resultados históricos dos 440 testes T12](audits/T12-test-results.json).
+- [Validação integral e publicação T13](audits/T13-release-validation.md).
+- [Resultados atuais dos 477 testes T13](audits/T13-test-results.json).
 - [Auditoria da entrega](delivery-review.md): conferência do enunciado e critérios eliminatórios.
 - [Setup no README](../README.md#executar-o-projeto): instalação e comandos da implementação.
 
@@ -32,6 +34,7 @@
 - [Plano T10 — documentação final e conferência](exec-plans/completed/T10-delivery-review.md).
 - [Plano T11 — auditoria ponto a ponto](exec-plans/completed/T11-readme-audit.md).
 - [Plano T12 — correções da auditoria](exec-plans/completed/T12-audit-fixes.md).
+- [Plano T13 — validação e publicação](exec-plans/active/T13-release-validation.md).
 - [Dívida técnica](exec-plans/tech-debt.md).
 
 ## Decisões
@@ -62,6 +65,7 @@
 - [Consumidor SQS e publisher](runbooks/messaging.md).
 - [Reconciliação, health e métricas](runbooks/observability.md).
 - [Testes distribuídos e recuperação](runbooks/distributed.md).
+- [Fluxos de produção e recuperação](runbooks/production-validation.md).
 - [Reprodução limpa da entrega](runbooks/delivery.md).
 - [Diagnóstico de verificações](runbooks/troubleshooting.md).
 
@@ -74,12 +78,10 @@
 As referências orientam o processo. Requisitos do produto continuam definidos pelo
 enunciado, e as restrições desta entrega prevalecem sobre exemplos das referências.
 
-Estado atual: T12 corrige os três defeitos reproduzidos na auditoria T11: cadeia do
-ledger, parser HTTP e métricas FAILED. As regressões agora integram os gates
-regulares. São 440 testes distintos aprovados e 78 requisitos verificados no escopo
-local documentado. Os resultados T10/T11 permanecem históricos.
+Estado atual: T13 validou os 78 requisitos no escopo local e aprovou 477 testes
+mais quatro probes de recuperação. Corrigiu identidade Unicode malformada e manteve
+as regressões de ledger, parser e métricas da T12. Publicação main autorizada e CI
+remota em andamento; consultar o relatório T13 para o resultado final.
 
-Leia o relatório T12 e o procedimento de upgrade antes de aplicar a quinta migration
-em banco existente. CI remota/AWS não executadas; nenhuma publicação em main.
-
-Não há plano ativo. Aguardar seleção de publicação ou de uma nova etapa.
+Para banco existente, siga o procedimento de upgrade da quinta migration no runbook
+de persistência. Resultados T10/T11/T12 são históricos; AWS não foi homologada.

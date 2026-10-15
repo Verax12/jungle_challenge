@@ -2,7 +2,9 @@
 
 As entregas T00–T10 foram auditadas novamente na T11. A [T12](../audits/T12-corrections.md)
 corrigiu os três achados e integrou regressões aos gates. Não há achado F1/F2/F3
-pendente; CI remota e homologação externa continuam sem execução.
+pendente. A [T13](../audits/T13-release-validation.md) corrigiu identidade Unicode
+malformada e validou 477 testes mais quatro probes reais. CI remota em andamento;
+homologação externa continua fora do escopo.
 
 | Item                           | Situação                                                             | Tratamento                                              |
 | ------------------------------ | -------------------------------------------------------------------- | ------------------------------------------------------- |

@@ -22,11 +22,19 @@ jobs:
   stack:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      COMPOSE_PROJECT_NAME: backend-challenge-t13-ci-${{ github.run_id }}
+      PORT: '13013'
+      DB_PORT: '15443'
+      DB_PASSWORD: challenge-local-only
+      AUDIT_APP_URL: http://127.0.0.1:13013
+      AUDIT_POSTGRES_MODE: stop
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: .bun-version
+      - run: bun install --frozen-lockfile
       - run: bun run stack:up
       - run: bun run stack:migrate
       - run: bun run stack:persistence
@@ -37,6 +45,8 @@ jobs:
       - run: docker compose run --rm consumer bun dist/composition/messaging-main.js consumer --once
       - run: docker compose run --rm publisher bun dist/composition/messaging-main.js publisher --once
       - run: bun run stack:workers
+      - run: bun run test:recovery
+      - run: bun run stack:production
       - name: Worker operational endpoints
         run: |
           for worker in consumer publisher reference-worker; do

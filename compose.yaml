@@ -225,5 +225,25 @@ services:
       app:
         condition: service_healthy
 
+  production:
+    profiles: ['tools']
+    build:
+      context: .
+      target: build
+    environment:
+      <<: *application-environment
+      SMOKE_APP_URL: http://app:3000
+      PRODUCTION_TESTS: '1'
+    command: ['bun', 'run', 'test:production']
+    depends_on:
+      app:
+        condition: service_healthy
+      consumer:
+        condition: service_healthy
+      publisher:
+        condition: service_healthy
+      reference-worker:
+        condition: service_healthy
+
 volumes:
   postgres-data:
